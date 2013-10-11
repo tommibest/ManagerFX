@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 5, 2013 10:12:04 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pl.tzaras.fitness.manager.db.data.GymClass" table="GYMCLASS">
+        <id name="classId" type="long" column="CLASSID">
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="classRoom" class="pl.tzaras.fitness.manager.db.data.GymRoom" column="CLASS_ROOM" cascade="all" not-null="true" />
+        <many-to-one name="classTrainer" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER" cascade="all" not-null="true" />
+        <many-to-one name="classType" class="pl.tzaras.fitness.manager.db.data.GymClassType" column="CLASS_TYPE" cascade="all" not-null="true" />
+        <!-- 
+        <property name="roomId" type="long" column="ROOMID" />
+        <property name="trainerId" type="long" column="TRAINERID" />
+        <property name="classTypeId" type="long" column="CLASSTYPEID" /> 
+        <property name="startTime" type="long" column="START_TIME" />
+        -->
+        <property name="startTime" type="java.lang.String" column="START_TIME" />
+        <property name="duration" type="long" column="DURATION" />
+        <property name="participants" type="int" column="PARTICIPANTS" />
+    </class>
+</hibernate-mapping>

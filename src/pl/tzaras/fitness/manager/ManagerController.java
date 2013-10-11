@@ -1,0 +1,348 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pl.tzaras.fitness.manager;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
+
+import pl.tzaras.fitness.manager.db.DataManager;
+import pl.tzaras.fitness.manager.db.GymClassManager;
+import pl.tzaras.fitness.manager.db.data.GymClass;
+import pl.tzaras.fitness.manager.db.data.GymClassType;
+import pl.tzaras.fitness.manager.db.data.GymRoom;
+import pl.tzaras.fitness.manager.db.data.GymTrainer;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+
+/**
+ *
+ * @author tommi
+ */
+public class ManagerController implements Initializable {
+    
+	@FXML private TextField txtFieldInstructorName;
+	@FXML private TextField txtFieldInstructorSurrname;
+	@FXML private TextField tfClassTypeName;
+	@FXML private TextField tfRoomName;
+	@FXML private TextField tfDuration;
+	@FXML private TextField tfStartTime;
+	
+	@FXML private Button btnAddClass;
+	@FXML private Button btnAddInstructor;
+	@FXML private Button btnAddRoom;
+	
+	@FXML private ComboBox<TrainerWrapper> instructorCombo;
+	@FXML private ComboBox<TypeWrapper> classTypeCombo;
+	@FXML private ComboBox<String> daysCombo;
+	@FXML private ComboBox<RoomWrapper> roomCombo;
+	
+	@FXML private TableView<GymRoom> tblRoom;
+	@FXML private TableColumn<GymRoom, String> colRoomName;
+	
+	@FXML private TableView<GymClassType> tblClassType;
+	@FXML private TableColumn<GymClassType, String> colClassType;
+	
+	@FXML private TableView<GymTrainer> tblTrainers;
+	@FXML private TableColumn<GymTrainer, String> colName;
+	@FXML private TableColumn<GymTrainer, String> colSurrname;
+	
+	@FXML private TableView<GymClass> tblClasses;
+	@FXML private TableColumn<GymClass, Long> colClassId;
+	@FXML private TableColumn<GymClass, String> colCType;
+	@FXML private TableColumn<GymClass, String> colClassTrainer;
+	@FXML private TableColumn<GymClass, String> colClassRoom;
+	@FXML private TableColumn<GymClass, String> colClassDay;
+	@FXML private TableColumn<GymClass, Long> colClassHour;
+	@FXML private TableColumn<GymClass, Long> colParticipants;
+	@FXML private TableColumn<GymClass, Long> colClassDuration; 
+	
+	@FXML private TableView<WeekEntry> tblCalendar;
+	@FXML private TableColumn<WeekEntry, String> colHours;
+	@FXML private TableColumn<WeekEntry, String> colMonday;
+	@FXML private TableColumn<WeekEntry, String> colTuesday;
+	@FXML private TableColumn<WeekEntry, String> colWendesday;
+	@FXML private TableColumn<WeekEntry, String> colThursday;
+	@FXML private TableColumn<WeekEntry, String> colFriday;
+	@FXML private TableColumn<WeekEntry, String> colSaturday;
+	@FXML private TableColumn<WeekEntry, String> colSunday;
+	
+	@FXML private Button btnNextWeek;
+	@FXML private Button btnPrevWeek;
+	@FXML private Label lblCurrentWeek;
+	
+	LocalDate monday;
+	LocalDate sunday;
+	
+	private boolean populate = false;
+	
+	@FXML protected void addInstructor(MouseEvent arg0) {
+    	if ( !txtFieldInstructorName.getText().isEmpty() && !txtFieldInstructorSurrname.getText().isEmpty() ) {
+    		DataManager.getInstance().getGymTrainerManager().saveTrainer(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText());
+            System.out.println("Adding instructor: "+ txtFieldInstructorName.getText()  + ", " + txtFieldInstructorSurrname.getText() );
+            txtFieldInstructorName.setText("");
+            txtFieldInstructorSurrname.setText("");
+            DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
+            
+            ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
+    				.getInstance().getGymTrainerManager().getInstructors());
+    		for (GymTrainer trainer : data) {
+    			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
+    		}
+    		tblTrainers.setItems(data);
+    	} else {
+        	System.err.println("Name or surrname of instructor is empty");
+    	}
+    }
+
+    @FXML protected void addClassType(MouseEvent arg0) {
+    	if ( !tfClassTypeName.getText().isEmpty() ) {
+    		System.out.println("Adding class: " + tfClassTypeName.getText());
+    		DataManager.getInstance().getGymClassTypeManager().saveClass(tfClassTypeName.getText());
+    		tfClassTypeName.setText("");
+    		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
+    		
+    		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
+    				.getInstance().getGymClassTypeManager().getClassTypes());
+    		for (GymClassType classType : classTypes) {
+    			System.out.println(classType.getName());
+    		}
+    		tblClassType.setItems(classTypes);
+    		
+    	} else {
+    		System.err.println("Cannot add empty class type.");
+    	}
+    }
+    
+    @FXML protected void addRoom(MouseEvent arg0) {
+    	if ( !tfRoomName.getText().isEmpty() ) {
+    		System.out.println("Adding class: " + tfRoomName.getText());
+    		DataManager.getInstance().getGymRoomManager().saveRoom(tfRoomName.getText());
+    		tfRoomName.setText("");
+    		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
+    		
+    		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(DataManager
+    				.getInstance().getGymRoomManager().getRooms());
+    		for (GymRoom room : rooms) {
+    			System.out.println(room.getName());
+    		}
+    		tblRoom.setItems(rooms);
+    		
+    	} else {
+    		System.err.println("Cannot add empty class type.");
+    	}
+    }    
+    
+    @FXML protected void addClass(MouseEvent arg0) {
+    	GymClassManager mngr = DataManager.getInstance().getGymClassManager();
+    	String [] time = tfStartTime.getText().split(":");
+    	System.out.println("Start time: "+ time[0] + ":" + time[1]);
+    	
+    	DateTime startTime = (new DateTime()).withDayOfWeek(dayOfWeek(daysCombo.getValue()));
+    	startTime.withTime(Integer.valueOf(time[0]), Integer.valueOf(time[1]), 0,0);
+    	mngr.saveClass( roomCombo.getValue().getRoom(), 
+    			startTime, 
+    			Long.valueOf(tfDuration.getText()), 
+    			instructorCombo.getValue().getGymTrainer(), 
+    			classTypeCombo.getValue().getClassType(), 0);
+    	
+    	ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymClassManager().getClasses());
+		for (GymClass gymClass : data) {
+			System.out.println(gymClass.getClassId() + ", " + gymClass.getClassTrainer().getTrainerId());
+		}
+		tblClasses.setItems(data);
+    	
+    }
+
+	private int dayOfWeek(String value) {
+		if (value.compareToIgnoreCase("poniedziałek") == 0) {
+			return DateTimeConstants.MONDAY;
+		} else if (value.compareToIgnoreCase("wtorek") == 0) {
+			return DateTimeConstants.TUESDAY;
+		} else if (value.compareToIgnoreCase("Środa") == 0) {
+			return DateTimeConstants.WEDNESDAY;
+		} else if (value.compareToIgnoreCase("czwartek") == 0) {
+			return DateTimeConstants.THURSDAY;
+		} else if (value.compareToIgnoreCase("piątek") == 0) {
+			return DateTimeConstants.FRIDAY;
+		} else if (value.compareToIgnoreCase("sobota") == 0) {
+			return DateTimeConstants.SATURDAY;
+		} else if (value.compareToIgnoreCase("niedziela") == 0) {
+			return DateTimeConstants.SUNDAY;
+		}
+		return 0;
+	}
+
+	public void initialize(URL location, ResourceBundle resources) {
+		if (populate) {
+			populateTestData();
+		}
+		initializeMainTab();
+		initializeManagementTab();
+	}
+
+	private void initializeMainTab() {
+		LocalDate now = new LocalDate();
+		monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
+		sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
+		lblCurrentWeek.setText(monday.toString() + " - " + sunday.toString());
+		setColumnsHeaders();
+		colHours.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("hour"));
+		colMonday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("monday"));
+		colTuesday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("tuesday"));
+		colWendesday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("wendesday"));
+		colThursday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("thursday"));
+		colFriday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("friday"));
+		colSaturday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("saturday"));
+		colSunday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("sunday"));
+		ObservableList<WeekEntry> entries = FXCollections.observableArrayList();
+		for (int i=0; i<24;i++) {
+			entries.add(new WeekEntry(i+":00","","","","","","",""));
+			entries.add(new WeekEntry(i+":30","","","","","","",""));
+		}
+		tblCalendar.setItems(entries);
+		
+		colClassId.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("classId"));
+		colCType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
+
+		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		        if (p.getValue() != null) {
+		            return new SimpleStringProperty(p.getValue().getClassType().getName());
+		        } else {
+		            return new SimpleStringProperty("<no name>");
+		        }
+		    }
+		});
+		colClassTrainer.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
+
+		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		        if (p.getValue() != null) {
+		        	System.out.println(p.getValue().getStartTime());
+		            return new SimpleStringProperty(p.getValue().getClassTrainer().getName() + ", " + p.getValue().getClassTrainer().getSurrname());
+		        } else {
+		            return new SimpleStringProperty("<no name>");
+		        }
+		    }
+		});
+		colClassRoom.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
+
+		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		        if (p.getValue() != null) {
+		            return new SimpleStringProperty(p.getValue().getClassRoom().getName());
+		        } else {
+		            return new SimpleStringProperty("<no name>");
+		        }
+		    }
+		});
+		colClassDay.setCellValueFactory(new PropertyValueFactory<GymClass, String>("day"));
+		colClassHour.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("startTime"));
+		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
+		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymClassManager().getClasses());
+		for (GymClass gymClass : data) {
+			System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
+		}
+		tblClasses.setItems(data);
+		
+		ArrayList<Integer> hours = new ArrayList<Integer>();
+		for (int i=0; i<24; i++) hours.add(i);
+		daysCombo.getItems().setAll("PoniedziaÅ‚ek", "Wtorek", "Åšroda", "Czwartek", "PiÄ…tek", "Sobota", "Niedziela");	
+		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
+		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
+		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
+		
+		/*Calendar firstDay = Calendar.getInstance();
+		firstDay.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		Calendar lastDay = Calendar.getInstance();
+		lastDay.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+		lblCurrentWeek.setText(firstDay.getTime().toString() + " " + lastDay.getTime().toString() );	*/
+		
+	}
+
+	private void setColumnsHeaders() {
+		colMonday.setText("Pon "+monday.getDayOfMonth()+"/"+monday.getMonthOfYear());
+		colTuesday.setText("Wt "+monday.plusDays(1).getDayOfMonth()+"/"+monday.plusDays(1).getMonthOfYear());
+		colWendesday.setText("Åšr "+monday.plusDays(2).getDayOfMonth()+"/"+monday.plusDays(2).getMonthOfYear());
+		colThursday.setText("Czw "+monday.plusDays(3).getDayOfMonth()+"/"+monday.plusDays(3).getMonthOfYear());
+		colFriday.setText("Pt "+monday.plusDays(4).getDayOfMonth()+"/"+monday.plusDays(4).getMonthOfYear());
+		colSaturday.setText("Sb "+monday.plusDays(5).getDayOfMonth()+"/"+monday.plusDays(5).getMonthOfYear());
+		colSunday.setText("Niedz "+monday.plusDays(6).getDayOfMonth()+"/"+monday.plusDays(6).getMonthOfYear());
+	}
+
+	private void initializeManagementTab() {
+		colName.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("name"));
+		colSurrname.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("surrname"));
+		ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymTrainerManager().getInstructors());
+		for (GymTrainer trainer : data) {
+			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
+		}
+		tblTrainers.setItems(data);
+		
+		colClassType.setCellValueFactory(new PropertyValueFactory<GymClassType, String>("name"));
+		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymClassTypeManager().getClassTypes());
+		for (GymClassType classType : classTypes) {
+			System.out.println(classType.getName());
+		}
+		tblClassType.setItems(classTypes);
+		
+		colRoomName.setCellValueFactory(new PropertyValueFactory<GymRoom, String>("name"));
+		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(DataManager.getInstance().getGymRoomManager().getRooms());
+		for (GymClassType classType : classTypes) {
+			System.out.println(classType.getName());
+		}
+		tblRoom.setItems(rooms);
+	}
+
+	private void populateTestData() {
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Szymon", "WesoÅ‚owski");
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Fitness");
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Mental");
+		
+		DataManager.getInstance().getGymClassTypeManager().saveClass("FITNESS");
+		DataManager.getInstance().getGymClassTypeManager().saveClass("ZUMBA");
+		DataManager.getInstance().getGymClassTypeManager().saveClass("GRID");
+		DataManager.getInstance().getGymClassTypeManager().saveClass("HAPPY Hours");
+		
+		DataManager.getInstance().getGymRoomManager().saveRoom("Sala FITNESS");
+		DataManager.getInstance().getGymRoomManager().saveRoom("Sala ROWEROWA");
+		DataManager.getInstance().getGymRoomManager().saveRoom("Sala MENTAL");
+		DataManager.getInstance().getGymRoomManager().saveRoom("SiÅ‚ownia");
+		DataManager.getInstance().getGymRoomManager().saveRoom("OUTODOOR");
+	}
+       
+	@FXML protected void prevWeekAction(MouseEvent arg0) {
+		monday = monday.minusWeeks(1);
+		sunday = sunday.minusWeeks(1);
+		lblCurrentWeek.setText(monday.toString() + " - " + sunday.toString());
+		setColumnsHeaders();
+	}
+	
+	@FXML protected void nextWeekAction(MouseEvent arg0) {
+		monday = monday.plusWeeks(1);
+		sunday = sunday.plusWeeks(1);
+		lblCurrentWeek.setText(monday.toString() + " - " + sunday.toString());
+		setColumnsHeaders();
+	}
+}

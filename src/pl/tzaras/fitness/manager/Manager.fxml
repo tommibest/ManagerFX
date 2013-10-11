@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.*?>
+<?import pl.tzaras.fitness.manager.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="817.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
+  <children>
+    <Label fx:id="label" layoutX="126.0" layoutY="120.0" minHeight="16.0" minWidth="69.0" />
+    <TabPane layoutX="0.0" layoutY="24.0" prefHeight="793.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab text="Przeglad">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="526.0" prefWidth="662.0">
+              <children>
+                <Accordion layoutX="25.0" layoutY="10.0" minWidth="653.0" prefHeight="500.0" prefWidth="650.0">
+                  <expandedPane>
+                    <TitledPane fx:id="x2" animated="true" text="Przegląd zajęć">
+                      <content>
+                        <TableView fx:id="tblClasses" prefHeight="500.0" prefWidth="650.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="ID zajęć" fx:id="colClassId" />
+                            <TableColumn prefWidth="75.0" text="Typ zajęć" fx:id="colCType" />
+                            <TableColumn prefWidth="75.0" text="Dzień" fx:id="colClassDay" />
+                            <TableColumn prefWidth="75.0" text="Godzina" fx:id="colClassHour" />
+                            <TableColumn prefWidth="75.0" text="Instruktor" fx:id="colClassTrainer" />
+                            <TableColumn prefWidth="75.0" text="Sala" fx:id="colClassRoom" />
+                            <TableColumn prefWidth="139.0" text="Ilość uczestników" fx:id="colParticipants" />
+                            <TableColumn prefWidth="104.0" text="Czas trwania" fx:id="colClassDuration" />
+                          </columns>
+                        </TableView>
+                      </content>
+                    </TitledPane>
+                  </expandedPane>
+                  <panes>
+                    <fx:reference source="x2" />
+                    <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
+                      <content>
+                        <TableView fx:id="tblCalendar" prefHeight="500.0" prefWidth="650.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="Godziny" fx:id="colHours" />
+                            <TableColumn prefWidth="75.0" style="border:0" text="Poniedzialek" fx:id="colMonday" />
+                            <TableColumn prefWidth="75.0" text="Wtorek" fx:id="colTuesday" />
+                            <TableColumn prefWidth="75.0" text="Sroda" fx:id="colWendesday" />
+                            <TableColumn prefWidth="75.0" text="Czwartek" fx:id="colThursday" />
+                            <TableColumn prefWidth="75.0" text="Piatek" fx:id="colFriday" />
+                            <TableColumn prefWidth="75.0" text="Sobota" fx:id="colSaturday" />
+                            <TableColumn prefWidth="91.0" text="Niedziela" fx:id="colSunday" />
+                          </columns>
+                        </TableView>
+                      </content>
+                    </TitledPane>
+                  </panes>
+                </Accordion>
+                <Accordion layoutX="25.0" layoutY="548.0">
+                  <expandedPane>
+                    <TitledPane fx:id="x1" animated="false" prefHeight="160.0" text="Dodaj nowe zajecia">
+                      <content>
+                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="132.0" prefWidth="646.0">
+                          <children>
+                            <Label fx:id="lblClassType" layoutX="24.0" layoutY="14.0" text="Typ zajęć" />
+                            <ComboBox fx:id="classTypeCombo" layoutX="100.0" layoutY="12.0" prefWidth="183.0" />
+                            <Label fx:id="lblInstructor" layoutX="24.0" layoutY="43.0" text="Instruktor" />
+                            <ComboBox fx:id="instructorCombo" layoutX="100.0" layoutY="40.0" prefWidth="183.0" />
+                            <Label fx:id="lblRoom" layoutX="24.0" layoutY="73.0" text="Sala" />
+                            <ComboBox fx:id="roomCombo" layoutX="100.0" layoutY="70.0" prefWidth="183.0" />
+                            <Label fx:id="lblClassDay" layoutX="349.0" layoutY="17.0" text="Dzień" />
+                            <ComboBox fx:id="daysCombo" layoutX="442.0" layoutY="12.0" prefWidth="183.0" visibleRowCount="7" />
+                            <Label fx:id="lblClassHour" layoutX="349.0" layoutY="45.0" text="Godzina" />
+                            <TextField fx:id="tfStartTime" layoutX="442.0" layoutY="40.0" prefWidth="183.0" promptText="00:00" />
+                            <Label fx:id="lblDuration" layoutX="349.0" layoutY="69.0" text="Czas trwania" />
+                            <TextField fx:id="tfDuration" layoutX="442.0" layoutY="67.0" prefWidth="183.0" />
+                            <Button id="createNewClass" fx:id="createNewClassButton" layoutX="564.0" layoutY="100.0" mnemonicParsing="false" onMouseClicked="#addClass" text="Utworz" />
+                          </children>
+                        </AnchorPane>
+                      </content>
+                    </TitledPane>
+                  </expandedPane>
+                  <panes>
+                    <fx:reference source="x1" />
+                    <TitledPane animated="false" prefHeight="160.0" text="Wyszukaj">
+                      <content>
+                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                      </content>
+                    </TitledPane>
+                  </panes>
+                </Accordion>
+                <Button fx:id="btnPrevWeek" layoutX="25.0" layoutY="518.0" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;" />
+                <Button fx:id="btnNextWeek" layoutX="63.0" layoutY="518.0" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" />
+                <Label fx:id="lblCurrentWeek" layoutX="112.0" layoutY="521.0" prefWidth="574.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER" underline="false" wrapText="false" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab closable="false" text="Zarządzaj">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TableView id="tblInstructor" fx:id="tblTrainers" layoutX="15.0" layoutY="10.0" prefHeight="140.0" prefWidth="420.0">
+                  <columns>
+                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Imię" fx:id="colName" />
+                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Nazwisko" fx:id="colSurrname" />
+                  </columns>
+                </TableView>
+                <TitledPane animated="false" collapsible="true" disable="false" expanded="true" focusTraversable="true" layoutX="445.0" layoutY="10.0" minWidth="218.0" prefHeight="140.0" prefWidth="240.0" text="Dodaj instruktora" underline="false" visible="true" wrapText="false">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="117.0" prefWidth="400.0">
+                      <children>
+                        <Label layoutX="19.0" layoutY="11.0" text="Imię" />
+                        <TextField fx:id="txtFieldInstructorName" layoutX="79.0" layoutY="11.0" prefWidth="149.0" />
+                        <Label layoutX="17.0" layoutY="40.0" text="Nazwisko" />
+                        <TextField fx:id="txtFieldInstructorSurrname" layoutX="79.0" layoutY="37.0" prefWidth="149.0" />
+                        <Button id="btnAddClass" fx:id="btnAddInstructor" layoutX="168.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </TitledPane>
+                <TableView fx:id="tblClassType" layoutX="15.0" layoutY="170.0" prefHeight="140.0" prefWidth="420.0">
+                  <columns>
+                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="404.0" text="Typ zajęć" fx:id="colClassType" />
+                  </columns>
+                </TableView>
+                <TitledPane animated="false" expanded="true" layoutX="445.0" layoutY="170.0" prefHeight="137.0" prefWidth="238.0" text="Nowy typ zajęć">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                        <Label layoutX="14.0" layoutY="14.0" text="Nazwa" />
+                        <TextField id="txtFieldClassName" fx:id="tfClassTypeName" layoutX="77.0" layoutY="11.0" prefWidth="143.0" />
+                        <Button id="btnAddClass" layoutX="160.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#addClassType" text="Dodaj" />
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </TitledPane>
+                <TableView fx:id="tblRoom" layoutX="15.0" layoutY="330.0" prefHeight="140.0" prefWidth="420.0">
+                  <columns>
+                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="404.0" text="Nazwa sali" fx:id="colRoomName" />
+                  </columns>
+                </TableView>
+                <TitledPane animated="false" collapsible="true" disable="false" expanded="true" focusTraversable="true" layoutX="445.0" layoutY="330.0" prefHeight="140.0" prefWidth="240.0" text="Dodaj sale" underline="false" visible="true" wrapText="false">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                        <Label fx:id="lblRoomName" layoutX="19.0" layoutY="9.0" text="Nazwa" />
+                        <TextField id="txtFieldInstructorName" fx:id="tfRoomName" layoutX="90.0" layoutY="8.0" prefWidth="127.0" />
+                        <Button id="btnAddClass" fx:id="btnAddRoom" layoutX="152.0" layoutY="42.0" mnemonicParsing="false" onMouseClicked="#addRoom" text="Dodaj" />
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </TitledPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+    <MenuBar layoutX="0.0" layoutY="0.0" prefWidth="700.0">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Close" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Delete" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+  </children>
+</AnchorPane>
