@@ -33,6 +33,8 @@ import javafx.util.Callback;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -90,8 +92,8 @@ public class ManagerController implements Initializable {
 	@FXML private Button btnPrevWeek;
 	@FXML private Label lblCurrentWeek;
 	
-	LocalDate monday;
-	LocalDate sunday;
+	DateTime monday;
+	DateTime sunday;
 	
 	private boolean populate = false;
 	
@@ -202,11 +204,10 @@ public class ManagerController implements Initializable {
 	}
 
 	private void initializeMainTab() {
-		LocalDate now = new LocalDate();
+		DateTime now = new DateTime();
 		monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
 		sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
-		lblCurrentWeek.setText(monday.toString() + " - " + sunday.toString());
-		setColumnsHeaders();
+		displaySelectedWeek();
 		colHours.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("hour"));
 		colMonday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("monday"));
 		colTuesday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("tuesday"));
@@ -257,32 +258,29 @@ public class ManagerController implements Initializable {
 		colClassDay.setCellValueFactory(new PropertyValueFactory<GymClass, String>("day"));
 		colClassHour.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("startTime"));
 		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
+		populateCurrentWeekData();
+		
+		ArrayList<Integer> hours = new ArrayList<Integer>();
+		for (int i=0; i<24; i++) hours.add(i);
+		daysCombo.getItems().setAll("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela");	
+		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
+		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
+		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
+	}
+
+	private void populateCurrentWeekData() {
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymClassManager().getClasses());
+				.getInstance().getGymClassManager().getClasses(monday,sunday));
 		for (GymClass gymClass : data) {
 			System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
 		}
 		tblClasses.setItems(data);
-		
-		ArrayList<Integer> hours = new ArrayList<Integer>();
-		for (int i=0; i<24; i++) hours.add(i);
-		daysCombo.getItems().setAll("PoniedziaÅ‚ek", "Wtorek", "Åšroda", "Czwartek", "PiÄ…tek", "Sobota", "Niedziela");	
-		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
-		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
-		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
-		
-		/*Calendar firstDay = Calendar.getInstance();
-		firstDay.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-		Calendar lastDay = Calendar.getInstance();
-		lastDay.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-		lblCurrentWeek.setText(firstDay.getTime().toString() + " " + lastDay.getTime().toString() );	*/
-		
 	}
 
 	private void setColumnsHeaders() {
 		colMonday.setText("Pon "+monday.getDayOfMonth()+"/"+monday.getMonthOfYear());
 		colTuesday.setText("Wt "+monday.plusDays(1).getDayOfMonth()+"/"+monday.plusDays(1).getMonthOfYear());
-		colWendesday.setText("Åšr "+monday.plusDays(2).getDayOfMonth()+"/"+monday.plusDays(2).getMonthOfYear());
+		colWendesday.setText("Śr "+monday.plusDays(2).getDayOfMonth()+"/"+monday.plusDays(2).getMonthOfYear());
 		colThursday.setText("Czw "+monday.plusDays(3).getDayOfMonth()+"/"+monday.plusDays(3).getMonthOfYear());
 		colFriday.setText("Pt "+monday.plusDays(4).getDayOfMonth()+"/"+monday.plusDays(4).getMonthOfYear());
 		colSaturday.setText("Sb "+monday.plusDays(5).getDayOfMonth()+"/"+monday.plusDays(5).getMonthOfYear());
@@ -316,7 +314,7 @@ public class ManagerController implements Initializable {
 	}
 
 	private void populateTestData() {
-		DataManager.getInstance().getGymTrainerManager().saveTrainer("Szymon", "WesoÅ‚owski");
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Szymon", "Wesołowski");
 		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Fitness");
 		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Mental");
 		
@@ -328,21 +326,28 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymRoomManager().saveRoom("Sala FITNESS");
 		DataManager.getInstance().getGymRoomManager().saveRoom("Sala ROWEROWA");
 		DataManager.getInstance().getGymRoomManager().saveRoom("Sala MENTAL");
-		DataManager.getInstance().getGymRoomManager().saveRoom("SiÅ‚ownia");
+		DataManager.getInstance().getGymRoomManager().saveRoom("Siłownia");
 		DataManager.getInstance().getGymRoomManager().saveRoom("OUTODOOR");
 	}
        
 	@FXML protected void prevWeekAction(MouseEvent arg0) {
 		monday = monday.minusWeeks(1);
 		sunday = sunday.minusWeeks(1);
-		lblCurrentWeek.setText(monday.toString() + " - " + sunday.toString());
+		displaySelectedWeek();
 		setColumnsHeaders();
+		populateCurrentWeekData();
 	}
 	
 	@FXML protected void nextWeekAction(MouseEvent arg0) {
 		monday = monday.plusWeeks(1);
 		sunday = sunday.plusWeeks(1);
-		lblCurrentWeek.setText(monday.toString() + " - " + sunday.toString());
+		displaySelectedWeek();
 		setColumnsHeaders();
+		populateCurrentWeekData();
+	}
+
+	private void displaySelectedWeek() {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
+		lblCurrentWeek.setText(fmt.print(monday) + " - " + fmt.print(sunday));
 	}
 }

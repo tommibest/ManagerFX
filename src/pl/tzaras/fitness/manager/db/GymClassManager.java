@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.util.Callback;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
@@ -57,7 +60,7 @@ public class GymClassManager {
 			transaction = session.beginTransaction();
 			GymClass gymClass = new GymClass();
 			gymClass.setClassRoom(room);
-			gymClass.setStartTime(startTime.toString());
+			gymClass.setStartTime(startTime);
 			gymClass.setClassType(classType);
 			gymClass.setClassTrainer(classTrainer);
 			gymClass.setDuration(duration);
@@ -72,6 +75,31 @@ public class GymClassManager {
 		}
 		return courseId;
 		
+	}
+
+	public List<GymClass> getClasses(DateTime monday, DateTime sunday) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		ArrayList<GymClass> classes = new ArrayList<GymClass>();
+		try {
+
+			transaction = session.beginTransaction();
+			classes.addAll( session.createQuery("from GymClass where START_TIME >= :from and START_TIME <= :to").setParameter("from", monday).setParameter("to", sunday).list() );
+			for (Iterator iter = classes.iterator(); iter.hasNext();) {
+				GymClass gClass = (GymClass) iter.next();
+				System.out.println("Trainer: "+gClass.getClassTrainer().getName() + ", " + gClass.getClassTrainer().getSurrname());
+				System.out.println("Room: "+gClass.getClassRoom().getName());
+				System.out.println("ClassType: "+gClass.getClassType().getName());
+			}
+				
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return classes;
 	}
 
 /*	public void updateClass(Long gClassId, String roomName)

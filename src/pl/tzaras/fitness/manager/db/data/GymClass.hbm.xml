@@ -16,7 +16,7 @@
         <property name="classTypeId" type="long" column="CLASSTYPEID" /> 
         <property name="startTime" type="long" column="START_TIME" />
         -->
-        <property name="startTime" type="java.lang.String" column="START_TIME" />
+        <property name="startTime" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime" column="START_TIME" />
         <property name="duration" type="long" column="DURATION" />
         <property name="participants" type="int" column="PARTICIPANTS" />
     </class>
