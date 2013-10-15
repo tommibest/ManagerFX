@@ -32,6 +32,7 @@ import javafx.util.Callback;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -73,8 +74,7 @@ public class ManagerController implements Initializable {
 	@FXML private TableColumn<GymClass, String> colCType;
 	@FXML private TableColumn<GymClass, String> colClassTrainer;
 	@FXML private TableColumn<GymClass, String> colClassRoom;
-	@FXML private TableColumn<GymClass, String> colClassDay;
-	@FXML private TableColumn<GymClass, Long> colClassHour;
+	@FXML private TableColumn<GymClass, String> colClassHour;
 	@FXML private TableColumn<GymClass, Long> colParticipants;
 	@FXML private TableColumn<GymClass, Long> colClassDuration; 
 	
@@ -115,6 +115,18 @@ public class ManagerController implements Initializable {
         	System.err.println("Name or surrname of instructor is empty");
     	}
     }
+	
+	@FXML protected void removeInstructor(MouseEvent arg0) {
+		DataManager.getInstance().getGymTrainerManager().delete(tblTrainers.getSelectionModel().getSelectedItem());
+        DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
+        
+        ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymTrainerManager().getInstructors());
+		for (GymTrainer trainer : data) {
+			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
+		}
+		tblTrainers.setItems(data);
+	}
 
     @FXML protected void addClassType(MouseEvent arg0) {
     	if ( !tfClassTypeName.getText().isEmpty() ) {
@@ -159,20 +171,16 @@ public class ManagerController implements Initializable {
     	String [] time = tfStartTime.getText().split(":");
     	System.out.println("Start time: "+ time[0] + ":" + time[1]);
     	
-    	DateTime startTime = (new DateTime()).withDayOfWeek(dayOfWeek(daysCombo.getValue()));
-    	startTime.withTime(Integer.valueOf(time[0]), Integer.valueOf(time[1]), 0,0);
+    	DateTime startTime = monday.withDayOfWeek(dayOfWeek(daysCombo.getValue()))
+    			.withHourOfDay(Integer.valueOf(time[0]))
+    			.withMinuteOfHour(Integer.valueOf(time[1]));
     	mngr.saveClass( roomCombo.getValue().getRoom(), 
     			startTime, 
-    			Long.valueOf(tfDuration.getText()), 
+    			0, 
     			instructorCombo.getValue().getGymTrainer(), 
-    			classTypeCombo.getValue().getClassType(), 0);
-    	
-    	ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymClassManager().getClasses());
-		for (GymClass gymClass : data) {
-			System.out.println(gymClass.getClassId() + ", " + gymClass.getClassTrainer().getTrainerId());
-		}
-		tblClasses.setItems(data);
+    			classTypeCombo.getValue().getClassType(), Long.valueOf(tfDuration.getText()));
+
+    	populateCurrentWeekData();
     	
     }
 
@@ -255,8 +263,18 @@ public class ManagerController implements Initializable {
 		        }
 		    }
 		});
-		colClassDay.setCellValueFactory(new PropertyValueFactory<GymClass, String>("day"));
-		colClassHour.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("startTime"));
+		colClassHour.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
+
+		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		        if (p.getValue() != null) {
+		        	DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+		    		return new SimpleStringProperty( fmt.print(p.getValue().getStartTime()) );
+		        } else {
+		            return new SimpleStringProperty("<no name>");
+		        }
+		    }
+		});
+		//.setCellValueFactory(new PropertyValueFactory<GymClass, DateTime>("startTime"));
 		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
 		populateCurrentWeekData();
 		

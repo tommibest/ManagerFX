@@ -103,4 +103,21 @@ public class GymTrainerManager {
 		
 		return newList;
 	}
+
+	public void delete(GymTrainer selectedItem) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			GymTrainer trainer = (GymTrainer) session.get(GymTrainer.class, selectedItem.getTrainerId());
+			session.delete(trainer);
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
+	}
 }

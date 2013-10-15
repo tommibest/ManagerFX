@@ -51,7 +51,7 @@ public class GymClassManager {
 		return classes;
 	}
 
-	public Long saveClass(GymRoom room, DateTime startTime, Long valueOf,
+	public Long saveClass(GymRoom room, DateTime startTime, int participants,
 			GymTrainer classTrainer, GymClassType classType, long duration) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -64,7 +64,7 @@ public class GymClassManager {
 			gymClass.setClassType(classType);
 			gymClass.setClassTrainer(classTrainer);
 			gymClass.setDuration(duration);
-			gymClass.setParticipants(0);
+			gymClass.setParticipants(participants);
 			courseId = (Long) session.save(gymClass);
 			transaction.commit();
 		} catch (HibernateException e) {
@@ -84,7 +84,7 @@ public class GymClassManager {
 		try {
 
 			transaction = session.beginTransaction();
-			classes.addAll( session.createQuery("from GymClass where START_TIME >= :from and START_TIME <= :to").setParameter("from", monday).setParameter("to", sunday).list() );
+			classes.addAll( session.createQuery("from GymClass where startTime >= :from and startTime <= :to").setParameter("from", monday).setParameter("to", sunday).list() );
 			for (Iterator iter = classes.iterator(); iter.hasNext();) {
 				GymClass gClass = (GymClass) iter.next();
 				System.out.println("Trainer: "+gClass.getClassTrainer().getName() + ", " + gClass.getClassTrainer().getSurrname());

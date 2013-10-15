@@ -26,7 +26,6 @@
                           <columns>
                             <TableColumn prefWidth="75.0" text="ID zajęć" fx:id="colClassId" />
                             <TableColumn prefWidth="75.0" text="Typ zajęć" fx:id="colCType" />
-                            <TableColumn prefWidth="75.0" text="Dzień" fx:id="colClassDay" />
                             <TableColumn prefWidth="75.0" text="Godzina" fx:id="colClassHour" />
                             <TableColumn prefWidth="75.0" text="Instruktor" fx:id="colClassTrainer" />
                             <TableColumn prefWidth="75.0" text="Sala" fx:id="colClassRoom" />
@@ -115,7 +114,8 @@
                         <TextField fx:id="txtFieldInstructorName" layoutX="79.0" layoutY="11.0" prefWidth="149.0" />
                         <Label layoutX="17.0" layoutY="40.0" text="Nazwisko" />
                         <TextField fx:id="txtFieldInstructorSurrname" layoutX="79.0" layoutY="37.0" prefWidth="149.0" />
-                        <Button id="btnAddClass" fx:id="btnAddInstructor" layoutX="168.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
+                        <Button fx:id="btnAddInstructor" layoutX="168.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
+                        <Button fx:id="btnRemoveInstructor" layoutX="168.0" layoutY="89.0" mnemonicParsing="false" onMouseClicked="#removeInstructor" text="Usuń" />
                       </children>
                     </AnchorPane>
                   </content>
