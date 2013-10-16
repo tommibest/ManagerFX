@@ -115,7 +115,7 @@
                         <Label layoutX="17.0" layoutY="40.0" text="Nazwisko" />
                         <TextField fx:id="txtFieldInstructorSurrname" layoutX="79.0" layoutY="37.0" prefWidth="149.0" />
                         <Button fx:id="btnAddInstructor" layoutX="167.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
-                        <Button fx:id="btnRemoveInstructor" layoutX="94.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#removeInstructor" prefWidth="60.0" text="Usuń" />
+                        <Button id="btnRemoveInstructor" fx:id="btnRmvInstructor" layoutX="94.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#removeInstructor" prefWidth="60.0" text="Usuń" />
                       </children>
                     </AnchorPane>
                   </content>
