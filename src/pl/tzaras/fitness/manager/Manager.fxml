@@ -114,8 +114,8 @@
                         <TextField fx:id="txtFieldInstructorName" layoutX="79.0" layoutY="11.0" prefWidth="149.0" />
                         <Label layoutX="17.0" layoutY="40.0" text="Nazwisko" />
                         <TextField fx:id="txtFieldInstructorSurrname" layoutX="79.0" layoutY="37.0" prefWidth="149.0" />
-                        <Button fx:id="btnAddInstructor" layoutX="168.0" layoutY="69.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
-                        <Button fx:id="btnRemoveInstructor" layoutX="168.0" layoutY="89.0" mnemonicParsing="false" onMouseClicked="#removeInstructor" text="Usuń" />
+                        <Button fx:id="btnAddInstructor" layoutX="167.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
+                        <Button fx:id="btnRemoveInstructor" layoutX="94.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#removeInstructor" prefWidth="60.0" text="Usuń" />
                       </children>
                     </AnchorPane>
                   </content>
@@ -132,6 +132,7 @@
                         <Label layoutX="14.0" layoutY="14.0" text="Nazwa" />
                         <TextField id="txtFieldClassName" fx:id="tfClassTypeName" layoutX="77.0" layoutY="11.0" prefWidth="143.0" />
                         <Button id="btnAddClass" layoutX="160.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#addClassType" text="Dodaj" />
+                        <Button id="btnRemoveInstructor" fx:id="btnRmvClassType" layoutX="89.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#removeClassType" prefWidth="60.0" text="Usuń" />
                       </children>
                     </AnchorPane>
                   </content>
@@ -148,6 +149,7 @@
                         <Label fx:id="lblRoomName" layoutX="19.0" layoutY="9.0" text="Nazwa" />
                         <TextField id="txtFieldInstructorName" fx:id="tfRoomName" layoutX="90.0" layoutY="8.0" prefWidth="127.0" />
                         <Button id="btnAddClass" fx:id="btnAddRoom" layoutX="152.0" layoutY="42.0" mnemonicParsing="false" onMouseClicked="#addRoom" text="Dodaj" />
+                        <Button id="btnRemoveInstructor" fx:id="btnRmvRoom" layoutX="88.0" layoutY="42.0" mnemonicParsing="false" onMouseClicked="#removeRoom" prefWidth="60.0" text="Usuń" />
                       </children>
                     </AnchorPane>
                   </content>

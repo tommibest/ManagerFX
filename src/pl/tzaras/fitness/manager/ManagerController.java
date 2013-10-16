@@ -128,6 +128,30 @@ public class ManagerController implements Initializable {
 		tblTrainers.setItems(data);
 	}
 
+	@FXML protected void removeClassType(MouseEvent arg0) {
+		DataManager.getInstance().getGymClassTypeManager().delete(tblClassType.getSelectionModel().getSelectedItem());
+        DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
+        
+        ObservableList<GymClassType> data = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymClassTypeManager().getClassTypes());
+		for (GymClassType cType : data) {
+			System.out.println(cType.getName());
+		}
+		tblClassType.setItems(data);
+	}	
+
+	@FXML protected void removeRoom(MouseEvent arg0) {
+		DataManager.getInstance().getGymRoomManager().delete(tblRoom.getSelectionModel().getSelectedItem());
+        DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
+        
+        ObservableList<GymRoom> data = FXCollections.observableArrayList(DataManager
+				.getInstance().getGymRoomManager().getRooms());
+		for (GymRoom room : data) {
+			System.out.println(room.getName());
+		}
+		tblRoom.setItems(data);
+	}
+	
     @FXML protected void addClassType(MouseEvent arg0) {
     	if ( !tfClassTypeName.getText().isEmpty() ) {
     		System.out.println("Adding class: " + tfClassTypeName.getText());

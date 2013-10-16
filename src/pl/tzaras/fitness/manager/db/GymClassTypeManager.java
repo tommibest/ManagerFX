@@ -11,6 +11,7 @@ import org.hibernate.Transaction;
 
 import pl.tzaras.fitness.manager.TypeWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
+import pl.tzaras.fitness.manager.db.data.GymTrainer;
 import pl.tzaras.fitness.manager.util.HibernateUtil;
 
 public class GymClassTypeManager {
@@ -102,6 +103,23 @@ public class GymClassTypeManager {
 			wrapped.add(new TypeWrapper(classType));
 		}
 		return wrapped;
+	}
+
+	public void delete(GymClassType selectedItem) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			GymClassType classType = (GymClassType) session.get(GymClassType.class, selectedItem.getClassId());
+			session.delete(classType);
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		
 	}
 	
 }

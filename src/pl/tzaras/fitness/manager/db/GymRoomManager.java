@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import pl.tzaras.fitness.manager.RoomWrapper;
+import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.db.data.GymRoom;
 import pl.tzaras.fitness.manager.util.HibernateUtil;
 
@@ -102,6 +103,22 @@ public class GymRoomManager {
 			wrapped.add(new RoomWrapper(classType));
 		}
 		return wrapped;
+	}
+
+	public void delete(GymRoom selectedItem) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			GymRoom room = (GymRoom) session.get(GymRoom.class, selectedItem.getID());
+			session.delete(room);
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 	}
 
 }
