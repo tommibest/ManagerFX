@@ -9,10 +9,9 @@
 <?import javafx.scene.layout.*?>
 <?import pl.tzaras.fitness.manager.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="817.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
+<AnchorPane id="AnchorPane" prefHeight="782.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
   <children>
-    <Label fx:id="label" layoutX="126.0" layoutY="120.0" minHeight="16.0" minWidth="69.0" />
-    <TabPane layoutX="0.0" layoutY="24.0" prefHeight="793.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
+    <TabPane layoutX="0.0" layoutY="0.0" prefHeight="782.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
       <tabs>
         <Tab text="Przeglad">
           <content>
@@ -71,10 +70,29 @@
                             <Label fx:id="lblClassDay" layoutX="349.0" layoutY="17.0" text="Dzień" />
                             <ComboBox fx:id="daysCombo" layoutX="442.0" layoutY="12.0" prefWidth="183.0" visibleRowCount="7" />
                             <Label fx:id="lblClassHour" layoutX="349.0" layoutY="45.0" text="Godzina" />
-                            <TextField fx:id="tfStartTime" layoutX="442.0" layoutY="40.0" prefWidth="183.0" promptText="00:00" />
                             <Label fx:id="lblDuration" layoutX="349.0" layoutY="69.0" text="Czas trwania" />
-                            <TextField fx:id="tfDuration" layoutX="442.0" layoutY="67.0" prefWidth="183.0" />
+                            <TextField fx:id="tfDuration" layoutX="442.0" layoutY="67.0" prefWidth="69.0" promptText="60" />
                             <Button id="createNewClass" fx:id="createNewClassButton" layoutX="564.0" layoutY="100.0" mnemonicParsing="false" onMouseClicked="#addClass" text="Utworz" />
+                            <ComboBox id="cmbHour" fx:id="cmbHours" layoutX="442.0" layoutY="40.0" prefWidth="61.0">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="Item 1" />
+                                  <String fx:value="Item 2" />
+                                  <String fx:value="Item 3" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <ComboBox fx:id="cmbMinutes" layoutX="518.0" layoutY="40.0" prefWidth="61.0">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="Item 1" />
+                                  <String fx:value="Item 2" />
+                                  <String fx:value="Item 3" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <Label fx:id="lblCollon" layoutX="509.0" layoutY="44.0" text=":" />
+                            <Label layoutX="516.0" layoutY="71.0" text="minut" />
                           </children>
                         </AnchorPane>
                       </content>
@@ -92,6 +110,8 @@
                 <Button fx:id="btnPrevWeek" layoutX="25.0" layoutY="518.0" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;" />
                 <Button fx:id="btnNextWeek" layoutX="63.0" layoutY="518.0" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" />
                 <Label fx:id="lblCurrentWeek" layoutX="112.0" layoutY="521.0" prefWidth="574.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER" underline="false" wrapText="false" />
+                <Button fx:id="btnEditClass" layoutX="612.0" layoutY="517.0" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
+                <Button cancelButton="false" layoutX="536.0" layoutY="519.0" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun" />
               </children>
             </AnchorPane>
           </content>
@@ -160,24 +180,5 @@
         </Tab>
       </tabs>
     </TabPane>
-    <MenuBar layoutX="0.0" layoutY="0.0" prefWidth="700.0">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Close" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Delete" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
   </children>
 </AnchorPane>

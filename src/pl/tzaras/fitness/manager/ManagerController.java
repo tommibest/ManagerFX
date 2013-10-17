@@ -4,6 +4,7 @@
  */
 package pl.tzaras.fitness.manager;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -19,7 +20,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ComboBox;
@@ -28,6 +33,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import org.joda.time.DateTime;
@@ -48,7 +55,6 @@ public class ManagerController implements Initializable {
 	@FXML private TextField tfClassTypeName;
 	@FXML private TextField tfRoomName;
 	@FXML private TextField tfDuration;
-	@FXML private TextField tfStartTime;
 	
 	@FXML private Button btnAddClass;
 	@FXML private Button btnAddInstructor;
@@ -58,6 +64,8 @@ public class ManagerController implements Initializable {
 	@FXML private ComboBox<TypeWrapper> classTypeCombo;
 	@FXML private ComboBox<String> daysCombo;
 	@FXML private ComboBox<RoomWrapper> roomCombo;
+	@FXML private ComboBox<String> cmbHours;
+	@FXML private ComboBox<String> cmbMinutes;
 	
 	@FXML private TableView<GymRoom> tblRoom;
 	@FXML private TableColumn<GymRoom, String> colRoomName;
@@ -192,17 +200,20 @@ public class ManagerController implements Initializable {
     
     @FXML protected void addClass(MouseEvent arg0) {
     	GymClassManager mngr = DataManager.getInstance().getGymClassManager();
-    	String [] time = tfStartTime.getText().split(":");
-    	System.out.println("Start time: "+ time[0] + ":" + time[1]);
+    	System.out.println("Start time: "+ cmbHours.getValue() + ":" + cmbMinutes.getValue());
     	
-    	DateTime startTime = monday.withDayOfWeek(dayOfWeek(daysCombo.getValue()))
-    			.withHourOfDay(Integer.valueOf(time[0]))
-    			.withMinuteOfHour(Integer.valueOf(time[1]));
+    	DateTime startTime = monday
+    			.withDayOfWeek(dayOfWeek(daysCombo.getValue()))
+    			.withHourOfDay(Integer.valueOf(cmbHours.getValue()))
+    			.withMinuteOfHour(Integer.valueOf(cmbMinutes.getValue()));
+    	
+    	System.out.println("Start time: " + startTime.toString());
     	mngr.saveClass( roomCombo.getValue().getRoom(), 
     			startTime, 
     			0, 
     			instructorCombo.getValue().getGymTrainer(), 
-    			classTypeCombo.getValue().getClassType(), Long.valueOf(tfDuration.getText()));
+    			classTypeCombo.getValue().getClassType(), 
+    			Long.valueOf(tfDuration.getText()));
 
     	populateCurrentWeekData();
     	
@@ -298,13 +309,19 @@ public class ManagerController implements Initializable {
 		        }
 		    }
 		});
-		//.setCellValueFactory(new PropertyValueFactory<GymClass, DateTime>("startTime"));
+
 		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
 		populateCurrentWeekData();
 		
-		ArrayList<Integer> hours = new ArrayList<Integer>();
-		for (int i=0; i<24; i++) hours.add(i);
-		daysCombo.getItems().setAll("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela");	
+		daysCombo.getItems().setAll("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela");
+		ArrayList<String> hours = new ArrayList<String>();
+		for (int i=0; i<24; i++) hours.add(String.valueOf(i));
+		cmbHours.getItems().setAll(hours);
+		
+		ArrayList<String> minutes = new ArrayList<String>();
+		for (int i=0; i<60; i++) minutes.add(String.valueOf(i));
+		cmbMinutes.getItems().setAll(minutes);
+		
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
@@ -391,5 +408,26 @@ public class ManagerController implements Initializable {
 	private void displaySelectedWeek() {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
 		lblCurrentWeek.setText(fmt.print(monday) + " - " + fmt.print(sunday));
+	}
+	
+	@FXML protected void editClass(MouseEvent event) {
+		Stage stage = new Stage();
+		Parent root;
+		try {
+			root = FXMLLoader.load(
+					getClass().getResource("EditDialog.fxml"));
+			stage.setScene(new Scene(root));
+			stage.setTitle("My modal window");
+			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initOwner(
+					((Node)event.getSource()).getScene().getWindow() );
+			stage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML protected void removeClass(MouseEvent event) {
 	}
 }

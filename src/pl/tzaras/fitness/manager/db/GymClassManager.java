@@ -66,6 +66,7 @@ public class GymClassManager {
 			gymClass.setDuration(duration);
 			gymClass.setParticipants(participants);
 			courseId = (Long) session.save(gymClass);
+			System.out.println("Course ID: " + courseId );
 			transaction.commit();
 		} catch (HibernateException e) {
 			transaction.rollback();
