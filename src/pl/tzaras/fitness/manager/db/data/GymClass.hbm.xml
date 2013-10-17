@@ -7,9 +7,9 @@
         <id name="classId" type="long" column="CLASSID">
             <generator class="increment"/>
         </id>
-        <many-to-one name="classRoom" class="pl.tzaras.fitness.manager.db.data.GymRoom" column="CLASS_ROOM" cascade="all" not-null="true" />
-        <many-to-one name="classTrainer" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER" cascade="all" not-null="true" />
-        <many-to-one name="classType" class="pl.tzaras.fitness.manager.db.data.GymClassType" column="CLASS_TYPE" cascade="all" not-null="true" />
+        <many-to-one name="classRoom" class="pl.tzaras.fitness.manager.db.data.GymRoom" column="CLASS_ROOM" not-null="true" />
+        <many-to-one name="classTrainer" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER" not-null="true" />
+        <many-to-one name="classType" class="pl.tzaras.fitness.manager.db.data.GymClassType" column="CLASS_TYPE" not-null="true" />
         <!-- 
         <property name="roomId" type="long" column="ROOMID" />
         <property name="trainerId" type="long" column="TRAINERID" />

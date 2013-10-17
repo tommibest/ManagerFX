@@ -15,6 +15,7 @@ import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.db.data.GymRoom;
 import pl.tzaras.fitness.manager.db.data.GymTrainer;
+import pl.tzaras.fitness.manager.utils.ManagerUtils;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -82,8 +83,9 @@ public class ManagerController implements Initializable {
 	@FXML private TableColumn<GymClass, String> colCType;
 	@FXML private TableColumn<GymClass, String> colClassTrainer;
 	@FXML private TableColumn<GymClass, String> colClassRoom;
+	@FXML private TableColumn<GymClass, String> colClassDay;
 	@FXML private TableColumn<GymClass, String> colClassHour;
-	@FXML private TableColumn<GymClass, Long> colParticipants;
+	@FXML private TableColumn<GymClass, Integer> colParticipants;
 	@FXML private TableColumn<GymClass, Long> colClassDuration; 
 	
 	@FXML private TableView<WeekEntry> tblCalendar;
@@ -203,7 +205,7 @@ public class ManagerController implements Initializable {
     	System.out.println("Start time: "+ cmbHours.getValue() + ":" + cmbMinutes.getValue());
     	
     	DateTime startTime = monday
-    			.withDayOfWeek(dayOfWeek(daysCombo.getValue()))
+    			.withDayOfWeek(ManagerUtils.dayToInt(daysCombo.getValue()))
     			.withHourOfDay(Integer.valueOf(cmbHours.getValue()))
     			.withMinuteOfHour(Integer.valueOf(cmbMinutes.getValue()));
     	
@@ -219,7 +221,7 @@ public class ManagerController implements Initializable {
     	
     }
 
-	private int dayOfWeek(String value) {
+/*	private int dayOfWeek(String value) {
 		if (value.compareToIgnoreCase("poniedziałek") == 0) {
 			return DateTimeConstants.MONDAY;
 		} else if (value.compareToIgnoreCase("wtorek") == 0) {
@@ -236,7 +238,7 @@ public class ManagerController implements Initializable {
 			return DateTimeConstants.SUNDAY;
 		}
 		return 0;
-	}
+	}*/
 
 	public void initialize(URL location, ResourceBundle resources) {
 		if (populate) {
@@ -277,9 +279,10 @@ public class ManagerController implements Initializable {
 		        }
 		    }
 		});
+		
 		colClassTrainer.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
-
-		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
 		        if (p.getValue() != null) {
 		        	System.out.println(p.getValue().getStartTime());
 		            return new SimpleStringProperty(p.getValue().getClassTrainer().getName() + ", " + p.getValue().getClassTrainer().getSurrname());
@@ -288,6 +291,7 @@ public class ManagerController implements Initializable {
 		        }
 		    }
 		});
+		
 		colClassRoom.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
 
 		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
@@ -298,11 +302,23 @@ public class ManagerController implements Initializable {
 		        }
 		    }
 		});
-		colClassHour.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
-
-		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		
+		colClassDay.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
+		    
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
 		        if (p.getValue() != null) {
-		        	DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+		    		return new SimpleStringProperty( ManagerUtils.intToWeekDay(p.getValue().getStartTime().getDayOfWeek()) );
+		        } else {
+		            return new SimpleStringProperty("<no name>");
+		        }
+		    }
+		});
+		
+		colClassHour.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
+		    
+			public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
+		        if (p.getValue() != null) {
+		        	DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm");
 		    		return new SimpleStringProperty( fmt.print(p.getValue().getStartTime()) );
 		        } else {
 		            return new SimpleStringProperty("<no name>");
@@ -311,16 +327,13 @@ public class ManagerController implements Initializable {
 		});
 
 		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
+		colParticipants.setCellValueFactory(new PropertyValueFactory<GymClass, Integer>("participants"));
+		
 		populateCurrentWeekData();
 		
-		daysCombo.getItems().setAll("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela");
-		ArrayList<String> hours = new ArrayList<String>();
-		for (int i=0; i<24; i++) hours.add(String.valueOf(i));
-		cmbHours.getItems().setAll(hours);
-		
-		ArrayList<String> minutes = new ArrayList<String>();
-		for (int i=0; i<60; i++) minutes.add(String.valueOf(i));
-		cmbMinutes.getItems().setAll(minutes);
+		ManagerUtils.fillWithWeekDays(daysCombo);
+		ManagerUtils.fillWithHours(cmbHours);
+		ManagerUtils.fillWithMinutes(cmbMinutes);
 		
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
@@ -414,14 +427,19 @@ public class ManagerController implements Initializable {
 		Stage stage = new Stage();
 		Parent root;
 		try {
-			root = FXMLLoader.load(
-					getClass().getResource("EditDialog.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("EditDialog.fxml"));
+			root = (Parent) loader.load();
 			stage.setScene(new Scene(root));
-			stage.setTitle("My modal window");
+			stage.setTitle("Edytuj zajęcia");
 			stage.initModality(Modality.WINDOW_MODAL);
 			stage.initOwner(
 					((Node)event.getSource()).getScene().getWindow() );
-			stage.show();
+			EditDialogController controller = (EditDialogController)loader.getController();
+			controller.setGymClass(tblClasses.getSelectionModel().getSelectedItem());
+			controller.setEditDialogStage(stage);
+			stage.showAndWait();
+			DataManager.getInstance().getGymClassManager().updateClass(controller.getGymClass());
+			populateCurrentWeekData();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -429,5 +447,7 @@ public class ManagerController implements Initializable {
 	}
 	
 	@FXML protected void removeClass(MouseEvent event) {
+		DataManager.getInstance().getGymClassManager().deleteClass(tblClasses.getSelectionModel().getSelectedItem());
+		populateCurrentWeekData();
 	}
 }

@@ -103,14 +103,20 @@ public class GymClassManager {
 		return classes;
 	}
 
-/*	public void updateClass(Long gClassId, String roomName)
-	{
+	public void updateClass(GymClass gymClass) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			GymRoom gClass = (GymRoom) session.get(GymRoom.class, gClassId);
-			gClass.setName(roomName);
+			GymClass gClass = (GymClass) session.get(GymClass.class, gymClass.getClassId());
+			gClass.setClassRoom(gymClass.getClassRoom());
+			gClass.setClassType(gymClass.getClassType());
+			gClass.setClassTrainer(gymClass.getClassTrainer());
+			gClass.setStartTime(gymClass.getStartTime());
+			gClass.setDuration(gymClass.getDuration());
+			gClass.setParticipants(gymClass.getParticipants());
+			
+			session.update(gClass);
 			transaction.commit();
 		} catch (HibernateException e) {
 			transaction.rollback();
@@ -120,14 +126,15 @@ public class GymClassManager {
 		}
 	}
 
-	public void deleteClass(Long roomId)
+	public void deleteClass(GymClass gymClass)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			GymRoom room = (GymRoom) session.get(GymRoom.class, roomId);
-			session.delete(room);
+			GymClass gClass = (GymClass) session.get(GymClass.class, gymClass.getClassId());
+			
+			session.delete(gClass);
 			transaction.commit();
 		} catch (HibernateException e) {
 			transaction.rollback();
@@ -137,6 +144,7 @@ public class GymClassManager {
 		}
 	}
 
+	/*
 	public void initializeCombo(ComboBox<RoomWrapper> classTypeCombo) {
 		classTypeCombo.getItems().setAll(wrapRoom(getRooms()));		
 	}

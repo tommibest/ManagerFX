@@ -22,14 +22,14 @@
     <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
       <children>
         <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
-        <Button fx:id="cancelButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" text="Cancel" HBox.hgrow="NEVER">
+        <Button fx:id="cancelButton" onMouseClicked="#handleCancel" cancelButton="true" minWidth="80.0" mnemonicParsing="false" text="Cancel" HBox.hgrow="NEVER">
           <HBox.margin>
             <Insets />
           </HBox.margin>
         </Button>
         <HBox id="HBox" fx:id="okParent" alignment="CENTER">
           <children>
-            <Button fx:id="okButton" minWidth="80.0" mnemonicParsing="false" text="Ok" HBox.hgrow="NEVER">
+            <Button fx:id="okButton" onMouseClicked="#updateClass" minWidth="80.0" mnemonicParsing="false" text="Ok" HBox.hgrow="NEVER">
               <HBox.margin>
                 <Insets left="14.0" />
               </HBox.margin>
@@ -66,7 +66,7 @@
         </Label>
       </children>
     </HBox>
-    <TextField prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" />
+    <TextField fx:id="tfParticipants" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" />
   </children>
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER" maxWidth="0.0" minWidth="-Infinity" prefWidth="0.0" />
