@@ -1,4 +1,4 @@
-package pl.tzaras.fitness.manager.util;
+package pl.tzaras.fitness.manager.utils;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

@@ -20,6 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
@@ -101,6 +103,23 @@ public class ManagerController implements Initializable {
 	@FXML private Button btnNextWeek;
 	@FXML private Button btnPrevWeek;
 	@FXML private Label lblCurrentWeek;
+	
+	@FXML private CheckBox chbTrainer;
+	@FXML private CheckBox chbType;
+	@FXML private CheckBox chbDay;
+	@FXML private CheckBox chbFromDate;
+	@FXML private CheckBox chbToDate;
+	@FXML private CheckBox chbFromHour;
+	@FXML private CheckBox chbToHour;
+	
+	@FXML private ComboBox<TrainerWrapper> cmbSearchTrainer;
+    @FXML private ComboBox<TypeWrapper> cmbSearchType;
+    @FXML private ComboBox<String> cmbSearchDay;
+    @FXML private TextField tfFromDay;
+    @FXML private TextField tfToDate;
+    @FXML private TextField tfFromHour;
+    @FXML private TextField tfToHour;
+    @FXML private Button btnSearch;
 	
 	DateTime monday;
 	DateTime sunday;
@@ -220,25 +239,6 @@ public class ManagerController implements Initializable {
     	populateCurrentWeekData();
     	
     }
-
-/*	private int dayOfWeek(String value) {
-		if (value.compareToIgnoreCase("poniedziałek") == 0) {
-			return DateTimeConstants.MONDAY;
-		} else if (value.compareToIgnoreCase("wtorek") == 0) {
-			return DateTimeConstants.TUESDAY;
-		} else if (value.compareToIgnoreCase("Środa") == 0) {
-			return DateTimeConstants.WEDNESDAY;
-		} else if (value.compareToIgnoreCase("czwartek") == 0) {
-			return DateTimeConstants.THURSDAY;
-		} else if (value.compareToIgnoreCase("piątek") == 0) {
-			return DateTimeConstants.FRIDAY;
-		} else if (value.compareToIgnoreCase("sobota") == 0) {
-			return DateTimeConstants.SATURDAY;
-		} else if (value.compareToIgnoreCase("niedziela") == 0) {
-			return DateTimeConstants.SUNDAY;
-		}
-		return 0;
-	}*/
 
 	public void initialize(URL location, ResourceBundle resources) {
 		if (populate) {
@@ -449,5 +449,44 @@ public class ManagerController implements Initializable {
 	@FXML protected void removeClass(MouseEvent event) {
 		DataManager.getInstance().getGymClassManager().deleteClass(tblClasses.getSelectionModel().getSelectedItem());
 		populateCurrentWeekData();
+	}
+	
+	@FXML protected void enableWidget(ActionEvent event){
+		
+		CheckBox source = (CheckBox)event.getSource();
+		if ( source.isSelected() ){
+			if (source.getId().compareTo("chbTrainer") == 0) {
+				cmbSearchTrainer.setDisable(false);
+			} else if (source.getId().compareTo("chbType") == 0) {
+				cmbSearchType.setDisable(false);
+			} else if (source.getId().compareTo("chbDay") == 0) {
+				cmbSearchDay.setDisable(false);
+			} else if (source.getId().compareTo("chbFromDate") == 0) {
+				tfFromDay.setDisable(false);
+			} else if (source.getId().compareTo("chbToDate") == 0) {
+				tfToDate.setDisable(false);
+			} else if (source.getId().compareTo("chbFromHour") == 0) {
+				tfFromHour.setDisable(false);
+			} else if (source.getId().compareTo("chbToHour") == 0) {
+				tfToHour.setDisable(false);
+			}  
+		} else {
+			if (source.getId().compareTo("chbTrainer") == 0) {
+				cmbSearchTrainer.setDisable(true);
+			} else if (source.getId().compareTo("chbType") == 0) {
+				cmbSearchType.setDisable(true);
+			} else if (source.getId().compareTo("chbDay") == 0) {
+				cmbSearchDay.setDisable(true);
+			} else if (source.getId().compareTo("chbFromDate") == 0) {
+				tfFromDay.setDisable(true);
+			} else if (source.getId().compareTo("chbToDate") == 0) {
+				tfToDate.setDisable(true);
+			} else if (source.getId().compareTo("chbFromHour") == 0) {
+				tfFromHour.setDisable(true);
+			} else if (source.getId().compareTo("chbToHour") == 0) {
+				tfToHour.setDisable(true);
+			}
+		}
+		
 	}
 }

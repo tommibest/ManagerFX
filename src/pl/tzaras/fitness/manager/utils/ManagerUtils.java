@@ -12,25 +12,31 @@ public class ManagerUtils {
 
 	public static final String SATURDAY_pl = "Sobota";
 
-	public static final String FRIDAY_pl = "Piątek";
+	public static final String FRIDAY_pl = "Piatek";
 
 	public static final String THURSDAY_pl = "Czwartek";
 
-	public static final String WEDNESDAY_pl = "Środa";
+	public static final String WEDNESDAY_pl = "Sroda";
 
 	public static final String TUESDAY_pl = "Wtorek";
 
-	public static final String MONDAY_pl = "Poniedziałek";
+	public static final String MONDAY_pl = "Poniedzialek";
 
 	public static void fillWithHours(ComboBox<String> combo) {
 		ArrayList<String> hours = new ArrayList<String>();
-		for (int i=0; i<24; i++) hours.add(String.valueOf(i));
+		for (int i=0; i<24; i++) {
+			if (i<10) hours.add("0"+String.valueOf(i));
+			else hours.add(String.valueOf(i));
+		}
 		combo.getItems().setAll(hours);
 	}
 
 	public static void fillWithMinutes(ComboBox<String> combo) {
 		ArrayList<String> minutes = new ArrayList<String>();
-		for (int i=0; i<60; i+=10) minutes.add(String.valueOf(i));
+		for (int i=0; i<60; i+=5) {
+			if (i<10) minutes.add("0"+String.valueOf(i));
+			else minutes.add(String.valueOf(i));
+		}	
 		combo.getItems().setAll(minutes);
 	}
 

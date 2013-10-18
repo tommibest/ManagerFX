@@ -12,7 +12,7 @@ import org.hibernate.Transaction;
 import pl.tzaras.fitness.manager.RoomWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.db.data.GymRoom;
-import pl.tzaras.fitness.manager.util.HibernateUtil;
+import pl.tzaras.fitness.manager.utils.HibernateUtil;
 
 public class GymRoomManager {
 	

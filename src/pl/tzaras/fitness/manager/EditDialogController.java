@@ -1,7 +1,6 @@
 package pl.tzaras.fitness.manager;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import pl.tzaras.fitness.manager.db.DataManager;

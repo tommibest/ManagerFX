@@ -16,7 +16,7 @@ import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.db.data.GymRoom;
 import pl.tzaras.fitness.manager.db.data.GymTrainer;
-import pl.tzaras.fitness.manager.util.HibernateUtil;
+import pl.tzaras.fitness.manager.utils.HibernateUtil;
 
 
 public class GymClassManager {

@@ -62,45 +62,21 @@
                       <content>
                         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                           <children>
-                            <ComboBox fx:id="cmbSearchTrainer" layoutX="81.0" layoutY="14.0" prefWidth="168.0">
-                              <items>
-                                <FXCollections fx:factory="observableArrayList">
-                                  <String fx:value="Item 1" />
-                                  <String fx:value="Item 2" />
-                                  <String fx:value="Item 3" />
-                                </FXCollections>
-                              </items>
-                            </ComboBox>
-                            <ComboBox fx:id="cmbSearchType" layoutX="78.0" layoutY="46.0" prefWidth="171.0">
-                              <items>
-                                <FXCollections fx:factory="observableArrayList">
-                                  <String fx:value="Item 1" />
-                                  <String fx:value="Item 2" />
-                                  <String fx:value="Item 3" />
-                                </FXCollections>
-                              </items>
-                            </ComboBox>
-                            <TextField id="tfFromDay" fx:id="tfFromDate" layoutX="338.0" layoutY="13.0" prefWidth="126.0" />
-                            <TextField fx:id="tfToDate" layoutX="336.0" layoutY="43.0" prefWidth="125.00009999999747" />
-                            <TextField id="tfromHour" fx:id="tfFromHour" layoutX="561.0" layoutY="14.0" prefWidth="74.0" />
-                            <TextField fx:id="tfToHour" layoutX="557.0" layoutY="42.0" prefWidth="74.0" />
+                            <CheckBox fx:id="chbTrainer" layoutX="8.0" layoutY="16.0" mnemonicParsing="false" onAction="#enableWidget" text="Trener" />
+                            <ComboBox fx:id="cmbSearchTrainer" disable="true" editable="false" layoutX="90.0" layoutY="14.0" prefWidth="160.0" />
+                            <CheckBox fx:id="chbType" layoutX="8.0" layoutY="46.0" mnemonicParsing="false" onAction="#enableWidget" text="Typ zaj." />
+                            <ComboBox fx:id="cmbSearchType" disable="true" editable="false" layoutX="90.0" layoutY="44.0" prefWidth="160.0" />
+                            <CheckBox fx:id="chbDay" layoutX="8.0" layoutY="76.0" mnemonicParsing="false" onAction="#enableWidget" text="W/g dnia:" />
+                            <ComboBox fx:id="cmbSearchDay" disable="true" editable="false" layoutX="90.0" layoutY="74.0" prefWidth="160.0" />
+                            <CheckBox fx:id="chbFromDate" layoutX="265.0" layoutY="16.0" mnemonicParsing="false" onAction="#enableWidget" text="Od dnia:" />
+                            <TextField fx:id="tfFromDay" disable="true" layoutX="330.0" layoutY="14.0" prefWidth="120.0" />
+                            <CheckBox fx:id="chbToDate" layoutX="265.0" layoutY="46.0" mnemonicParsing="false" onAction="#enableWidget" text="Do dnia:" />
+                            <TextField fx:id="tfToDate" disable="true" layoutX="330.0" layoutY="44.0" prefWidth="120.0" />
+                            <CheckBox fx:id="chbFromHour" layoutX="470.0" layoutY="16.0" mnemonicParsing="false" onAction="#enableWidget" text="Od godz.:" />
+                            <TextField fx:id="tfFromHour" disable="true" layoutX="560.0" layoutY="14.0" prefWidth="74.0" />
+                            <CheckBox fx:id="chbToHour" layoutX="470.0" layoutY="46.0" mnemonicParsing="false" onAction="#enableWidget" text="Do godz.:" />
+                            <TextField fx:id="tfToHour" disable="true" layoutX="560.0" layoutY="44.0" prefWidth="74.0" />
                             <Button fx:id="btnSearch" layoutX="551.0" layoutY="102.0" mnemonicParsing="false" text="Wyszukaj" />
-                            <CheckBox layoutX="8.0" layoutY="18.0" mnemonicParsing="false" text="Trener" />
-                            <CheckBox layoutX="8.0" layoutY="51.0" mnemonicParsing="false" text="Typ zaj." />
-                            <CheckBox layoutX="259.0" layoutY="17.0" mnemonicParsing="false" text="Od dnia:" />
-                            <CheckBox layoutX="259.0" layoutY="51.0" mnemonicParsing="false" text="Do dnia:" />
-                            <CheckBox layoutX="470.0" layoutY="16.0" mnemonicParsing="false" text="Od godz.:" />
-                            <CheckBox layoutX="470.0" layoutY="47.0" mnemonicParsing="false" text="Do godz.:" />
-                            <CheckBox layoutX="8.0" layoutY="83.0" mnemonicParsing="false" text="w/g dnia:" />
-                            <ComboBox fx:id="cmbSearchDay" layoutX="98.0" layoutY="81.0" prefWidth="148.0">
-                              <items>
-                                <FXCollections fx:factory="observableArrayList">
-                                  <String fx:value="Item 1" />
-                                  <String fx:value="Item 2" />
-                                  <String fx:value="Item 3" />
-                                </FXCollections>
-                              </items>
-                            </ComboBox>
                           </children>
                         </AnchorPane>
                       </content>
