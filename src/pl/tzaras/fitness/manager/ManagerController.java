@@ -115,11 +115,16 @@ public class ManagerController implements Initializable {
 	@FXML private ComboBox<TrainerWrapper> cmbSearchTrainer;
     @FXML private ComboBox<TypeWrapper> cmbSearchType;
     @FXML private ComboBox<String> cmbSearchDay;
-    @FXML private TextField tfFromDay;
+    @FXML private TextField tfFromDate;
     @FXML private TextField tfToDate;
-    @FXML private TextField tfFromHour;
+    @FXML private ComboBox<String> cmbFromHour;
+    @FXML private ComboBox<String> cmbFromMinute;
+    @FXML private ComboBox<String> cmbToHour;
+    @FXML private ComboBox<String> cmbToMinute;
     @FXML private TextField tfToHour;
     @FXML private Button btnSearch;
+    
+    @FXML private TextField tfSearchResult;
 	
 	DateTime monday;
 	DateTime sunday;
@@ -338,6 +343,19 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
+		initializeSearchPanel();
+	}
+
+	private void initializeSearchPanel() {
+		ManagerUtils.fillWithWeekDays(cmbSearchDay);
+		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbSearchTrainer);
+		DataManager.getInstance().getGymClassTypeManager().initializeCombo(cmbSearchType);
+		
+		ManagerUtils.fillWithHours(cmbFromHour);
+		ManagerUtils.fillWithHours(cmbToHour);
+		ManagerUtils.fillWithMinutes(cmbFromMinute);
+		ManagerUtils.fillWithMinutes(cmbToMinute);
+		
 	}
 
 	private void populateCurrentWeekData() {
@@ -462,13 +480,15 @@ public class ManagerController implements Initializable {
 			} else if (source.getId().compareTo("chbDay") == 0) {
 				cmbSearchDay.setDisable(false);
 			} else if (source.getId().compareTo("chbFromDate") == 0) {
-				tfFromDay.setDisable(false);
+				tfFromDate.setDisable(false);
 			} else if (source.getId().compareTo("chbToDate") == 0) {
 				tfToDate.setDisable(false);
 			} else if (source.getId().compareTo("chbFromHour") == 0) {
-				tfFromHour.setDisable(false);
+				cmbFromHour.setDisable(false);
+				cmbFromMinute.setDisable(false);
 			} else if (source.getId().compareTo("chbToHour") == 0) {
-				tfToHour.setDisable(false);
+				cmbToHour.setDisable(false);
+				cmbToMinute.setDisable(false);
 			}  
 		} else {
 			if (source.getId().compareTo("chbTrainer") == 0) {
@@ -478,15 +498,73 @@ public class ManagerController implements Initializable {
 			} else if (source.getId().compareTo("chbDay") == 0) {
 				cmbSearchDay.setDisable(true);
 			} else if (source.getId().compareTo("chbFromDate") == 0) {
-				tfFromDay.setDisable(true);
+				tfFromDate.setDisable(true);
 			} else if (source.getId().compareTo("chbToDate") == 0) {
 				tfToDate.setDisable(true);
 			} else if (source.getId().compareTo("chbFromHour") == 0) {
-				tfFromHour.setDisable(true);
+				cmbFromHour.setDisable(true);
+				cmbFromMinute.setDisable(true);
 			} else if (source.getId().compareTo("chbToHour") == 0) {
-				tfToHour.setDisable(true);
+				cmbToHour.setDisable(true);
+				cmbToMinute.setDisable(true);
 			}
 		}
 		
+	}
+	
+	@FXML protected void handleSearch(MouseEvent event) {
+		tfSearchResult.setText( "" );
+		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses();
+		ArrayList<GymClass> result = new ArrayList<GymClass>();
+		for (GymClass gClass : allClasses) { 
+			if ( chbTrainer.isSelected() ) {
+				if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer().getTrainerId() ) {
+					continue;
+				}
+			} 
+			if (chbType.isSelected()) {
+				if (cmbSearchType.getValue().getClassType().getClassId() != gClass.getClassType().getClassId()) {
+					continue;
+				}
+			}
+			if (chbDay.isSelected()) {
+				if (cmbSearchDay.getValue().compareToIgnoreCase(ManagerUtils.intToWeekDay(gClass.getStartTime().getDayOfWeek())) != 0){
+					continue;
+				}
+			}
+			if (chbFromDate.isSelected()) {
+				String [] date = tfFromDate.getText().split("-");
+				DateTime fromDate = new DateTime(Integer.valueOf(date[2]),Integer.valueOf(date[1]),Integer.valueOf(date[0]),0,0,0,0);
+				if ( !gClass.getStartTime().isAfter(fromDate.getMillis()) ) {
+					continue;
+				}	
+			}
+			if (chbToDate.isSelected()) {
+				String [] date = tfToDate.getText().split("-");
+				DateTime toDate = new DateTime(Integer.valueOf(date[2]),Integer.valueOf(date[1]),Integer.valueOf(date[0])+1,0,0,0,0);
+				if ( !gClass.getStartTime().isBefore(toDate.getMillis()) ) {
+					continue;
+				}
+			}
+			if ( chbFromHour.isSelected() ) {
+				if ( Integer.valueOf(cmbFromHour.getValue())*60+Integer.valueOf(cmbFromMinute.getValue()) >
+						(gClass.getStartTime().getHourOfDay()*60+gClass.getStartTime().getMinuteOfHour()) ) {
+					continue;
+				}
+			}
+			if ( chbToHour.isSelected() ) {
+				if ( Integer.valueOf(cmbToHour.getValue())*60+Integer.valueOf(cmbToMinute.getValue()) <
+				(gClass.getStartTime().getHourOfDay()*60+gClass.getStartTime().getMinuteOfHour()) ) {
+					continue;
+				}
+			} 
+			result.add(gClass);
+		}
+		int totalNumber = 0;
+		for (GymClass gClass : result) {
+			totalNumber += gClass.getParticipants();
+		}
+		System.out.println("Total number: " + totalNumber);
+		tfSearchResult.setText( String.valueOf(totalNumber) );
 	}
 }

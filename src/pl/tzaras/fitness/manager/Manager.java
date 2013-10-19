@@ -2,10 +2,9 @@ package pl.tzaras.fitness.manager;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
-
 import pl.tzaras.fitness.manager.db.DatabaseEngine;
 
 /**
@@ -22,7 +21,6 @@ public class Manager extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("Manager.fxml"));
         
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
         stage.show();
         
