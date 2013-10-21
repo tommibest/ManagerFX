@@ -5,6 +5,7 @@
 <?import javafx.collections.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.layout.*?>
 <?import pl.tzaras.fitness.manager.*?>
@@ -19,6 +20,34 @@
               <children>
                 <Accordion layoutX="4.0" layoutY="4.0" minWidth="653.0" prefHeight="534.0" prefWidth="701.0">
                   <expandedPane>
+                    <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
+                      <content>
+                        <AnchorPane>
+                          <AnchorPane fx:id="hourPane" layoutX="0.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="mondayPane" layoutX="88.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="tuesdayPane" layoutX="175.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="wednesdayPane" layoutX="262.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="thursdayPane" layoutX="349.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="fridayPane" layoutX="436.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="saturdayPane" layoutX="523.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="sundayPane" layoutX="610.0" prefHeight="500.0" prefWidth="87.0" />
+                        </AnchorPane>
+                        <!-- <TableView fx:id="tblCalendar" prefHeight="500.0" prefWidth="650.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="Godziny" fx:id="colHours" />
+                            <TableColumn prefWidth="75.0" style="border:0" text="Poniedzialek" fx:id="colMonday" />
+                            <TableColumn prefWidth="75.0" text="Wtorek" fx:id="colTuesday" />
+                            <TableColumn prefWidth="75.0" text="Sroda" fx:id="colWendesday" />
+                            <TableColumn prefWidth="75.0" text="Czwartek" fx:id="colThursday" />
+                            <TableColumn prefWidth="75.0" text="Piatek" fx:id="colFriday" />
+                            <TableColumn prefWidth="75.0" text="Sobota" fx:id="colSaturday" />
+                            <TableColumn prefWidth="91.0" text="Niedziela" fx:id="colSunday" />
+                          </columns>
+                        </TableView> -->
+                      </content>
+                    </TitledPane>
+                  </expandedPane>
+                  <panes>
                     <TitledPane fx:id="x2" animated="true" text="Przegląd zajęć">
                       <content>
                         <TableView fx:id="tblClasses" prefHeight="500.0" prefWidth="650.0">
@@ -35,25 +64,7 @@
                         </TableView>
                       </content>
                     </TitledPane>
-                  </expandedPane>
-                  <panes>
-                    <fx:reference source="x2" />
-                    <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
-                      <content>
-                        <TableView fx:id="tblCalendar" prefHeight="500.0" prefWidth="650.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="Godziny" fx:id="colHours" />
-                            <TableColumn prefWidth="75.0" style="border:0" text="Poniedzialek" fx:id="colMonday" />
-                            <TableColumn prefWidth="75.0" text="Wtorek" fx:id="colTuesday" />
-                            <TableColumn prefWidth="75.0" text="Sroda" fx:id="colWendesday" />
-                            <TableColumn prefWidth="75.0" text="Czwartek" fx:id="colThursday" />
-                            <TableColumn prefWidth="75.0" text="Piatek" fx:id="colFriday" />
-                            <TableColumn prefWidth="75.0" text="Sobota" fx:id="colSaturday" />
-                            <TableColumn prefWidth="91.0" text="Niedziela" fx:id="colSunday" />
-                          </columns>
-                        </TableView>
-                      </content>
-                    </TitledPane>
+                    <fx:reference source="x3" />
                   </panes>
                 </Accordion>
                 <Accordion layoutX="715.0" layoutY="5.0" minWidth="263.0" prefHeight="300.0" prefWidth="275.0">
@@ -116,7 +127,7 @@
                 </Accordion>
                 <Button fx:id="btnPrevWeek" layoutX="5.0" layoutY="545.0" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;" />
                 <Button fx:id="btnNextWeek" layoutX="671.0" layoutY="545.0" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" />
-                <Label fx:id="lblCurrentWeek" layoutX="48.0" layoutY="548.0" prefWidth="611.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER" underline="false" wrapText="true" />
+                <Label fx:id="lblCurrentWeek" alignment="CENTER" layoutX="48.0" layoutY="548.0" prefWidth="611.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER"/>
                 <Button fx:id="btnEditClass" layoutX="768.0" layoutY="516.0" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
                 <Button cancelButton="false" layoutX="708.0" layoutY="516.0" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun" />
                 <Label layoutX="717.0" layoutY="326.0" text="Wynik zapytania : " />

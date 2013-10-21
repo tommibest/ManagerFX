@@ -24,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -36,6 +37,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -90,7 +92,7 @@ public class ManagerController implements Initializable {
 	@FXML private TableColumn<GymClass, Integer> colParticipants;
 	@FXML private TableColumn<GymClass, Long> colClassDuration; 
 	
-	@FXML private TableView<WeekEntry> tblCalendar;
+	/*@FXML private TableView<WeekEntry> tblCalendar;
 	@FXML private TableColumn<WeekEntry, String> colHours;
 	@FXML private TableColumn<WeekEntry, String> colMonday;
 	@FXML private TableColumn<WeekEntry, String> colTuesday;
@@ -98,7 +100,7 @@ public class ManagerController implements Initializable {
 	@FXML private TableColumn<WeekEntry, String> colThursday;
 	@FXML private TableColumn<WeekEntry, String> colFriday;
 	@FXML private TableColumn<WeekEntry, String> colSaturday;
-	@FXML private TableColumn<WeekEntry, String> colSunday;
+	@FXML private TableColumn<WeekEntry, String> colSunday;*/
 	
 	@FXML private Button btnNextWeek;
 	@FXML private Button btnPrevWeek;
@@ -126,6 +128,15 @@ public class ManagerController implements Initializable {
     
     @FXML private TextField tfSearchResult;
 	
+    @FXML private AnchorPane hourPane;
+    @FXML private AnchorPane mondayPane;
+    @FXML private AnchorPane tuesdayPane;
+    @FXML private AnchorPane wednesdayPane;
+    @FXML private AnchorPane thursdayPane;
+    @FXML private AnchorPane fridayPane;
+    @FXML private AnchorPane saturdayPane;
+    @FXML private AnchorPane sundayPane;
+    
 	DateTime monday;
 	DateTime sunday;
 	
@@ -258,20 +269,7 @@ public class ManagerController implements Initializable {
 		monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
 		sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
 		displaySelectedWeek();
-		colHours.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("hour"));
-		colMonday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("monday"));
-		colTuesday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("tuesday"));
-		colWendesday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("wendesday"));
-		colThursday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("thursday"));
-		colFriday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("friday"));
-		colSaturday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("saturday"));
-		colSunday.setCellValueFactory(new PropertyValueFactory<WeekEntry, String>("sunday"));
-		ObservableList<WeekEntry> entries = FXCollections.observableArrayList();
-		for (int i=0; i<24;i++) {
-			entries.add(new WeekEntry(i+":00","","","","","","",""));
-			entries.add(new WeekEntry(i+":30","","","","","","",""));
-		}
-		tblCalendar.setItems(entries);
+		initializeCalendarView();
 		
 		colClassId.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("classId"));
 		colCType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
@@ -346,6 +344,45 @@ public class ManagerController implements Initializable {
 		initializeSearchPanel();
 	}
 
+	private void initializeCalendarView() {
+
+		Label [] weekLabel = new Label [] {
+				new Label(ManagerUtils.MONDAY_pl), 
+				new Label(ManagerUtils.TUESDAY_pl),
+				new Label(ManagerUtils.WEDNESDAY_pl),
+				new Label(ManagerUtils.THURSDAY_pl),
+				new Label(ManagerUtils.FRIDAY_pl),
+				new Label(ManagerUtils.SATURDAY_pl),
+				new Label(ManagerUtils.SUNDAY_pl)
+				};
+		
+		for (Label lbl : weekLabel) {
+			lbl.setPrefSize(87.0, 20.0);
+			AnchorPane.setTopAnchor(lbl, 10.0);
+			AnchorPane.setLeftAnchor(lbl, 0.0);
+			lbl.setAlignment(Pos.CENTER);
+		}
+				
+		mondayPane.getChildren().add(weekLabel[0]);
+		tuesdayPane.getChildren().add(weekLabel[1]);
+		wednesdayPane.getChildren().add(weekLabel[2]);
+		thursdayPane.getChildren().add(weekLabel[3]);
+		fridayPane.getChildren().add(weekLabel[4]);
+		saturdayPane.getChildren().add(weekLabel[5]);
+		sundayPane.getChildren().add(weekLabel[6]);
+		
+		for (int i=0;i<24; i++) {
+			Label newLbl = new Label();
+			if (i<10) newLbl.setText("0"+i+":00");
+			else newLbl.setText(String.valueOf(i)+":00");
+			newLbl.setPrefSize(87.0, 20.0);
+			newLbl.setAlignment(Pos.CENTER);
+			AnchorPane.setTopAnchor(newLbl, (i+1)*20.0);
+			AnchorPane.setLeftAnchor(newLbl, 0.0);
+			hourPane.getChildren().add(newLbl);
+		}
+	}
+
 	private void initializeSearchPanel() {
 		ManagerUtils.fillWithWeekDays(cmbSearchDay);
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbSearchTrainer);
@@ -359,22 +396,74 @@ public class ManagerController implements Initializable {
 	}
 
 	private void populateCurrentWeekData() {
+		
+		mondayPane.getChildren().clear();
+		tuesdayPane.getChildren().clear();
+		wednesdayPane.getChildren().clear();
+		thursdayPane.getChildren().clear();
+		fridayPane.getChildren().clear();
+		saturdayPane.getChildren().clear();
+		sundayPane.getChildren().clear();
+		initializeCalendarView();
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
 		for (GymClass gymClass : data) {
+			if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.MONDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				mondayPane.getChildren().add(newLable);
+			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.TUESDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				tuesdayPane.getChildren().add(newLable);
+			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.WEDNESDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				wednesdayPane.getChildren().add(newLable);
+			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.THURSDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				thursdayPane.getChildren().add(newLable);
+			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.FRIDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				fridayPane.getChildren().add(newLable);
+			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.SATURDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				saturdayPane.getChildren().add(newLable);
+			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.SUNDAY) {
+				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
+				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
+				AnchorPane.setLeftAnchor(newLable, 0.0);
+				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
+				sundayPane.getChildren().add(newLable);
+			}
 			System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
 		}
 		tblClasses.setItems(data);
 	}
 
 	private void setColumnsHeaders() {
-		colMonday.setText("Pon "+monday.getDayOfMonth()+"/"+monday.getMonthOfYear());
+		/*colMonday.setText("Pon "+monday.getDayOfMonth()+"/"+monday.getMonthOfYear());
 		colTuesday.setText("Wt "+monday.plusDays(1).getDayOfMonth()+"/"+monday.plusDays(1).getMonthOfYear());
 		colWendesday.setText("Śr "+monday.plusDays(2).getDayOfMonth()+"/"+monday.plusDays(2).getMonthOfYear());
 		colThursday.setText("Czw "+monday.plusDays(3).getDayOfMonth()+"/"+monday.plusDays(3).getMonthOfYear());
 		colFriday.setText("Pt "+monday.plusDays(4).getDayOfMonth()+"/"+monday.plusDays(4).getMonthOfYear());
 		colSaturday.setText("Sb "+monday.plusDays(5).getDayOfMonth()+"/"+monday.plusDays(5).getMonthOfYear());
-		colSunday.setText("Niedz "+monday.plusDays(6).getDayOfMonth()+"/"+monday.plusDays(6).getMonthOfYear());
+		colSunday.setText("Niedz "+monday.plusDays(6).getDayOfMonth()+"/"+monday.plusDays(6).getMonthOfYear());*/
 	}
 
 	private void initializeManagementTab() {
