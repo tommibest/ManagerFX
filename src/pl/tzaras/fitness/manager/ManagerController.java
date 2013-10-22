@@ -9,15 +9,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import pl.tzaras.fitness.manager.db.DataManager;
-import pl.tzaras.fitness.manager.db.GymClassManager;
-import pl.tzaras.fitness.manager.db.data.GymClass;
-import pl.tzaras.fitness.manager.db.data.GymClassType;
-import pl.tzaras.fitness.manager.db.data.GymRoom;
-import pl.tzaras.fitness.manager.db.data.GymTrainer;
-import pl.tzaras.fitness.manager.utils.ManagerUtils;
-import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,8 +23,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -44,10 +37,16 @@ import javafx.util.Callback;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import pl.tzaras.fitness.manager.db.DataManager;
+import pl.tzaras.fitness.manager.db.GymClassManager;
+import pl.tzaras.fitness.manager.db.data.GymClass;
+import pl.tzaras.fitness.manager.db.data.GymClassType;
+import pl.tzaras.fitness.manager.db.data.GymRoom;
+import pl.tzaras.fitness.manager.db.data.GymTrainer;
+import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 /**
  *
@@ -128,14 +127,16 @@ public class ManagerController implements Initializable {
     
     @FXML private TextField tfSearchResult;
 	
-    @FXML private AnchorPane hourPane;
+    @FXML private AnchorPane callendarPane;
+    
+    /*@FXML private AnchorPane hourPane;
     @FXML private AnchorPane mondayPane;
     @FXML private AnchorPane tuesdayPane;
     @FXML private AnchorPane wednesdayPane;
     @FXML private AnchorPane thursdayPane;
     @FXML private AnchorPane fridayPane;
     @FXML private AnchorPane saturdayPane;
-    @FXML private AnchorPane sundayPane;
+    @FXML private AnchorPane sundayPane;*/
     
 	DateTime monday;
 	DateTime sunday;
@@ -356,20 +357,15 @@ public class ManagerController implements Initializable {
 				new Label(ManagerUtils.SUNDAY_pl)
 				};
 		
+		Double currentXPos = 88.0;
 		for (Label lbl : weekLabel) {
 			lbl.setPrefSize(87.0, 20.0);
-			AnchorPane.setTopAnchor(lbl, 10.0);
-			AnchorPane.setLeftAnchor(lbl, 0.0);
+			AnchorPane.setTopAnchor(lbl, 5.0);
+			AnchorPane.setLeftAnchor(lbl, currentXPos);
 			lbl.setAlignment(Pos.CENTER);
+			currentXPos += 87.0;
+			callendarPane.getChildren().add(lbl);
 		}
-				
-		mondayPane.getChildren().add(weekLabel[0]);
-		tuesdayPane.getChildren().add(weekLabel[1]);
-		wednesdayPane.getChildren().add(weekLabel[2]);
-		thursdayPane.getChildren().add(weekLabel[3]);
-		fridayPane.getChildren().add(weekLabel[4]);
-		saturdayPane.getChildren().add(weekLabel[5]);
-		sundayPane.getChildren().add(weekLabel[6]);
 		
 		for (int i=0;i<24; i++) {
 			Label newLbl = new Label();
@@ -379,7 +375,7 @@ public class ManagerController implements Initializable {
 			newLbl.setAlignment(Pos.CENTER);
 			AnchorPane.setTopAnchor(newLbl, (i+1)*20.0);
 			AnchorPane.setLeftAnchor(newLbl, 0.0);
-			hourPane.getChildren().add(newLbl);
+			callendarPane.getChildren().add(newLbl);
 		}
 	}
 
@@ -396,61 +392,14 @@ public class ManagerController implements Initializable {
 	}
 
 	private void populateCurrentWeekData() {
-		
-		mondayPane.getChildren().clear();
-		tuesdayPane.getChildren().clear();
-		wednesdayPane.getChildren().clear();
-		thursdayPane.getChildren().clear();
-		fridayPane.getChildren().clear();
-		saturdayPane.getChildren().clear();
-		sundayPane.getChildren().clear();
+		callendarPane.getChildren().clear();
+
 		initializeCalendarView();
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
 		for (GymClass gymClass : data) {
-			if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.MONDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				mondayPane.getChildren().add(newLable);
-			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.TUESDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				tuesdayPane.getChildren().add(newLable);
-			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.WEDNESDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				wednesdayPane.getChildren().add(newLable);
-			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.THURSDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				thursdayPane.getChildren().add(newLable);
-			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.FRIDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				fridayPane.getChildren().add(newLable);
-			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.SATURDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				saturdayPane.getChildren().add(newLable);
-			} else if (gymClass.getStartTime().getDayOfWeek() == DateTimeConstants.SUNDAY) {
-				Button newLable = new Button(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
-				newLable.setPrefSize(87.0, gymClass.getDuration()/3);
-				AnchorPane.setLeftAnchor(newLable, 0.0);
-				AnchorPane.setTopAnchor(newLable, gymClass.getStartTime().getHourOfDay()*20.0);
-				sundayPane.getChildren().add(newLable);
-			}
+			callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass));
+			
 			System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
 		}
 		tblClasses.setItems(data);
@@ -554,7 +503,9 @@ public class ManagerController implements Initializable {
 	}
 	
 	@FXML protected void removeClass(MouseEvent event) {
+		// TODO: remove CallendarEntry from CallendarEntry
 		DataManager.getInstance().getGymClassManager().deleteClass(tblClasses.getSelectionModel().getSelectedItem());
+		CallendarEntryManager.getInstance().remove(tblClasses.getSelectionModel().getSelectedItem());
 		populateCurrentWeekData();
 	}
 	

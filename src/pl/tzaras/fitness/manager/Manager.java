@@ -22,6 +22,7 @@ public class Manager extends Application {
         
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setTitle("Fitness Manager");
         stage.show();
         
         dbEngine.stop();

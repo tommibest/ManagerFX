@@ -22,15 +22,15 @@
                   <expandedPane>
                     <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
                       <content>
-                        <AnchorPane>
-                          <AnchorPane fx:id="hourPane" layoutX="0.0" prefHeight="500.0" prefWidth="87.0" />
+                        <AnchorPane fx:id="callendarPane">
+                          <!-- <AnchorPane fx:id="hourPane" layoutX="0.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="mondayPane" layoutX="88.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="tuesdayPane" layoutX="175.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="wednesdayPane" layoutX="262.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="thursdayPane" layoutX="349.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="fridayPane" layoutX="436.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="saturdayPane" layoutX="523.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="sundayPane" layoutX="610.0" prefHeight="500.0" prefWidth="87.0" />
+                          <AnchorPane fx:id="sundayPane" layoutX="610.0" prefHeight="500.0" prefWidth="87.0" /> -->
                         </AnchorPane>
                         <!-- <TableView fx:id="tblCalendar" prefHeight="500.0" prefWidth="650.0">
                           <columns>
