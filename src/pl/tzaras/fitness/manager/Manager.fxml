@@ -3,11 +3,15 @@
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.collections.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import pl.tzaras.fitness.manager.*?>
 
 <AnchorPane id="AnchorPane" prefHeight="610.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
@@ -16,13 +20,13 @@
       <tabs>
         <Tab text="Przeglad">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="746.0" prefWidth="1018.0">
+            <AnchorPane id="Content" fx:id="cmb" minHeight="0.0" minWidth="0.0" prefHeight="746.0" prefWidth="1018.0" style="-fx-border-color: #2e8b57;&#10;-fx-border-width: 2px;&#10;">
               <children>
                 <Accordion layoutX="4.0" layoutY="4.0" minWidth="653.0" prefHeight="534.0" prefWidth="701.0">
                   <expandedPane>
                     <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
                       <content>
-                        <AnchorPane fx:id="callendarPane">
+                        <AnchorPane fx:id="callendarPane" prefHeight="530.0">
                           <!-- <AnchorPane fx:id="hourPane" layoutX="0.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="mondayPane" layoutX="88.0" prefHeight="500.0" prefWidth="87.0" />
                           <AnchorPane fx:id="tuesdayPane" layoutX="175.0" prefHeight="500.0" prefWidth="87.0" />
@@ -67,71 +71,130 @@
                     <fx:reference source="x3" />
                   </panes>
                 </Accordion>
-                <Accordion layoutX="715.0" layoutY="5.0" minWidth="263.0" prefHeight="327.0" prefWidth="275.0">
-                  <expandedPane>
-                    <TitledPane fx:id="x4" animated="false" prefHeight="160.0" text="Wyszukaj">
-                      <content>
-                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="290.0">
-                          <children>
-                            <CheckBox fx:id="chbTrainer" layoutX="6.0" layoutY="8.0" mnemonicParsing="false" onAction="#enableWidget" text="Trener" />
-                            <ComboBox fx:id="cmbSearchTrainer" disable="true" editable="false" layoutX="86.0" layoutY="4.0" prefWidth="175.0" />
-                            <CheckBox fx:id="chbType" layoutX="6.0" layoutY="38.0" mnemonicParsing="false" onAction="#enableWidget" text="Typ zaj." />
-                            <ComboBox fx:id="cmbSearchType" disable="true" editable="false" layoutX="86.0" layoutY="34.0" prefWidth="175.0" />
-                            <CheckBox fx:id="chbDay" layoutX="6.0" layoutY="68.0" mnemonicParsing="false" onAction="#enableWidget" text="W/g dnia" />
-                            <ComboBox fx:id="cmbSearchDay" disable="true" editable="false" layoutX="86.0" layoutY="64.0" prefWidth="175.0" />
-                            <CheckBox fx:id="chbFromDate" layoutX="6.0" layoutY="98.0" mnemonicParsing="false" onAction="#enableWidget" text="Od dnia:" />
-                            <TextField fx:id="tfFromDate" disable="true" layoutX="86.0" layoutY="94.0" prefWidth="120.0" promptText="dd-mm-yyyy" />
-                            <CheckBox fx:id="chbToDate" layoutX="6.0" layoutY="128.0" mnemonicParsing="false" onAction="#enableWidget" text="Do dnia:" />
-                            <TextField fx:id="tfToDate" disable="true" layoutX="86.0" layoutY="124.0" pickOnBounds="false" prefWidth="120.0" promptText="dd-mm-yyyy" text="" />
-                            <CheckBox fx:id="chbFromHour" layoutX="6.0" layoutY="158.0" mnemonicParsing="false" onAction="#enableWidget" text="Od godz." />
-                            <ComboBox fx:id="cmbFromHour" disable="true" layoutX="88.0" layoutY="154.0" prefWidth="61.0" />
-                            <Label layoutX="153.0" layoutY="157.0" text=":" />
-                            <ComboBox fx:id="cmbFromMinute" disable="true" layoutX="162.0" layoutY="154.0" prefWidth="61.0" />
-                            <CheckBox fx:id="chbToHour" layoutX="6.0" layoutY="188.0" mnemonicParsing="false" onAction="#enableWidget" text="Do godz." />
-                            <ComboBox fx:id="cmbToHour" disable="true" layoutX="88.0" layoutY="184.0" prefWidth="61.0" />
-                            <Label layoutX="153.0" layoutY="182.0" text=":" />
-                            <ComboBox fx:id="cmbToMinute" disable="true" layoutX="162.0" layoutY="184.0" prefWidth="61.0" />
-                            <Button fx:id="btnSearch" layoutX="9.0" layoutY="218.0" mnemonicParsing="false" onMouseClicked="#handleSearch" prefWidth="254.0" text="Przelicz" />
-                            <Label layoutX="14.0" layoutY="252.0" text="Wynik zapytania : " />
-                            <TextField fx:id="tfSearchResult" editable="false" layoutX="130.0" layoutY="248.0" prefWidth="127.0" promptText="ilosc osob" />
-                          </children>
-                        </AnchorPane>
-                      </content>
-                    </TitledPane>
-                  </expandedPane>
-                  <panes>
-                    <TitledPane fx:id="x1" animated="false" prefHeight="230.0" text="Dodaj nowe zajecia">
-                      <content>
-                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="132.0" prefWidth="290.0">
-                          <children>
-                            <Label fx:id="lblClassType" layoutX="6.0" layoutY="8.0" text="Typ zajęć" />
-                            <ComboBox fx:id="classTypeCombo" layoutX="91.0" layoutY="4.0" prefWidth="175.0" />
-                            <Label fx:id="lblInstructor" layoutX="6.0" layoutY="37.0" text="Instruktor" />
-                            <ComboBox fx:id="instructorCombo" layoutX="91.0" layoutY="32.0" prefWidth="175.0" />
-                            <Label fx:id="lblRoom" layoutX="6.0" layoutY="67.0" text="Sala" />
-                            <ComboBox fx:id="roomCombo" layoutX="91.0" layoutY="62.0" prefWidth="175.0" />
-                            <Label fx:id="lblClassDay" layoutX="6.0" layoutY="97.0" text="Dzień" />
-                            <ComboBox fx:id="daysCombo" layoutX="91.0" layoutY="92.0" prefWidth="175.0" visibleRowCount="7" />
-                            <Label fx:id="lblClassHour" layoutX="6.0" layoutY="127.0" text="Godzina" />
-                            <ComboBox id="cmbHour" fx:id="cmbHours" layoutX="91.0" layoutY="122.0" prefWidth="61.0" />
-                            <Label fx:id="lblCollon" layoutX="158.0" layoutY="126.0" text=":" />
-                            <ComboBox fx:id="cmbMinutes" layoutX="167.0" layoutY="122.0" prefWidth="61.0" />
-                            <Label fx:id="lblDuration" layoutX="6.0" layoutY="157.0" text="Czas trwania" />
-                            <TextField fx:id="tfDuration" layoutX="91.0" layoutY="152.0" prefWidth="40.0" promptText="60" />
-                            <Label layoutX="136.0" layoutY="155.0" text="minut" />
-                            <Button id="createNewClass" fx:id="createNewClassButton" layoutX="7.0" layoutY="188.0" mnemonicParsing="false" onMouseClicked="#addClass" prefWidth="258.0" text="Utworz" />
-                          </children>
-                        </AnchorPane>
-                      </content>
-                    </TitledPane>
-                    <fx:reference source="x4" />
-                  </panes>
-                </Accordion>
-                <Button fx:id="btnPrevWeek" layoutX="5.0" layoutY="545.0" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;" />
-                <Button fx:id="btnNextWeek" layoutX="671.0" layoutY="545.0" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" />
-                <Label fx:id="lblCurrentWeek" alignment="CENTER" layoutX="48.0" layoutY="548.0" prefWidth="611.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER" />
-                <Button fx:id="btnEditClass" layoutX="768.0" layoutY="516.0" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
-                <Button cancelButton="false" layoutX="708.0" layoutY="516.0" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun" />
+                <VBox layoutX="716.0" layoutY="5.0" prefWidth="275.0">
+                  <!-- layoutX="715.0" layoutY="333.0"  -->
+                  <TitledPane animated="false" prefHeight="231.0" prefWidth="274.0" text="Podsumowanie">
+                    <content>
+                      <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <children>
+                          <GridPane alignment="CENTER_RIGHT" disable="false" focusTraversable="false" gridLinesVisible="false" layoutX="0.0" layoutY="-1.0" prefHeight="160.0" prefWidth="274.0" style="" visible="true">
+                            <children>
+                              <Label alignment="CENTER_RIGHT" cache="false" contentDisplay="RIGHT" depthTest="INHERIT" prefWidth="-1.0" text="Zajecia:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+                                <GridPane.margin>
+                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x5" />
+                                </GridPane.margin>
+                              </Label>
+                              <Label text="Sala:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="1" />
+                              <Label text="Trener:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="2" />
+                              <Label alignment="CENTER_RIGHT" text="Dzien:" textAlignment="LEFT" underline="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="3" />
+                              <Label text="Godzina:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="4" />
+                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Zapisanych:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                              <Label fx:id="lblOverviewType" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="0" />
+                              <Label fx:id="lblOverviewRoom" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="1" />
+                              <Label fx:id="lblOverviewTrainer" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="2" />
+                              <Label fx:id="lblOverviewDay" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="3" />
+                              <Label fx:id="lblOverviewHour" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="4" />
+                              <Label fx:id="lblOverviewEnrolled" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                            </children>
+                            <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="92.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="180.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                              <RowConstraints maxHeight="26.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="26.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="26.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="26.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="27.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="27.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                          </GridPane>
+                          <Button cancelButton="false" layoutX="134.0" layoutY="168.0" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun" />
+                          <Button fx:id="btnEditClass" layoutX="194.0" layoutY="168.0" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
+                        </children>
+                      </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <Accordion minWidth="263.0" prefHeight="327.0" prefWidth="275.0">
+                    <expandedPane>
+                      <TitledPane fx:id="x1" animated="false" prefHeight="230.0" text="Dodaj nowe zajecia">
+                        <content>
+                          <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="132.0" prefWidth="290.0">
+                            <children>
+                              <Label fx:id="lblClassType" layoutX="6.0" layoutY="8.0" text="Typ zajęć" />
+                              <ComboBox fx:id="classTypeCombo" layoutX="91.0" layoutY="4.0" prefWidth="175.0" />
+                              <Label fx:id="lblInstructor" layoutX="6.0" layoutY="37.0" text="Instruktor" />
+                              <ComboBox fx:id="instructorCombo" layoutX="91.0" layoutY="32.0" prefWidth="175.0" />
+                              <Label fx:id="lblRoom" layoutX="6.0" layoutY="67.0" text="Sala" />
+                              <ComboBox fx:id="roomCombo" layoutX="91.0" layoutY="62.0" prefWidth="175.0" />
+                              <Label fx:id="lblClassDay" layoutX="6.0" layoutY="97.0" text="Dzień" />
+                              <ComboBox fx:id="daysCombo" layoutX="91.0" layoutY="92.0" prefWidth="175.0" visibleRowCount="7" />
+                              <Label fx:id="lblClassHour" layoutX="6.0" layoutY="127.0" text="Godzina" />
+                              <ComboBox id="cmbHour" fx:id="cmbHours" layoutX="91.0" layoutY="122.0" prefWidth="61.0" />
+                              <Label fx:id="lblCollon" layoutX="158.0" layoutY="126.0" text=":" />
+                              <ComboBox fx:id="cmbMinutes" layoutX="167.0" layoutY="122.0" prefWidth="61.0" />
+                              <Label fx:id="lblDuration" layoutX="6.0" layoutY="157.0" text="Czas trwania" />
+                              <TextField fx:id="tfDuration" layoutX="91.0" layoutY="152.0" prefWidth="40.0" promptText="60" />
+                              <Label layoutX="136.0" layoutY="155.0" text="minut" />
+                              <Button id="createNewClass" fx:id="createNewClassButton" layoutX="7.0" layoutY="188.0" mnemonicParsing="false" onMouseClicked="#addClass" prefWidth="258.0" text="Utworz" />
+                            </children>
+                          </AnchorPane>
+                        </content>
+                      </TitledPane>
+                    </expandedPane>
+                    <panes>
+                      <fx:reference source="x1" />
+                      <TitledPane fx:id="x4" animated="false" prefHeight="160.0" text="Wyszukaj">
+                        <content>
+                          <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="290.0">
+                            <children>
+                              <CheckBox fx:id="chbTrainer" layoutX="6.0" layoutY="8.0" mnemonicParsing="false" onAction="#enableWidget" text="Trener" />
+                              <ComboBox fx:id="cmbSearchTrainer" disable="true" editable="false" layoutX="86.0" layoutY="4.0" prefWidth="175.0" />
+                              <CheckBox fx:id="chbType" layoutX="6.0" layoutY="38.0" mnemonicParsing="false" onAction="#enableWidget" text="Typ zaj." />
+                              <ComboBox fx:id="cmbSearchType" disable="true" editable="false" layoutX="86.0" layoutY="34.0" prefWidth="175.0" />
+                              <CheckBox fx:id="chbDay" layoutX="6.0" layoutY="68.0" mnemonicParsing="false" onAction="#enableWidget" text="W/g dnia" />
+                              <ComboBox fx:id="cmbSearchDay" disable="true" editable="false" layoutX="86.0" layoutY="64.0" prefWidth="175.0" />
+                              <CheckBox fx:id="chbFromDate" layoutX="6.0" layoutY="98.0" mnemonicParsing="false" onAction="#enableWidget" text="Od dnia:" />
+                              <TextField fx:id="tfFromDate" disable="true" layoutX="86.0" layoutY="94.0" prefWidth="120.0" promptText="dd-mm-yyyy" />
+                              <CheckBox fx:id="chbToDate" layoutX="6.0" layoutY="128.0" mnemonicParsing="false" onAction="#enableWidget" text="Do dnia:" />
+                              <TextField fx:id="tfToDate" disable="true" layoutX="86.0" layoutY="124.0" pickOnBounds="false" prefWidth="120.0" promptText="dd-mm-yyyy" text="" />
+                              <CheckBox fx:id="chbFromHour" layoutX="6.0" layoutY="158.0" mnemonicParsing="false" onAction="#enableWidget" text="Od godz." />
+                              <ComboBox fx:id="cmbFromHour" disable="true" layoutX="88.0" layoutY="154.0" prefWidth="61.0" />
+                              <Label layoutX="153.0" layoutY="157.0" text=":" />
+                              <ComboBox fx:id="cmbFromMinute" disable="true" layoutX="162.0" layoutY="154.0" prefWidth="61.0" />
+                              <CheckBox fx:id="chbToHour" layoutX="6.0" layoutY="188.0" mnemonicParsing="false" onAction="#enableWidget" text="Do godz." />
+                              <ComboBox fx:id="cmbToHour" disable="true" layoutX="88.0" layoutY="184.0" prefWidth="61.0" />
+                              <Label layoutX="153.0" layoutY="182.0" text=":" />
+                              <ComboBox fx:id="cmbToMinute" disable="true" layoutX="162.0" layoutY="184.0" prefWidth="61.0" />
+                              <Button fx:id="btnSearch" layoutX="9.0" layoutY="218.0" mnemonicParsing="false" onMouseClicked="#handleSearch" prefWidth="254.0" text="Przelicz" />
+                              <Label layoutX="14.0" layoutY="252.0" text="Wynik zapytania : " />
+                              <TextField fx:id="tfSearchResult" editable="false" layoutX="130.0" layoutY="248.0" prefWidth="127.0" promptText="ilosc osob" />
+                            </children>
+                          </AnchorPane>
+                        </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+                </VBox>
+                <HBox layoutX="6.0" AnchorPane.bottomAnchor="10.0">
+                  <Label text="Sala">
+                    <HBox.margin>
+                      <Insets left="5.0" right="5.0" top="4.0" />
+                    </HBox.margin>
+                  </Label>
+                  <ComboBox fx:id="callendarRoom" onAction="#refreshCallendar" prefWidth="150.0" />
+                  <Button fx:id="btnPrevWeek" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;">
+                    <HBox.margin>
+                      <Insets left="5.0" right="5.0" fx:id="x6" />
+                    </HBox.margin>
+                  </Button>
+                  <Label fx:id="lblCurrentWeek" alignment="CENTER" prefWidth="428.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER">
+                    <HBox.margin>
+                      <Insets top="4.0" />
+                    </HBox.margin>
+                  </Label>
+                  <Button fx:id="btnNextWeek" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" HBox.margin="$x6" />
+                </HBox>
               </children>
             </AnchorPane>
           </content>

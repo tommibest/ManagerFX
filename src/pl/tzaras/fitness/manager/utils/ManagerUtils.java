@@ -2,6 +2,7 @@ package pl.tzaras.fitness.manager.utils;
 
 import java.util.ArrayList;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 
 import javafx.scene.control.ComboBox;
@@ -22,9 +23,12 @@ public class ManagerUtils {
 
 	public static final String MONDAY_pl = "Poniedzialek";
 
+	public static int startHour = 8;
+	public static int endHour = 22;
+
 	public static void fillWithHours(ComboBox<String> combo) {
 		ArrayList<String> hours = new ArrayList<String>();
-		for (int i=0; i<24; i++) {
+		for (int i=startHour; i<endHour ; i++) {
 			if (i<10) hours.add("0"+String.valueOf(i));
 			else hours.add(String.valueOf(i));
 		}
@@ -72,6 +76,10 @@ public class ManagerUtils {
 		else if (dayOfWeek.compareToIgnoreCase(SATURDAY_pl) == 0) return DateTimeConstants.SATURDAY;
 		else if (dayOfWeek.compareToIgnoreCase(SUNDAY_pl) == 0) return DateTimeConstants.SUNDAY;
 		return -1;
+	}
+
+	public static String parseHour(DateTime dateTime) {
+		return dateTime.getHourOfDay()+":"+(dateTime.getMinuteOfHour()<10?"0"+dateTime.getMinuteOfHour():dateTime.getMinuteOfHour());
 	}
 
 }

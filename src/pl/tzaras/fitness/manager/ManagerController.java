@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -91,16 +92,14 @@ public class ManagerController implements Initializable {
 	@FXML private TableColumn<GymClass, Integer> colParticipants;
 	@FXML private TableColumn<GymClass, Long> colClassDuration; 
 	
-	/*@FXML private TableView<WeekEntry> tblCalendar;
-	@FXML private TableColumn<WeekEntry, String> colHours;
-	@FXML private TableColumn<WeekEntry, String> colMonday;
-	@FXML private TableColumn<WeekEntry, String> colTuesday;
-	@FXML private TableColumn<WeekEntry, String> colWendesday;
-	@FXML private TableColumn<WeekEntry, String> colThursday;
-	@FXML private TableColumn<WeekEntry, String> colFriday;
-	@FXML private TableColumn<WeekEntry, String> colSaturday;
-	@FXML private TableColumn<WeekEntry, String> colSunday;*/
+	@FXML private Label lblOverviewType;
+	@FXML private Label lblOverviewRoom;
+	@FXML private Label lblOverviewTrainer;
+	@FXML private Label lblOverviewDay;
+	@FXML private Label lblOverviewHour;
+	@FXML private Label lblOverviewEnrolled;
 	
+	@FXML private ComboBox<RoomWrapper> callendarRoom;
 	@FXML private Button btnNextWeek;
 	@FXML private Button btnPrevWeek;
 	@FXML private Label lblCurrentWeek;
@@ -129,18 +128,9 @@ public class ManagerController implements Initializable {
 	
     @FXML private AnchorPane callendarPane;
     
-    /*@FXML private AnchorPane hourPane;
-    @FXML private AnchorPane mondayPane;
-    @FXML private AnchorPane tuesdayPane;
-    @FXML private AnchorPane wednesdayPane;
-    @FXML private AnchorPane thursdayPane;
-    @FXML private AnchorPane fridayPane;
-    @FXML private AnchorPane saturdayPane;
-    @FXML private AnchorPane sundayPane;*/
-    
 	DateTime monday;
 	DateTime sunday;
-	
+	GymClass selected;
 	private boolean populate = false;
 	
 	@FXML protected void addInstructor(MouseEvent arg0) {
@@ -342,41 +332,14 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
+		
+		DataManager.getInstance().getGymRoomManager().initializeCombo(callendarRoom);
 		initializeSearchPanel();
 	}
 
 	private void initializeCalendarView() {
-
-		Label [] weekLabel = new Label [] {
-				new Label(ManagerUtils.MONDAY_pl), 
-				new Label(ManagerUtils.TUESDAY_pl),
-				new Label(ManagerUtils.WEDNESDAY_pl),
-				new Label(ManagerUtils.THURSDAY_pl),
-				new Label(ManagerUtils.FRIDAY_pl),
-				new Label(ManagerUtils.SATURDAY_pl),
-				new Label(ManagerUtils.SUNDAY_pl)
-				};
-		
-		Double currentXPos = 88.0;
-		for (Label lbl : weekLabel) {
-			lbl.setPrefSize(87.0, 20.0);
-			AnchorPane.setTopAnchor(lbl, 5.0);
-			AnchorPane.setLeftAnchor(lbl, currentXPos);
-			lbl.setAlignment(Pos.CENTER);
-			currentXPos += 87.0;
-			callendarPane.getChildren().add(lbl);
-		}
-		
-		for (int i=0;i<24; i++) {
-			Label newLbl = new Label();
-			if (i<10) newLbl.setText("0"+i+":00");
-			else newLbl.setText(String.valueOf(i)+":00");
-			newLbl.setPrefSize(87.0, 20.0);
-			newLbl.setAlignment(Pos.CENTER);
-			AnchorPane.setTopAnchor(newLbl, (i+1)*20.0);
-			AnchorPane.setLeftAnchor(newLbl, 0.0);
-			callendarPane.getChildren().add(newLbl);
-		}
+		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
+		GUIHelper.prepareHoursColumn(callendarPane);
 	}
 
 	private void initializeSearchPanel() {
@@ -387,10 +350,13 @@ public class ManagerController implements Initializable {
 		ManagerUtils.fillWithHours(cmbFromHour);
 		ManagerUtils.fillWithHours(cmbToHour);
 		ManagerUtils.fillWithMinutes(cmbFromMinute);
-		ManagerUtils.fillWithMinutes(cmbToMinute);
-		
+		ManagerUtils.fillWithMinutes(cmbToMinute);	
 	}
 
+	@FXML protected void refreshCallendar(ActionEvent event){
+		populateCurrentWeekData();
+	}
+	
 	private void populateCurrentWeekData() {
 		callendarPane.getChildren().clear();
 
@@ -398,21 +364,14 @@ public class ManagerController implements Initializable {
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
 		for (GymClass gymClass : data) {
-			callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass));
+			if ( callendarRoom.getSelectionModel().isEmpty() ||
+					gymClass.getClassRoom().getID() == callendarRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
+				callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
 			
-			System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
+				System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
+			}
 		}
 		tblClasses.setItems(data);
-	}
-
-	private void setColumnsHeaders() {
-		/*colMonday.setText("Pon "+monday.getDayOfMonth()+"/"+monday.getMonthOfYear());
-		colTuesday.setText("Wt "+monday.plusDays(1).getDayOfMonth()+"/"+monday.plusDays(1).getMonthOfYear());
-		colWendesday.setText("Śr "+monday.plusDays(2).getDayOfMonth()+"/"+monday.plusDays(2).getMonthOfYear());
-		colThursday.setText("Czw "+monday.plusDays(3).getDayOfMonth()+"/"+monday.plusDays(3).getMonthOfYear());
-		colFriday.setText("Pt "+monday.plusDays(4).getDayOfMonth()+"/"+monday.plusDays(4).getMonthOfYear());
-		colSaturday.setText("Sb "+monday.plusDays(5).getDayOfMonth()+"/"+monday.plusDays(5).getMonthOfYear());
-		colSunday.setText("Niedz "+monday.plusDays(6).getDayOfMonth()+"/"+monday.plusDays(6).getMonthOfYear());*/
 	}
 
 	private void initializeManagementTab() {
@@ -462,7 +421,6 @@ public class ManagerController implements Initializable {
 		monday = monday.minusWeeks(1);
 		sunday = sunday.minusWeeks(1);
 		displaySelectedWeek();
-		setColumnsHeaders();
 		populateCurrentWeekData();
 	}
 	
@@ -470,7 +428,6 @@ public class ManagerController implements Initializable {
 		monday = monday.plusWeeks(1);
 		sunday = sunday.plusWeeks(1);
 		displaySelectedWeek();
-		setColumnsHeaders();
 		populateCurrentWeekData();
 	}
 
@@ -491,11 +448,12 @@ public class ManagerController implements Initializable {
 			stage.initOwner(
 					((Node)event.getSource()).getScene().getWindow() );
 			EditDialogController controller = (EditDialogController)loader.getController();
-			controller.setGymClass(tblClasses.getSelectionModel().getSelectedItem());
+			controller.setGymClass(selected);
 			controller.setEditDialogStage(stage);
 			stage.showAndWait();
 			DataManager.getInstance().getGymClassManager().updateClass(controller.getGymClass());
 			populateCurrentWeekData();
+			displayOverview(controller.getGymClass());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -503,12 +461,21 @@ public class ManagerController implements Initializable {
 	}
 	
 	@FXML protected void removeClass(MouseEvent event) {
-		// TODO: remove CallendarEntry from CallendarEntry
-		DataManager.getInstance().getGymClassManager().deleteClass(tblClasses.getSelectionModel().getSelectedItem());
-		CallendarEntryManager.getInstance().remove(tblClasses.getSelectionModel().getSelectedItem());
+		DataManager.getInstance().getGymClassManager().deleteClass(selected);
+		CallendarEntryManager.getInstance().remove(selected);
+		clearOverview();
 		populateCurrentWeekData();
 	}
 	
+	private void clearOverview() {
+		lblOverviewType.setText("");
+		lblOverviewRoom.setText("");
+		lblOverviewTrainer.setText("");
+		lblOverviewDay.setText("");
+		lblOverviewHour.setText("");
+		lblOverviewEnrolled.setText("");
+	}
+
 	@FXML protected void enableWidget(ActionEvent event){
 		
 		CheckBox source = (CheckBox)event.getSource();
@@ -606,5 +573,19 @@ public class ManagerController implements Initializable {
 		}
 		System.out.println("Total number: " + totalNumber);
 		tfSearchResult.setText( String.valueOf(totalNumber) );
+	}
+
+	public void displayOverview(GymClass gymClass) {
+		selected = gymClass;
+		lblOverviewType.setText(gymClass.getClassType().getName());
+		lblOverviewRoom.setText(gymClass.getClassRoom().getName());
+		lblOverviewTrainer.setText(gymClass.getClassTrainer().getName()+", "+gymClass.getClassTrainer().getSurrname());
+		lblOverviewDay.setText(ManagerUtils.intToWeekDay(gymClass.getStartTime().getDayOfWeek()));
+		lblOverviewHour.setText(ManagerUtils.parseHour(gymClass.getStartTime()));
+		lblOverviewEnrolled.setText(String.valueOf(gymClass.getParticipants()));
+	}
+
+	public AnchorPane getCallendarPane() {
+		return callendarPane;
 	}
 }

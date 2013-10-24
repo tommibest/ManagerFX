@@ -19,10 +19,10 @@ public class Manager extends Application {
 		dbEngine.start();
 		
         Parent root = FXMLLoader.load(getClass().getResource("Manager.fxml"));
-        
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Fitness Manager");
+        scene.getStylesheets().add("application.css");
         stage.show();
         
         dbEngine.stop();

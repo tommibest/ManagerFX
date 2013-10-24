@@ -19,11 +19,11 @@ public class CallendarEntryManager {
 		entries = new HashMap<Long, CallendarEntry>();
 	}
 	
-	public CallendarEntry getEntry(GymClass gClass) {
+	public CallendarEntry getEntry(GymClass gClass,ManagerController mc) {
 		if ( entries.containsKey(gClass.getClassId()) ) {
 			return entries.get(gClass.getClassId());
 		} else {
-			CallendarEntry newCE =  new CallendarEntry(gClass);
+			CallendarEntry newCE =  new CallendarEntry(gClass,mc);
 			entries.put(gClass.getClassId(), newCE);
 			return newCE;
 		}
