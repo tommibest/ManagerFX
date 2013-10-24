@@ -79,7 +79,9 @@ public class ManagerUtils {
 	}
 
 	public static String parseHour(DateTime dateTime) {
-		return dateTime.getHourOfDay()+":"+(dateTime.getMinuteOfHour()<10?"0"+dateTime.getMinuteOfHour():dateTime.getMinuteOfHour());
+		return (dateTime.getHourOfDay()<10?"0"+dateTime.getHourOfDay():dateTime.getHourOfDay())+
+				":"+
+				(dateTime.getMinuteOfHour()<10?"0"+dateTime.getMinuteOfHour():dateTime.getMinuteOfHour());
 	}
 
 }

@@ -7,19 +7,29 @@ import javafx.scene.layout.AnchorPane;
 
 public class GUIHelper {
 
+	private static MyLogger log;
+	static {
+		log = MyLogger.getInstance();
+	}
+	
+	private static double headerHeight = 25.0;
+	
 	public static void prepareHoursColumn(AnchorPane callendarPane) {
-		double prefHeight = callendarPane.getPrefHeight()/(ManagerUtils.endHour-ManagerUtils.startHour);
+		log.logEntry("prepareHoursColumn");
+		double rowHeight = callendarPane.getPrefHeight()/(ManagerUtils.endHour-ManagerUtils.startHour);
 		for (int i=ManagerUtils.startHour;i<ManagerUtils.endHour; i++) {
 			Label newLbl = new Label();
 			if (i<10) newLbl.setText("0"+i+":00");
 			else newLbl.setText(String.valueOf(i)+":00");
-			newLbl.setPrefSize(87.0, prefHeight);
+			newLbl.setPrefSize(87.0, rowHeight);
 			newLbl.setAlignment(Pos.CENTER);
 			newLbl.getStyleClass().add("myborder");
-			AnchorPane.setTopAnchor(newLbl, (i-ManagerUtils.startHour+1)*prefHeight);
+			double rowPosition = headerHeight + (i-ManagerUtils.startHour)*rowHeight;
+			AnchorPane.setTopAnchor(newLbl, rowPosition);
 			AnchorPane.setLeftAnchor(newLbl, 0.0);
 			callendarPane.getChildren().add(newLbl);
 		}
+		log.logEnd("prepareHoursColumn");
 	}
 
 	public static void prepareDayOfWeekHeaders(AnchorPane callendarPane) {
@@ -33,15 +43,20 @@ public class GUIHelper {
 				new Label(ManagerUtils.SUNDAY_pl)
 				};
 		
-		Double currentXPos = 88.0;
+		Double currentXPos = 87.0;
 		for (Label lbl : weekLabel) {
-			lbl.setPrefSize(87.0, 20.0);
-			AnchorPane.setTopAnchor(lbl, 5.0);
+			lbl.setPrefSize(87.0, headerHeight);
+			AnchorPane.setTopAnchor(lbl, 0.0);
 			AnchorPane.setLeftAnchor(lbl, currentXPos);
 			lbl.setAlignment(Pos.CENTER);
+			lbl.getStyleClass().add("myborder");
 			currentXPos += 87.0;
 			callendarPane.getChildren().add(lbl);
 		}
+	}
+
+	public static double getHederHeight() {
+		return headerHeight;
 	}
 	
 }

@@ -13,10 +13,11 @@ public class CallendarEntry extends Button {
 	
 	public CallendarEntry(GymClass gClass, final ManagerController mController) {
 		super(gClass.getClassType().getName()+"\n"+gClass.getClassTrainer().getSurrname());
-		double prefHeight = mController.getCallendarPane().getPrefHeight()/(ManagerUtils.endHour-ManagerUtils.startHour);
+		double hourHeight = mController.getCallendarPane().getPrefHeight() / (ManagerUtils.endHour-ManagerUtils.startHour);
 		this.gymClass = gClass; 
-		setPrefSize(87.0, gymClass.getDuration()/3);
-		AnchorPane.setTopAnchor(this, gymClass.getStartTime().getHourOfDay()*prefHeight);
+		setPrefSize(87.0, gymClass.getDuration()*(hourHeight/60));
+		double posY = GUIHelper.getHederHeight() + ((gymClass.getStartTime().getHourOfDay()-ManagerUtils.startHour) + (gymClass.getStartTime().getMinuteOfHour()/60.0))*hourHeight;
+		AnchorPane.setTopAnchor(this, posY);
 		AnchorPane.setLeftAnchor(this, gymClass.getStartTime().getDayOfWeek()*87.0);
 		super.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent e) {

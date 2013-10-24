@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import pl.tzaras.fitness.manager.*?>
+<?import javafx.scene.control.ScrollPane?>
 
 <AnchorPane id="AnchorPane" prefHeight="610.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
   <children>
@@ -26,28 +27,9 @@
                   <expandedPane>
                     <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
                       <content>
-                        <AnchorPane fx:id="callendarPane" prefHeight="530.0">
-                          <!-- <AnchorPane fx:id="hourPane" layoutX="0.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="mondayPane" layoutX="88.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="tuesdayPane" layoutX="175.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="wednesdayPane" layoutX="262.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="thursdayPane" layoutX="349.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="fridayPane" layoutX="436.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="saturdayPane" layoutX="523.0" prefHeight="500.0" prefWidth="87.0" />
-                          <AnchorPane fx:id="sundayPane" layoutX="610.0" prefHeight="500.0" prefWidth="87.0" /> -->
-                        </AnchorPane>
-                        <!-- <TableView fx:id="tblCalendar" prefHeight="500.0" prefWidth="650.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="Godziny" fx:id="colHours" />
-                            <TableColumn prefWidth="75.0" style="border:0" text="Poniedzialek" fx:id="colMonday" />
-                            <TableColumn prefWidth="75.0" text="Wtorek" fx:id="colTuesday" />
-                            <TableColumn prefWidth="75.0" text="Sroda" fx:id="colWendesday" />
-                            <TableColumn prefWidth="75.0" text="Czwartek" fx:id="colThursday" />
-                            <TableColumn prefWidth="75.0" text="Piatek" fx:id="colFriday" />
-                            <TableColumn prefWidth="75.0" text="Sobota" fx:id="colSaturday" />
-                            <TableColumn prefWidth="91.0" text="Niedziela" fx:id="colSunday" />
-                          </columns>
-                        </TableView> -->
+                      <ScrollPane prefHeight="534.0" prefWidth="701.0" layoutX="0.0" layoutY="0.0">
+                        <AnchorPane fx:id="callendarPane" prefHeight="500.0" layoutX="0.0" layoutY="0.0" prefWidth="696.0"/>
+                      </ScrollPane>
                       </content>
                     </TitledPane>
                   </expandedPane>
