@@ -1,6 +1,8 @@
 package pl.tzaras.fitness.manager.db;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.control.ComboBox;
@@ -16,7 +18,16 @@ import pl.tzaras.fitness.manager.utils.HibernateUtil;
 
 public class GymRoomManager {
 	
-	public GymRoomManager() {}
+	public static final String DEFAULT = "Dowolna";
+	
+	private List<GymRoom> rooms;
+	private List<RoomWrapper> wrappedRooms;
+	public RoomWrapper defaultSelection = new RoomWrapper(DEFAULT);
+	
+	public GymRoomManager() {
+		rooms = retrieveRooms();
+		wrappedRooms = wrapRoom(rooms);
+	}
 
 	public Long saveRoom(String roomName)
 	{
@@ -29,16 +40,19 @@ public class GymRoomManager {
 			room.setName(roomName);
 			courseId = (Long) session.save(room);
 			transaction.commit();
+			rooms.add(room);
+			wrappedRooms.add(new RoomWrapper(room));
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
+		
 		return courseId;
 	}
 
-	public List<GymRoom> getRooms()
+	private List<GymRoom> retrieveRooms()
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -73,31 +87,25 @@ public class GymRoomManager {
 		} finally {
 			session.close();
 		}
-	}
-
-	public void deleteClass(Long roomId)
-	{
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = null;
-		try {
-			transaction = session.beginTransaction();
-			GymRoom room = (GymRoom) session.get(GymRoom.class, roomId);
-			session.delete(room);
-			transaction.commit();
-		} catch (HibernateException e) {
-			transaction.rollback();
-			e.printStackTrace();
-		} finally {
-			session.close();
+		
+		for (Iterator<GymRoom> iter = rooms.iterator(); iter.hasNext(); ) {
+			GymRoom room = iter.next();
+			if (room.getID() == gClassId) {
+				room.setName(roomName);
+			}
 		}
 	}
 
 	public void initializeCombo(ComboBox<RoomWrapper> classTypeCombo) {
-		classTypeCombo.getItems().setAll(wrapRoom(getRooms()));		
+		classTypeCombo.getItems().setAll(wrappedRooms);		
 	}
 	
+	public List<GymRoom> getRooms() {
+		return rooms;
+	}
+
 	private List<RoomWrapper> wrapRoom(List<GymRoom> rooms) {
-		ArrayList<RoomWrapper> wrapped = new ArrayList<RoomWrapper>();
+		LinkedList<RoomWrapper> wrapped = new LinkedList<RoomWrapper>();
 		
 		for (GymRoom classType : rooms) {
 			wrapped.add(new RoomWrapper(classType));
@@ -118,6 +126,22 @@ public class GymRoomManager {
 			e.printStackTrace();
 		} finally {
 			session.close();
+		}
+		
+		for (Iterator<GymRoom> iter = rooms.iterator(); iter.hasNext(); ) {
+			if (iter.next().getID() == selectedItem.getID()) {
+				iter.remove();
+				break;
+			}
+		}
+		for (Iterator<RoomWrapper> iter = wrappedRooms.iterator(); iter.hasNext(); ) {
+			RoomWrapper wrapped = iter.next();
+			if ( wrapped.getRoom() != null ) {
+				if (iter.next().getRoom().getID() == selectedItem.getID()) {
+					iter.remove();
+					break;
+				}
+			}
 		}
 	}
 

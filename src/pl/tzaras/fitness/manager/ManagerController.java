@@ -98,6 +98,8 @@ public class ManagerController implements Initializable {
 	@FXML private Label lblOverviewDay;
 	@FXML private Label lblOverviewHour;
 	@FXML private Label lblOverviewEnrolled;
+	@FXML private Button btnRemoveClass;
+	@FXML private Button btnEditClass;
 	
 	@FXML private ComboBox<RoomWrapper> callendarRoom;
 	@FXML private Button btnNextWeek;
@@ -142,7 +144,7 @@ public class ManagerController implements Initializable {
             DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
             
             ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
-    				.getInstance().getGymTrainerManager().getInstructors());
+    				.getInstance().getGymTrainerManager().getTrainers());
     		for (GymTrainer trainer : data) {
     			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
     		}
@@ -157,7 +159,7 @@ public class ManagerController implements Initializable {
         DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
         
         ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymTrainerManager().getInstructors());
+				.getInstance().getGymTrainerManager().getTrainers());
 		for (GymTrainer trainer : data) {
 			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
 		}
@@ -213,12 +215,12 @@ public class ManagerController implements Initializable {
     		DataManager.getInstance().getGymRoomManager().saveRoom(tfRoomName.getText());
     		tfRoomName.setText("");
     		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
-    		
+    		roomCombo.setValue(roomCombo.getItems().get(0));
+    		DataManager.getInstance().getGymRoomManager().initializeCombo(callendarRoom);
+    		callendarRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
+    		callendarRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
     		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(DataManager
     				.getInstance().getGymRoomManager().getRooms());
-    		for (GymRoom room : rooms) {
-    			System.out.println(room.getName());
-    		}
     		tblRoom.setItems(rooms);
     		
     	} else {
@@ -333,13 +335,17 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
 		
-		DataManager.getInstance().getGymRoomManager().initializeCombo(callendarRoom);
+		
 		initializeSearchPanel();
+		btnEditClass.setDisable(true);
+		btnRemoveClass.setDisable(true);
+		
 	}
 
 	private void initializeCalendarView() {
-		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
-		GUIHelper.prepareHoursColumn(callendarPane);
+		DataManager.getInstance().getGymRoomManager().initializeCombo(callendarRoom);
+		callendarRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
+		callendarRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
 	}
 
 	private void initializeSearchPanel() {
@@ -360,12 +366,14 @@ public class ManagerController implements Initializable {
 	private void populateCurrentWeekData() {
 		callendarPane.getChildren().clear();
 
-		initializeCalendarView();
+		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
+		GUIHelper.prepareHoursColumn(callendarPane);
+
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
 		for (GymClass gymClass : data) {
-			if ( callendarRoom.getSelectionModel().isEmpty() ||
-					gymClass.getClassRoom().getID() == callendarRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
+			if ( callendarRoom.getSelectionModel().getSelectedItem().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
+				 gymClass.getClassRoom().getID() == callendarRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
 				callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
 			
 				System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
@@ -378,7 +386,7 @@ public class ManagerController implements Initializable {
 		colName.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("name"));
 		colSurrname.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("surrname"));
 		ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymTrainerManager().getInstructors());
+				.getInstance().getGymTrainerManager().getTrainers());
 		for (GymTrainer trainer : data) {
 			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
 		}
@@ -422,6 +430,7 @@ public class ManagerController implements Initializable {
 		sunday = sunday.minusWeeks(1);
 		displaySelectedWeek();
 		populateCurrentWeekData();
+		clearOverview();
 	}
 	
 	@FXML protected void nextWeekAction(MouseEvent arg0) {
@@ -429,6 +438,7 @@ public class ManagerController implements Initializable {
 		sunday = sunday.plusWeeks(1);
 		displaySelectedWeek();
 		populateCurrentWeekData();
+		clearOverview();
 	}
 
 	private void displaySelectedWeek() {
@@ -465,6 +475,8 @@ public class ManagerController implements Initializable {
 		CallendarEntryManager.getInstance().remove(selected);
 		clearOverview();
 		populateCurrentWeekData();
+		btnRemoveClass.setDisable(true);
+		btnEditClass.setDisable(false);
 	}
 	
 	private void clearOverview() {
@@ -474,6 +486,8 @@ public class ManagerController implements Initializable {
 		lblOverviewDay.setText("");
 		lblOverviewHour.setText("");
 		lblOverviewEnrolled.setText("");
+		btnRemoveClass.setDisable(true);
+		btnEditClass.setDisable(true);
 	}
 
 	@FXML protected void enableWidget(ActionEvent event){
@@ -583,6 +597,8 @@ public class ManagerController implements Initializable {
 		lblOverviewDay.setText(ManagerUtils.intToWeekDay(gymClass.getStartTime().getDayOfWeek()));
 		lblOverviewHour.setText(ManagerUtils.parseHour(gymClass.getStartTime()));
 		lblOverviewEnrolled.setText(String.valueOf(gymClass.getParticipants()));
+		btnEditClass.setDisable(false);
+		btnRemoveClass.setDisable(false);
 	}
 
 	public AnchorPane getCallendarPane() {

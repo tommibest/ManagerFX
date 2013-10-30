@@ -54,7 +54,6 @@
                   </panes>
                 </Accordion>
                 <VBox layoutX="716.0" layoutY="5.0" prefWidth="275.0">
-                  <!-- layoutX="715.0" layoutY="333.0"  -->
                   <TitledPane animated="false" prefHeight="231.0" prefWidth="274.0" text="Podsumowanie">
                     <content>
                       <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -91,7 +90,7 @@
                               <RowConstraints maxHeight="27.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                           </GridPane>
-                          <Button cancelButton="false" layoutX="134.0" layoutY="168.0" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun" />
+                          <Button fx:id="btnRemoveClass" cancelButton="false" layoutX="134.0" layoutY="168.0" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun" />
                           <Button fx:id="btnEditClass" layoutX="194.0" layoutY="168.0" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
                         </children>
                       </AnchorPane>
