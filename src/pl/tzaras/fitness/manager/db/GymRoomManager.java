@@ -11,8 +11,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import pl.tzaras.fitness.manager.RoomWrapper;
-import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.db.data.GymRoom;
 import pl.tzaras.fitness.manager.utils.HibernateUtil;
 

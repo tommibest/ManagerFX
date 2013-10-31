@@ -1,4 +1,4 @@
-package pl.tzaras.fitness.manager;
+package pl.tzaras.fitness.manager.db;
 
 import pl.tzaras.fitness.manager.db.data.GymClassType;
 

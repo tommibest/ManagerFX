@@ -4,6 +4,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import pl.tzaras.fitness.manager.db.DataManager;
+import pl.tzaras.fitness.manager.db.RoomWrapper;
+import pl.tzaras.fitness.manager.db.TrainerWrapper;
+import pl.tzaras.fitness.manager.db.TypeWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
 import javafx.fxml.FXML;
@@ -39,6 +42,7 @@ public class EditDialogController  implements Initializable  {
 	}
 	
 	@FXML protected void updateClass(MouseEvent event) {
+		
 		gymClass.setClassRoom(cmbRoom.getSelectionModel().getSelectedItem().getRoom());
 		gymClass.setClassTrainer(cmbTrainer.getSelectionModel().getSelectedItem().getGymTrainer());
 		gymClass.setClassType(cmbClassType.getSelectionModel().getSelectedItem().getClassType());
@@ -61,35 +65,42 @@ public class EditDialogController  implements Initializable  {
 		return this.gymClass;
 	}
 	
-	public void setGymClass(GymClass gymClass) {
+	public void setGymClass(GymClass gymClass, boolean initialize) {
 		this.gymClass = gymClass;
-		
-		for (TrainerWrapper tw : cmbTrainer.getItems()) {
-			if (tw.getGymTrainer().getTrainerId() == gymClass.getClassTrainer().getTrainerId()) {
-				cmbTrainer.getSelectionModel().select(tw);
-				break;
+
+		if (initialize) {
+			for (TrainerWrapper tw : cmbTrainer.getItems()) {
+				if (tw.getGymTrainer().getTrainerId() == gymClass
+						.getClassTrainer().getTrainerId()) {
+					cmbTrainer.getSelectionModel().select(tw);
+					break;
+				}
 			}
-		}
-		
-		for (RoomWrapper rw : cmbRoom.getItems()) {
-			if (rw.getRoom().getID() == gymClass.getClassRoom().getID()) {
-				cmbRoom.getSelectionModel().select(rw);
-				break;
+
+			for (RoomWrapper rw : cmbRoom.getItems()) {
+				if (rw.getRoom().getID() == gymClass.getClassRoom().getID()) {
+					cmbRoom.getSelectionModel().select(rw);
+					break;
+				}
 			}
-		}
-		
-		for (TypeWrapper tw : cmbClassType.getItems()) {
-			if (tw.getClassType().getClassId() == gymClass.getClassType().getClassId()) {
-				cmbClassType.getSelectionModel().select(tw);
-				break;
+			for (TypeWrapper tw : cmbClassType.getItems()) {
+				if (tw.getClassType().getClassId() == gymClass.getClassType()
+						.getClassId()) {
+					cmbClassType.getSelectionModel().select(tw);
+					break;
+				}
 			}
+
+			cmbDay.getSelectionModel().select(
+					ManagerUtils.intToWeekDay(gymClass.getStartTime()
+							.getDayOfWeek()));
+			cmbHour.getSelectionModel().select(
+					String.valueOf(gymClass.getStartTime().getHourOfDay()));
+			cmbMinute.getSelectionModel().select(
+					String.valueOf(gymClass.getStartTime().getMinuteOfHour()));
+			tfDuration.setText(String.valueOf(gymClass.getDuration()));
+			tfParticipants.setText(String.valueOf(gymClass.getParticipants()));
 		}
-		
-		cmbDay.getSelectionModel().select(ManagerUtils.intToWeekDay(gymClass.getStartTime().getDayOfWeek()));
-		cmbHour.getSelectionModel().select(String.valueOf(gymClass.getStartTime().getHourOfDay()));
-		cmbMinute.getSelectionModel().select(String.valueOf(gymClass.getStartTime().getMinuteOfHour()));
-		tfDuration.setText(String.valueOf(gymClass.getDuration()));
-		tfParticipants.setText(String.valueOf(gymClass.getParticipants()));
 	}
 
 	public void setEditDialogStage(Stage stage) {

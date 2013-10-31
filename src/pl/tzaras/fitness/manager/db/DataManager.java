@@ -1,7 +1,5 @@
 package pl.tzaras.fitness.manager.db;
 
-
-
 public class DataManager {
 
 	private static DataManager instance;

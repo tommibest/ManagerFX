@@ -144,6 +144,25 @@ public class GymClassManager {
 		}
 	}
 
+	public Long saveClass(GymClass gymClass) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		Long courseId = null;
+		try {
+			transaction = session.beginTransaction();
+			courseId = (Long) session.save(gymClass);
+			System.out.println("Course ID: " + courseId );
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return courseId;
+		
+	}
+
 	/*
 	public void initializeCombo(ComboBox<RoomWrapper> classTypeCombo) {
 		classTypeCombo.getItems().setAll(wrapRoom(getRooms()));		

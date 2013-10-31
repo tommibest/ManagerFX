@@ -33,4 +33,10 @@ public class CallendarEntryManager {
 		entries.remove(selectedItem.getClassId());
 	}
 
+	public void updateEntry(GymClass gymClass) {
+		if (entries.containsKey(gymClass.getClassId())){
+			entries.get(gymClass.getClassId()).update();
+		}
+	}
+
 }

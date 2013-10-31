@@ -43,6 +43,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 import pl.tzaras.fitness.manager.db.DataManager;
 import pl.tzaras.fitness.manager.db.GymClassManager;
+import pl.tzaras.fitness.manager.db.RoomWrapper;
+import pl.tzaras.fitness.manager.db.TrainerWrapper;
+import pl.tzaras.fitness.manager.db.TypeWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.db.data.GymRoom;
@@ -167,7 +170,7 @@ public class ManagerController implements Initializable {
 	}
 
 	@FXML protected void removeClassType(MouseEvent arg0) {
-		DataManager.getInstance().getGymClassTypeManager().delete(tblClassType.getSelectionModel().getSelectedItem());
+		DataManager.getInstance().getGymClassTypeManager().deleteClassType(tblClassType.getSelectionModel().getSelectedItem());
         DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
         
         ObservableList<GymClassType> data = FXCollections.observableArrayList(DataManager
@@ -193,7 +196,7 @@ public class ManagerController implements Initializable {
     @FXML protected void addClassType(MouseEvent arg0) {
     	if ( !tfClassTypeName.getText().isEmpty() ) {
     		System.out.println("Adding class: " + tfClassTypeName.getText());
-    		DataManager.getInstance().getGymClassTypeManager().saveClass(tfClassTypeName.getText());
+    		DataManager.getInstance().getGymClassTypeManager().addClassType(tfClassTypeName.getText());
     		tfClassTypeName.setText("");
     		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
     		
@@ -228,11 +231,35 @@ public class ManagerController implements Initializable {
     	}
     }    
     
-    @FXML protected void addClass(MouseEvent arg0) {
+    @FXML protected void addClass(ActionEvent event) {
     	GymClassManager mngr = DataManager.getInstance().getGymClassManager();
-    	System.out.println("Start time: "+ cmbHours.getValue() + ":" + cmbMinutes.getValue());
     	
-    	DateTime startTime = monday
+    	Stage stage = new Stage();
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("EditDialog.fxml"));
+			root = (Parent) loader.load();
+			stage.setScene(new Scene(root));
+			stage.setTitle("Dodaj zajęcia");
+			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initOwner(
+					((Node)event.getSource()).getScene().getWindow() );
+			EditDialogController controller = (EditDialogController)loader.getController();
+			GymClass newClass = new GymClass();
+			newClass.setStartTime(monday);
+			controller.setGymClass(newClass,false);
+			controller.setEditDialogStage(stage);
+			stage.showAndWait();
+			mngr.saveClass(controller.getGymClass());
+			populateCurrentWeekData();
+			displayOverview(controller.getGymClass());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
+    	/*DateTime startTime = monday
     			.withDayOfWeek(ManagerUtils.dayToInt(daysCombo.getValue()))
     			.withHourOfDay(Integer.valueOf(cmbHours.getValue()))
     			.withMinuteOfHour(Integer.valueOf(cmbMinutes.getValue()));
@@ -243,7 +270,7 @@ public class ManagerController implements Initializable {
     			0, 
     			instructorCombo.getValue().getGymTrainer(), 
     			classTypeCombo.getValue().getClassType(), 
-    			Long.valueOf(tfDuration.getText()));
+    			Long.valueOf(tfDuration.getText()));*/
 
     	populateCurrentWeekData();
     	
@@ -264,7 +291,8 @@ public class ManagerController implements Initializable {
 		displaySelectedWeek();
 		initializeCalendarView();
 		
-		colClassId.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("classId"));
+		
+		/*colClassId.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("classId"));
 		colCType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
 
 		    public ObservableValue<String> call(TableColumn.CellDataFeatures<GymClass, String> p) {
@@ -324,17 +352,16 @@ public class ManagerController implements Initializable {
 
 		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
 		colParticipants.setCellValueFactory(new PropertyValueFactory<GymClass, Integer>("participants"));
-		
+*/		
 		populateCurrentWeekData();
 		
-		ManagerUtils.fillWithWeekDays(daysCombo);
+/*		ManagerUtils.fillWithWeekDays(daysCombo);
 		ManagerUtils.fillWithHours(cmbHours);
 		ManagerUtils.fillWithMinutes(cmbMinutes);
 		
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
-		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
-		
+		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);*/
 		
 		initializeSearchPanel();
 		btnEditClass.setDisable(true);
@@ -379,7 +406,7 @@ public class ManagerController implements Initializable {
 				System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
 			}
 		}
-		tblClasses.setItems(data);
+		//tblClasses.setItems(data);
 	}
 
 	private void initializeManagementTab() {
@@ -413,10 +440,10 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Fitness");
 		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Mental");
 		
-		DataManager.getInstance().getGymClassTypeManager().saveClass("FITNESS");
-		DataManager.getInstance().getGymClassTypeManager().saveClass("ZUMBA");
-		DataManager.getInstance().getGymClassTypeManager().saveClass("GRID");
-		DataManager.getInstance().getGymClassTypeManager().saveClass("HAPPY Hours");
+		DataManager.getInstance().getGymClassTypeManager().addClassType("FITNESS");
+		DataManager.getInstance().getGymClassTypeManager().addClassType("ZUMBA");
+		DataManager.getInstance().getGymClassTypeManager().addClassType("GRID");
+		DataManager.getInstance().getGymClassTypeManager().addClassType("HAPPY Hours");
 		
 		DataManager.getInstance().getGymRoomManager().saveRoom("Sala FITNESS");
 		DataManager.getInstance().getGymRoomManager().saveRoom("Sala ROWEROWA");
@@ -458,9 +485,10 @@ public class ManagerController implements Initializable {
 			stage.initOwner(
 					((Node)event.getSource()).getScene().getWindow() );
 			EditDialogController controller = (EditDialogController)loader.getController();
-			controller.setGymClass(selected);
+			controller.setGymClass(selected,true);
 			controller.setEditDialogStage(stage);
 			stage.showAndWait();
+			CallendarEntryManager.getInstance().updateEntry(controller.getGymClass());
 			DataManager.getInstance().getGymClassManager().updateClass(controller.getGymClass());
 			populateCurrentWeekData();
 			displayOverview(controller.getGymClass());

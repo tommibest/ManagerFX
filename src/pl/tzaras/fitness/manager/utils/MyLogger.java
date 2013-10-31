@@ -1,4 +1,4 @@
-package pl.tzaras.fitness.manager;
+package pl.tzaras.fitness.manager.utils;
 
 public class MyLogger {
 	
