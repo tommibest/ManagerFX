@@ -10,9 +10,11 @@ import javafx.scene.control.ComboBox;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import pl.tzaras.fitness.manager.db.data.GymRoom;
 import pl.tzaras.fitness.manager.utils.HibernateUtil;
+import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 public class GymRoomManager {
 	
@@ -111,7 +113,8 @@ public class GymRoomManager {
 		return wrapped;
 	}
 
-	public void delete(GymRoom selectedItem) {
+	public int deleteRoom(GymRoom selectedItem) {
+		int retVal = ManagerUtils.SUCCESS;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		try {
@@ -119,28 +122,35 @@ public class GymRoomManager {
 			GymRoom room = (GymRoom) session.get(GymRoom.class, selectedItem.getID());
 			session.delete(room);
 			transaction.commit();
-		} catch (HibernateException e) {
-			transaction.rollback();
-			e.printStackTrace();
-		} finally {
-			session.close();
-		}
-		
-		for (Iterator<GymRoom> iter = rooms.iterator(); iter.hasNext(); ) {
-			if (iter.next().getID() == selectedItem.getID()) {
-				iter.remove();
-				break;
-			}
-		}
-		for (Iterator<RoomWrapper> iter = wrappedRooms.iterator(); iter.hasNext(); ) {
-			RoomWrapper wrapped = iter.next();
-			if ( wrapped.getRoom() != null ) {
-				if (iter.next().getRoom().getID() == selectedItem.getID()) {
+			
+			for (Iterator<GymRoom> iter = rooms.iterator(); iter.hasNext(); ) {
+				if (iter.next().getID() == selectedItem.getID()) {
 					iter.remove();
 					break;
 				}
 			}
+			for (Iterator<RoomWrapper> iter = wrappedRooms.iterator(); iter.hasNext(); ) {
+				RoomWrapper wrapped = iter.next();
+				if ( wrapped.getRoom() != null ) {
+					if (iter.next().getRoom().getID() == selectedItem.getID()) {
+						iter.remove();
+						break;
+					}
+				}
+			}
+		} catch (ConstraintViolationException e) {
+			transaction.rollback();
+			System.err.println(e.getConstraintName());
+			retVal = ManagerUtils.CONSTRAINT_VIOLATTION;
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+			retVal = ManagerUtils.UNKNOWN_FAILURE;
+		} finally {
+			session.close();
 		}
+		
+		return retVal;
 	}
 
 }

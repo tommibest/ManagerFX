@@ -10,9 +10,11 @@ import javafx.scene.control.ComboBox;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import pl.tzaras.fitness.manager.db.data.GymClassType;
 import pl.tzaras.fitness.manager.utils.HibernateUtil;
+import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 public class GymClassTypeManager {
 	
@@ -91,7 +93,8 @@ public class GymClassTypeManager {
 		}
 	}
 
-	public void deleteClassType(GymClassType selectedItem) {
+	public int deleteClassType(GymClassType selectedItem) {
+		int retVal = ManagerUtils.SUCCESS;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		try {
@@ -114,12 +117,19 @@ public class GymClassTypeManager {
 				}
 			}
 			
+		} catch (ConstraintViolationException e) {
+			transaction.rollback();
+			System.err.println("Constraint name: " + e.getConstraintName());
+			retVal = ManagerUtils.CONSTRAINT_VIOLATTION;
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
+			retVal = ManagerUtils.UNKNOWN_FAILURE;
 		} finally {
 			session.close();
-		}	
+		}
+		
+		return retVal;
 	}
 	
 	public void initializeCombo(ComboBox<TypeWrapper> classTypeCombo) {

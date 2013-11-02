@@ -8,6 +8,7 @@ public class RoomWrapper {
 
 	public RoomWrapper(GymRoom room) {
 		this.room = room;
+		this.roomName = room.getName();
 	}
 	
 	public RoomWrapper(String roomName) {
@@ -25,4 +26,10 @@ public class RoomWrapper {
 	public GymRoom getRoom() {
 		return room;
 	}
+	
+	public String getName()
+	{
+		return roomName;
+	}
+	
 }

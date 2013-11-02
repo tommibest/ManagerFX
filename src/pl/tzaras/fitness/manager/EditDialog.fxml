@@ -41,24 +41,24 @@
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </GridPane.margin>
     </HBox>
-    <ComboBox fx:id="cmbClassType" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="0" />
-    <ComboBox fx:id="cmbTrainer" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-    <ComboBox fx:id="cmbRoom" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-    <ComboBox fx:id="cmbDay" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+    <ComboBox fx:id="cmbClassType" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="0" onAction="#updateDialog"/>
+    <ComboBox fx:id="cmbTrainer" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" onAction="#updateDialog"/>
+    <ComboBox fx:id="cmbRoom" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" onAction="#updateDialog"/>
+    <ComboBox fx:id="cmbDay" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" onAction="#updateDialog"/>
     <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
       <children>
-        <ComboBox fx:id="cmbHour" />
+        <ComboBox fx:id="cmbHour" onAction="#updateDialog"/>
         <Label fx:id="lblCollon" text=":">
           <HBox.margin>
             <Insets top="3.0" />
           </HBox.margin>
         </Label>
-        <ComboBox fx:id="cmbMinute" />
+        <ComboBox fx:id="cmbMinute" onAction="#updateDialog"/>
       </children>
     </HBox>
     <HBox GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5">
       <children>
-        <TextField fx:id="tfDuration" prefWidth="75.0" />
+        <TextField fx:id="tfDuration" prefWidth="75.0" onKeyTyped="#updateDialogOnKey"/>
         <Label text="minut">
           <HBox.margin>
             <Insets left="3.0" top="3.0" />

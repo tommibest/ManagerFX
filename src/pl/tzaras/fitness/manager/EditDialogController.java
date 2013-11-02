@@ -9,10 +9,13 @@ import pl.tzaras.fitness.manager.db.TrainerWrapper;
 import pl.tzaras.fitness.manager.db.TypeWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -29,6 +32,9 @@ public class EditDialogController  implements Initializable  {
 	@FXML private ComboBox<RoomWrapper> cmbRoom;
 	@FXML private ComboBox<String> cmbHour;
 	@FXML private ComboBox<String> cmbMinute;
+	
+	@FXML private Button okButton;
+	
 	private GymClass gymClass;
 
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -39,6 +45,7 @@ public class EditDialogController  implements Initializable  {
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(cmbClassType);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbRoom);
+		okButton.setDisable(true);
 	}
 	
 	@FXML protected void updateClass(MouseEvent event) {
@@ -52,7 +59,8 @@ public class EditDialogController  implements Initializable  {
 				.withHourOfDay(Integer.valueOf(cmbHour.getValue()))
 				.withMinuteOfHour(Integer.valueOf(cmbMinute.getValue())));
 		gymClass.setDuration(Long.valueOf(tfDuration.getText()));
-		gymClass.setParticipants(Integer.valueOf(tfParticipants.getText()));
+		int participants = tfParticipants.getText().isEmpty() ? 0 :Integer.valueOf(tfParticipants.getText());
+		gymClass.setParticipants(participants);
 		
 		dialogStage.close();
 	}
@@ -107,4 +115,25 @@ public class EditDialogController  implements Initializable  {
 		this.dialogStage = stage;
 	}
 	
+	@FXML protected void updateDialog(ActionEvent event) {
+		updatedOkButton();
+	}
+	
+	@FXML protected void updateDialogOnKey(KeyEvent event) {
+		updatedOkButton();
+	}
+
+	private void updatedOkButton() {
+		if ( cmbTrainer.getSelectionModel().getSelectedItem() != null &&
+				cmbClassType.getSelectionModel().getSelectedItem() != null &&
+				cmbDay.getSelectionModel().getSelectedItem() != null &&
+				cmbRoom.getSelectionModel().getSelectedItem() != null &&
+				cmbHour.getSelectionModel().getSelectedItem() != null &&
+				cmbMinute.getSelectionModel().getSelectedItem() != null && 
+				!tfDuration.getText().isEmpty() && tfDuration.getText().matches("\\d+") ) {
+			okButton.setDisable(false);
+		} else {
+			okButton.setDisable(true);
+		}
+	}
 }

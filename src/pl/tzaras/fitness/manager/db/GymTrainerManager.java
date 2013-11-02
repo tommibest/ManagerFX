@@ -10,9 +10,11 @@ import javafx.util.Callback;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import pl.tzaras.fitness.manager.db.data.GymTrainer;
 import pl.tzaras.fitness.manager.utils.HibernateUtil;
+import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 public class GymTrainerManager {
 
@@ -139,7 +141,8 @@ public class GymTrainerManager {
 		return newList;
 	}
 
-	public void delete(GymTrainer selectedItem) {
+	public int delete(GymTrainer selectedItem) {
+		int retVal = ManagerUtils.SUCCESS;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		try {
@@ -159,13 +162,18 @@ public class GymTrainerManager {
 					break;
 				}
 			}
+		} catch (ConstraintViolationException e) {
+			transaction.rollback();
+			System.err.println(e.getConstraintName());
+			retVal = ManagerUtils.CONSTRAINT_VIOLATTION;
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
+			retVal = ManagerUtils.UNKNOWN_FAILURE;
 		} finally {
 			session.close();
 		}
-		
+		return retVal;
 	}
 
 }

@@ -9,22 +9,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,15 +30,21 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.thehecklers.monologfx.MonologFX;
+import org.thehecklers.monologfx.MonologFXBuilder;
+import org.thehecklers.monologfx.MonologFXButton;
+import org.thehecklers.monologfx.MonologFXButtonBuilder;
 
 import pl.tzaras.fitness.manager.db.DataManager;
 import pl.tzaras.fitness.manager.db.GymClassManager;
+import pl.tzaras.fitness.manager.db.GymClassTypeManager;
+import pl.tzaras.fitness.manager.db.GymRoomManager;
+import pl.tzaras.fitness.manager.db.GymTrainerManager;
 import pl.tzaras.fitness.manager.db.RoomWrapper;
 import pl.tzaras.fitness.manager.db.TrainerWrapper;
 import pl.tzaras.fitness.manager.db.TypeWrapper;
@@ -104,7 +106,7 @@ public class ManagerController implements Initializable {
 	@FXML private Button btnRemoveClass;
 	@FXML private Button btnEditClass;
 	
-	@FXML private ComboBox<RoomWrapper> callendarRoom;
+	@FXML private ComboBox<RoomWrapper> cmbSelectRoom;
 	@FXML private Button btnNextWeek;
 	@FXML private Button btnPrevWeek;
 	@FXML private Label lblCurrentWeek;
@@ -158,39 +160,64 @@ public class ManagerController implements Initializable {
     }
 	
 	@FXML protected void removeInstructor(MouseEvent arg0) {
-		DataManager.getInstance().getGymTrainerManager().delete(tblTrainers.getSelectionModel().getSelectedItem());
-        DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
-        
-        ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymTrainerManager().getTrainers());
-		for (GymTrainer trainer : data) {
-			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
+		GymTrainer trainer = tblTrainers.getSelectionModel().getSelectedItem();
+		String displayValue = trainer.getName() + " " + trainer.getSurrname();
+		if (tblTrainers.getSelectionModel().getSelectedItem() == null){
+			GUIHelper.nothingSelectedWarning("Żaden trener na liście nie została zaznaczona do usunięcia");
+		} else if (GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć trenera: " + displayValue + "?") == MonologFXButton.Type.YES) {
+			GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager(); 
+			
+			int result = mngr.delete(trainer);
+			if (result == ManagerUtils.SUCCESS) {
+				mngr.initializeCombo(instructorCombo);
+
+				ObservableList<GymTrainer> data = FXCollections.observableArrayList(mngr.getTrainers());
+				tblTrainers.setItems(data);
+			} else if ( result == ManagerUtils.CONSTRAINT_VIOLATTION ) {
+
+				GUIHelper.cannotDelete("Trener: " + displayValue + ", nie może być usunięty.\n Jest przypisany do jakichś zajęć.");				
+			}
 		}
-		tblTrainers.setItems(data);
 	}
 
 	@FXML protected void removeClassType(MouseEvent arg0) {
-		DataManager.getInstance().getGymClassTypeManager().deleteClassType(tblClassType.getSelectionModel().getSelectedItem());
-        DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
-        
-        ObservableList<GymClassType> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymClassTypeManager().getClassTypes());
-		for (GymClassType cType : data) {
-			System.out.println(cType.getName());
+		GymClassType cType = tblClassType.getSelectionModel().getSelectedItem();
+		if (tblClassType.getSelectionModel().getSelectedItem() == null){
+			GUIHelper.nothingSelectedWarning("Żaden typ zajęć na liście nie została zaznaczona do usunięcia");
+		} else if (GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć typ zajęć: " + cType.getName() + "?") == MonologFXButton.Type.YES) {
+			GymClassTypeManager mngr = DataManager.getInstance().getGymClassTypeManager();
+			
+			int result = mngr.deleteClassType(cType);
+			if (result == ManagerUtils.SUCCESS) {
+				mngr.initializeCombo(classTypeCombo);
+
+				ObservableList<GymClassType> data = FXCollections.observableArrayList(mngr.getClassTypes());
+				tblClassType.setItems(data);
+			} else if (result == ManagerUtils.CONSTRAINT_VIOLATTION) {
+				GUIHelper.cannotDelete("Typ zajęć: "
+								+ cType.getName()
+								+ ", nie może być usunięty.\n Istnieją zajęcia tego typu.");
+			}
 		}
-		tblClassType.setItems(data);
 	}	
 
 	@FXML protected void removeRoom(MouseEvent arg0) {
-		DataManager.getInstance().getGymRoomManager().delete(tblRoom.getSelectionModel().getSelectedItem());
-        DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
-        
-        ObservableList<GymRoom> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymRoomManager().getRooms());
-		for (GymRoom room : data) {
-			System.out.println(room.getName());
+		GymRoom room = tblRoom.getSelectionModel().getSelectedItem();
+		
+		if (tblRoom.getSelectionModel().getSelectedItem() == null){
+			GUIHelper.nothingSelectedWarning("Żadna sala na liście nie została zaznaczona do usunięcia");
+		} else if (GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć salę: " + room.getName() + "?") == MonologFXButton.Type.YES) {
+			GymRoomManager mngr = DataManager.getInstance().getGymRoomManager();
+			int result = mngr.deleteRoom(room);
+			if (result == ManagerUtils.SUCCESS) {
+				mngr.initializeCombo(roomCombo);
+
+				ObservableList<GymRoom> data = FXCollections.observableArrayList(mngr.getRooms());
+				tblRoom.setItems(data);
+			} else if (result == ManagerUtils.CONSTRAINT_VIOLATTION) {
+				GUIHelper.cannotDelete("Sala: " + room.getName() + ", nie może być usunięta.\n Istnieją zajęcia przypisane do tej sali.");
+			}
 		}
-		tblRoom.setItems(data);
 	}
 	
     @FXML protected void addClassType(MouseEvent arg0) {
@@ -219,9 +246,9 @@ public class ManagerController implements Initializable {
     		tfRoomName.setText("");
     		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
     		roomCombo.setValue(roomCombo.getItems().get(0));
-    		DataManager.getInstance().getGymRoomManager().initializeCombo(callendarRoom);
-    		callendarRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
-    		callendarRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
+    		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbSelectRoom);
+    		cmbSelectRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
+    		cmbSelectRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
     		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(DataManager
     				.getInstance().getGymRoomManager().getRooms());
     		tblRoom.setItems(rooms);
@@ -270,9 +297,9 @@ public class ManagerController implements Initializable {
     			0, 
     			instructorCombo.getValue().getGymTrainer(), 
     			classTypeCombo.getValue().getClassType(), 
-    			Long.valueOf(tfDuration.getText()));*/
+    			Long.valueOf(tfDuration.getText()));
 
-    	populateCurrentWeekData();
+    	populateCurrentWeekData();*/
     	
     }
 
@@ -352,10 +379,8 @@ public class ManagerController implements Initializable {
 
 		colClassDuration.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("duration"));
 		colParticipants.setCellValueFactory(new PropertyValueFactory<GymClass, Integer>("participants"));
-*/		
-		populateCurrentWeekData();
-		
-/*		ManagerUtils.fillWithWeekDays(daysCombo);
+
+		ManagerUtils.fillWithWeekDays(daysCombo);
 		ManagerUtils.fillWithHours(cmbHours);
 		ManagerUtils.fillWithMinutes(cmbMinutes);
 		
@@ -363,6 +388,7 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);*/
 		
+		populateCurrentWeekData();
 		initializeSearchPanel();
 		btnEditClass.setDisable(true);
 		btnRemoveClass.setDisable(true);
@@ -370,9 +396,10 @@ public class ManagerController implements Initializable {
 	}
 
 	private void initializeCalendarView() {
-		DataManager.getInstance().getGymRoomManager().initializeCombo(callendarRoom);
-		callendarRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
-		callendarRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
+		callendarPane.setStyle("-fx-background-color: white");
+		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbSelectRoom);
+		cmbSelectRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
+		cmbSelectRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
 	}
 
 	private void initializeSearchPanel() {
@@ -393,19 +420,31 @@ public class ManagerController implements Initializable {
 	private void populateCurrentWeekData() {
 		callendarPane.getChildren().clear();
 
-		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
 		GUIHelper.prepareHoursColumn(callendarPane);
+		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
 
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
-		for (GymClass gymClass : data) {
-			if ( callendarRoom.getSelectionModel().getSelectedItem().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
-				 gymClass.getClassRoom().getID() == callendarRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
-				callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
-			
-				System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
-			}
+		if (cmbSelectRoom == null) {
+			System.out.println("cmbSelectRoom null");
 		}
+		
+		if ( cmbSelectRoom.getSelectionModel() == null ){
+			System.out.println("cmbSelectRoom.getSelectionModel() null");
+		}
+		if (cmbSelectRoom.getValue() == null ) {
+			System.out.println("cmbSelectRoom.getValue() null");
+		}
+
+			for (GymClass gymClass : data) {
+				if ( cmbSelectRoom.getValue().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
+					 gymClass.getClassRoom().getID() == cmbSelectRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
+					callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
+				
+					System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
+				}
+			}
+		
 		//tblClasses.setItems(data);
 	}
 
@@ -499,12 +538,15 @@ public class ManagerController implements Initializable {
 	}
 	
 	@FXML protected void removeClass(MouseEvent event) {
-		DataManager.getInstance().getGymClassManager().deleteClass(selected);
-		CallendarEntryManager.getInstance().remove(selected);
-		clearOverview();
-		populateCurrentWeekData();
-		btnRemoveClass.setDisable(true);
-		btnEditClass.setDisable(false);
+		if ( GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć te zajęcia?") == MonologFXButton.Type.YES) {
+			DataManager.getInstance().getGymClassManager().deleteClass(selected);
+			CallendarEntryManager.getInstance().remove(selected);
+			clearOverview();
+			populateCurrentWeekData();
+			btnRemoveClass.setDisable(true);
+			btnEditClass.setDisable(true);
+			selected = null;
+		}
 	}
 	
 	private void clearOverview() {

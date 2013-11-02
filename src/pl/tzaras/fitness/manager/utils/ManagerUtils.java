@@ -23,6 +23,10 @@ public class ManagerUtils {
 
 	public static final String MONDAY_pl = "Poniedzialek";
 
+	public static final int CONSTRAINT_VIOLATTION = 1;
+	public static final int SUCCESS = 0;
+	public static final int UNKNOWN_FAILURE = 2;
+
 	public static int startHour = 8;
 	public static int endHour = 22;
 
