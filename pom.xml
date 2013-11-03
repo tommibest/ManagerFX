@@ -66,7 +66,12 @@
 			<artifactId>usertype.jodatime</artifactId>
 			<version>2.0.1</version>
 		</dependency>
-		
+
+    	<dependency>
+    		<groupId>org.jfxtras</groupId>
+    		<artifactId>jfxtras-labs</artifactId>
+    		<version>2.2-r6-SNAPSHOT</version>
+    	</dependency>
     </dependencies>
 
 </project>

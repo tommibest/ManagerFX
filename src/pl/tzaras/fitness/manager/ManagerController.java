@@ -23,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,15 +31,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jfxtras.labs.dialogs.MonologFXButton;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.thehecklers.monologfx.MonologFX;
-import org.thehecklers.monologfx.MonologFXBuilder;
-import org.thehecklers.monologfx.MonologFXButton;
-import org.thehecklers.monologfx.MonologFXButtonBuilder;
 
 import pl.tzaras.fitness.manager.db.DataManager;
 import pl.tzaras.fitness.manager.db.GymClassManager;
@@ -142,14 +140,14 @@ public class ManagerController implements Initializable {
 	
 	@FXML protected void addInstructor(MouseEvent arg0) {
     	if ( !txtFieldInstructorName.getText().isEmpty() && !txtFieldInstructorSurrname.getText().isEmpty() ) {
-    		DataManager.getInstance().getGymTrainerManager().saveTrainer(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText());
+    		GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager();
+    		mngr.saveTrainer(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText());
             System.out.println("Adding instructor: "+ txtFieldInstructorName.getText()  + ", " + txtFieldInstructorSurrname.getText() );
             txtFieldInstructorName.setText("");
             txtFieldInstructorSurrname.setText("");
-            DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
+            mngr.initializeCombo(cmbSearchTrainer);
             
-            ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
-    				.getInstance().getGymTrainerManager().getTrainers());
+            ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager.getInstance().getGymTrainerManager().getTrainers());
     		for (GymTrainer trainer : data) {
     			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
     		}
@@ -161,21 +159,20 @@ public class ManagerController implements Initializable {
 	
 	@FXML protected void removeInstructor(MouseEvent arg0) {
 		GymTrainer trainer = tblTrainers.getSelectionModel().getSelectedItem();
-		String displayValue = trainer.getName() + " " + trainer.getSurrname();
 		if (tblTrainers.getSelectionModel().getSelectedItem() == null){
 			GUIHelper.nothingSelectedWarning("Żaden trener na liście nie została zaznaczona do usunięcia");
-		} else if (GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć trenera: " + displayValue + "?") == MonologFXButton.Type.YES) {
+		} else if (GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć trenera: " + trainer.getName() + " " + trainer.getSurrname() + "?") == MonologFXButton.Type.YES) {
 			GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager(); 
 			
 			int result = mngr.delete(trainer);
 			if (result == ManagerUtils.SUCCESS) {
-				mngr.initializeCombo(instructorCombo);
+				mngr.initializeCombo(cmbSearchTrainer);
 
 				ObservableList<GymTrainer> data = FXCollections.observableArrayList(mngr.getTrainers());
 				tblTrainers.setItems(data);
 			} else if ( result == ManagerUtils.CONSTRAINT_VIOLATTION ) {
 
-				GUIHelper.cannotDelete("Trener: " + displayValue + ", nie może być usunięty.\n Jest przypisany do jakichś zajęć.");				
+				GUIHelper.cannotDelete("Trener: " + trainer.getName() + " " + trainer.getSurrname() + ", nie może być usunięty.\n Jest przypisany do jakichś zajęć.");				
 			}
 		}
 	}
@@ -189,7 +186,7 @@ public class ManagerController implements Initializable {
 			
 			int result = mngr.deleteClassType(cType);
 			if (result == ManagerUtils.SUCCESS) {
-				mngr.initializeCombo(classTypeCombo);
+				mngr.initializeCombo(cmbSearchType);
 
 				ObservableList<GymClassType> data = FXCollections.observableArrayList(mngr.getClassTypes());
 				tblClassType.setItems(data);
@@ -210,8 +207,6 @@ public class ManagerController implements Initializable {
 			GymRoomManager mngr = DataManager.getInstance().getGymRoomManager();
 			int result = mngr.deleteRoom(room);
 			if (result == ManagerUtils.SUCCESS) {
-				mngr.initializeCombo(roomCombo);
-
 				ObservableList<GymRoom> data = FXCollections.observableArrayList(mngr.getRooms());
 				tblRoom.setItems(data);
 			} else if (result == ManagerUtils.CONSTRAINT_VIOLATTION) {
@@ -223,12 +218,12 @@ public class ManagerController implements Initializable {
     @FXML protected void addClassType(MouseEvent arg0) {
     	if ( !tfClassTypeName.getText().isEmpty() ) {
     		System.out.println("Adding class: " + tfClassTypeName.getText());
-    		DataManager.getInstance().getGymClassTypeManager().addClassType(tfClassTypeName.getText());
+    		GymClassTypeManager mngr = DataManager.getInstance().getGymClassTypeManager();
+    		mngr.addClassType(tfClassTypeName.getText());
     		tfClassTypeName.setText("");
-    		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
+    		mngr.initializeCombo(classTypeCombo);
     		
-    		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
-    				.getInstance().getGymClassTypeManager().getClassTypes());
+    		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(mngr.getClassTypes());
     		for (GymClassType classType : classTypes) {
     			System.out.println(classType.getName());
     		}
@@ -239,18 +234,20 @@ public class ManagerController implements Initializable {
     	}
     }
     
+    @FXML protected void editType(CellEditEvent<GymClassType, String> event) {
+    	DataManager.getInstance().getGymClassTypeManager().updateClassType(event.getRowValue().getClassId(),event.getNewValue());
+    }
+    
     @FXML protected void addRoom(MouseEvent arg0) {
     	if ( !tfRoomName.getText().isEmpty() ) {
     		System.out.println("Adding class: " + tfRoomName.getText());
-    		DataManager.getInstance().getGymRoomManager().saveRoom(tfRoomName.getText());
+    		GymRoomManager mngr = DataManager.getInstance().getGymRoomManager();
+    		mngr.saveRoom(tfRoomName.getText());
     		tfRoomName.setText("");
-    		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);
-    		roomCombo.setValue(roomCombo.getItems().get(0));
-    		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbSelectRoom);
-    		cmbSelectRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
-    		cmbSelectRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
-    		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(DataManager
-    				.getInstance().getGymRoomManager().getRooms());
+    		mngr.initializeCombo(cmbSelectRoom);
+    		cmbSelectRoom.getItems().add(mngr.defaultSelection);		
+    		cmbSelectRoom.setValue(mngr.defaultSelection);
+    		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(mngr.getRooms());
     		tblRoom.setItems(rooms);
     		
     	} else {
@@ -285,30 +282,18 @@ public class ManagerController implements Initializable {
 			e.printStackTrace();
 		}
     	
-    	
-    	/*DateTime startTime = monday
-    			.withDayOfWeek(ManagerUtils.dayToInt(daysCombo.getValue()))
-    			.withHourOfDay(Integer.valueOf(cmbHours.getValue()))
-    			.withMinuteOfHour(Integer.valueOf(cmbMinutes.getValue()));
-    	
-    	System.out.println("Start time: " + startTime.toString());
-    	mngr.saveClass( roomCombo.getValue().getRoom(), 
-    			startTime, 
-    			0, 
-    			instructorCombo.getValue().getGymTrainer(), 
-    			classTypeCombo.getValue().getClassType(), 
-    			Long.valueOf(tfDuration.getText()));
-
-    	populateCurrentWeekData();*/
-    	
     }
 
 	public void initialize(URL location, ResourceBundle resources) {
 		if (populate) {
 			populateTestData();
 		}
-		initializeMainTab();
+		
 		initializeManagementTab();
+		callendarPane.setVisible(true);
+		callendarPane.getChildren().clear();
+		initializeMainTab();
+		populateCurrentWeekData();
 	}
 
 	private void initializeMainTab() {
@@ -317,8 +302,10 @@ public class ManagerController implements Initializable {
 		sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
 		displaySelectedWeek();
 		initializeCalendarView();
-		
-		
+		populateCurrentWeekData();
+		initializeSearchPanel();
+		btnEditClass.setDisable(true);
+		btnRemoveClass.setDisable(true);
 		/*colClassId.setCellValueFactory(new PropertyValueFactory<GymClass, Long>("classId"));
 		colCType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<GymClass, String>, ObservableValue<String>>() {
 
@@ -387,12 +374,6 @@ public class ManagerController implements Initializable {
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(instructorCombo);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(classTypeCombo);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(roomCombo);*/
-		
-		populateCurrentWeekData();
-		initializeSearchPanel();
-		btnEditClass.setDisable(true);
-		btnRemoveClass.setDisable(true);
-		
 	}
 
 	private void initializeCalendarView() {
@@ -419,31 +400,20 @@ public class ManagerController implements Initializable {
 	
 	private void populateCurrentWeekData() {
 		callendarPane.getChildren().clear();
-
 		GUIHelper.prepareHoursColumn(callendarPane);
 		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
 
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
-		if (cmbSelectRoom == null) {
-			System.out.println("cmbSelectRoom null");
-		}
-		
-		if ( cmbSelectRoom.getSelectionModel() == null ){
-			System.out.println("cmbSelectRoom.getSelectionModel() null");
-		}
-		if (cmbSelectRoom.getValue() == null ) {
-			System.out.println("cmbSelectRoom.getValue() null");
-		}
-
-			for (GymClass gymClass : data) {
-				if ( cmbSelectRoom.getValue().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
-					 gymClass.getClassRoom().getID() == cmbSelectRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
-					callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
+	
+		for (GymClass gymClass : data) {
+			if ( cmbSelectRoom.getValue().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
+				 gymClass.getClassRoom().getID() == cmbSelectRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
+				callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
 				
-					System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
-				}
+				System.out.println("Getting: " + gymClass.getClassId() + ", " + gymClass.getClassTrainer().getName());
 			}
+		}
 		
 		//tblClasses.setItems(data);
 	}
@@ -458,7 +428,8 @@ public class ManagerController implements Initializable {
 		}
 		tblTrainers.setItems(data);
 		
-		colClassType.setCellValueFactory(new PropertyValueFactory<GymClassType, String>("name"));
+		tblClassType.setEditable(true);
+
 		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassTypeManager().getClassTypes());
 		for (GymClassType classType : classTypes) {

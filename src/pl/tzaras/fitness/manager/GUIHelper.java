@@ -1,11 +1,5 @@
 package pl.tzaras.fitness.manager;
 
-import org.thehecklers.monologfx.MonologFX;
-import org.thehecklers.monologfx.MonologFXBuilder;
-import org.thehecklers.monologfx.MonologFXButton;
-import org.thehecklers.monologfx.MonologFXButtonBuilder;
-import org.thehecklers.monologfx.MonologFXButton.Type;
-
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
 import pl.tzaras.fitness.manager.utils.MyLogger;
 import javafx.geometry.Pos;
@@ -16,6 +10,12 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
+import javafx.stage.StageStyle;
+import jfxtras.labs.dialogs.MonologFX;
+import jfxtras.labs.dialogs.MonologFXBuilder;
+import jfxtras.labs.dialogs.MonologFXButton;
+import jfxtras.labs.dialogs.MonologFXButton.Type;
+import jfxtras.labs.dialogs.MonologFXButtonBuilder;
 
 public class GUIHelper {
 
@@ -77,7 +77,7 @@ public class GUIHelper {
 		
 	}
 
-	public static double getHederHeight() {
+	public static double getHeaderHeight() {
 		return headerHeight;
 	}
 
@@ -96,8 +96,8 @@ public class GUIHelper {
 
 	public static Type cannotDelete(String message) {
 		MonologFXButton btnYes = MonologFXButtonBuilder.create().defaultButton(true).type(MonologFXButton.Type.OK).build();
-		MonologFX nothingSelectedDialog = MonologFXBuilder.create().modal(true).message(message).titleText("Brak zaznaczenia").button(btnYes).buttonAlignment(MonologFX.ButtonAlignment.CENTER).build();
-		return nothingSelectedDialog.showDialog();		
+		MonologFX cannotDeleteDialog = MonologFXBuilder.create().modal(true).message(message).titleText("Brak zaznaczenia").button(btnYes).buttonAlignment(MonologFX.ButtonAlignment.CENTER).build();
+		return cannotDeleteDialog.showDialog();		
 	}
 	
 }

@@ -18,7 +18,7 @@ public class CallendarEntry extends Button {
 		double hourHeight = mController.getCallendarPane().getPrefHeight() / (ManagerUtils.endHour-ManagerUtils.startHour);
 		this.gymClass = gClass; 
 		setPrefSize(87.0, gymClass.getDuration()*(hourHeight/60));
-		double posY = GUIHelper.getHederHeight() + ((gymClass.getStartTime().getHourOfDay()-ManagerUtils.startHour) + (gymClass.getStartTime().getMinuteOfHour()/60.0))*hourHeight;
+		double posY = GUIHelper.getHeaderHeight() + ((gymClass.getStartTime().getHourOfDay()-ManagerUtils.startHour) + (gymClass.getStartTime().getMinuteOfHour()/60.0))*hourHeight;
 		AnchorPane.setTopAnchor(this, posY);
 		AnchorPane.setLeftAnchor(this, gymClass.getStartTime().getDayOfWeek()*87.0);
 		super.setOnAction(new EventHandler<ActionEvent>() {
@@ -31,7 +31,7 @@ public class CallendarEntry extends Button {
 	public void update(){
 		double hourHeight = mController.getCallendarPane().getPrefHeight() / (ManagerUtils.endHour-ManagerUtils.startHour);
 		setPrefSize(87.0, gymClass.getDuration()*(hourHeight/60));
-		double posY = GUIHelper.getHederHeight() + ((gymClass.getStartTime().getHourOfDay()-ManagerUtils.startHour) + (gymClass.getStartTime().getMinuteOfHour()/60.0))*hourHeight;
+		double posY = GUIHelper.getHeaderHeight() + ((gymClass.getStartTime().getHourOfDay()-ManagerUtils.startHour) + (gymClass.getStartTime().getMinuteOfHour()/60.0))*hourHeight;
 		AnchorPane.setTopAnchor(this, posY);
 		AnchorPane.setLeftAnchor(this, gymClass.getStartTime().getDayOfWeek()*87.0);
 		super.setOnAction(new EventHandler<ActionEvent>() {

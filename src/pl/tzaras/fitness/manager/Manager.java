@@ -22,7 +22,7 @@ public class Manager extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Fitness Manager");
-        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         stage.show();
         
         dbEngine.stop();

@@ -54,17 +54,7 @@
                     </HBox>
                   </children>
                 </VBox>
-                <!-- <Accordion layoutX="4.0" layoutY="4.0" minWidth="653.0" prefHeight="534.0" prefWidth="701.0">
-                  <expandedPane>
-                    <TitledPane fx:id="x3" animated="true" text="Widok tygodnia">
-                      <content>
-                      <ScrollPane prefHeight="534.0" prefWidth="701.0" layoutX="0.0" layoutY="0.0">
-                        <AnchorPane fx:id="callendarPane" prefHeight="500.0" layoutX="0.0" layoutY="0.0" prefWidth="696.0"/>
-                      </ScrollPane>
-                      </content>
-                    </TitledPane>
-                  </expandedPane>
-                  <panes>
+                <!-- 
                     <TitledPane fx:id="x2" animated="true" text="Przegląd zajęć">
                       <content>
                         <TableView fx:id="tblClasses" prefHeight="500.0" prefWidth="650.0">
@@ -81,10 +71,7 @@
                         </TableView>
                       </content>
                     </TitledPane>
-                    <fx:reference source="x3" />
-                  </panes>
-                </Accordion>
-               `-->
+               -->
                 <VBox alignment="TOP_CENTER" layoutX="716.0" prefWidth="275.0" AnchorPane.topAnchor="8.0">
                   <TitledPane fx:id="paneOverview" collapsible="false" text="Podsumowanie">
                     <content>
@@ -137,35 +124,6 @@
                       <Insets bottom="5.0" fx:id="bottom5" />
                     </VBox.margin>
                   </TitledPane>
-                  <!-- >Accordion minWidth="263.0" prefHeight="327.0" prefWidth="275.0">
-                    <expandedPane>
-                      <TitledPane fx:id="x1" animated="false" prefHeight="230.0" text="Dodaj nowe zajecia">
-                        <content>
-                          <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="132.0" prefWidth="290.0">
-                            <children>
-                              <Label fx:id="lblClassType" layoutX="6.0" layoutY="8.0" text="Typ zajęć" />
-                              <ComboBox fx:id="classTypeCombo" layoutX="91.0" layoutY="4.0" prefWidth="175.0" />
-                              <Label fx:id="lblInstructor" layoutX="6.0" layoutY="37.0" text="Instruktor" />
-                              <ComboBox fx:id="instructorCombo" layoutX="91.0" layoutY="32.0" prefWidth="175.0" />
-                              <Label fx:id="lblRoom" layoutX="6.0" layoutY="67.0" text="Sala" />
-                              <ComboBox fx:id="roomCombo" layoutX="91.0" layoutY="62.0" prefWidth="175.0" />
-                              <Label fx:id="lblClassDay" layoutX="6.0" layoutY="97.0" text="Dzień" />
-                              <ComboBox fx:id="daysCombo" layoutX="91.0" layoutY="92.0" prefWidth="175.0" visibleRowCount="7" />
-                              <Label fx:id="lblClassHour" layoutX="6.0" layoutY="127.0" text="Godzina" />
-                              <ComboBox id="cmbHour" fx:id="cmbHours" layoutX="91.0" layoutY="122.0" prefWidth="61.0" />
-                              <Label fx:id="lblCollon" layoutX="158.0" layoutY="126.0" text=":" />
-                              <ComboBox fx:id="cmbMinutes" layoutX="167.0" layoutY="122.0" prefWidth="61.0" />
-                              <Label fx:id="lblDuration" layoutX="6.0" layoutY="157.0" text="Czas trwania" />
-                              <TextField fx:id="tfDuration" layoutX="91.0" layoutY="152.0" prefWidth="40.0" promptText="60" />
-                              <Label layoutX="136.0" layoutY="155.0" text="minut" />
-                              <Button id="createNewClass" fx:id="createNewClassButton" layoutX="7.0" layoutY="188.0" mnemonicParsing="false" onMouseClicked="#addClass" prefWidth="258.0" text="Utworz" />
-                            </children>
-                          </AnchorPane>
-                        </content>
-                      </TitledPane>
-                    </expandedPane>
-                    <panes>
-                      <fx:reference source="x1" /> -->
                   <TitledPane fx:id="paneSearch" collapsible="false" text="Wyszukaj" VBox.margin="$bottom5">
                     <content>
                       <AnchorPane id="Content" prefHeight="275.0" prefWidth="250.0">
@@ -209,62 +167,116 @@
         </Tab>
         <Tab closable="false" text="Zarządzaj">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <AnchorPane id="Content">
               <children>
-                <TableView id="tblInstructor" fx:id="tblTrainers" layoutX="15.0" layoutY="10.0" prefHeight="140.0" prefWidth="420.0">
-                  <columns>
-                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Imię" fx:id="colName" />
-                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Nazwisko" fx:id="colSurrname" />
-                  </columns>
-                </TableView>
-                <TitledPane animated="false" collapsible="true" disable="false" expanded="true" focusTraversable="true" layoutX="445.0" layoutY="10.0" minWidth="218.0" prefHeight="140.0" prefWidth="240.0" text="Dodaj instruktora" underline="false" visible="true" wrapText="false">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="117.0" prefWidth="400.0">
-                      <children>
-                        <Label layoutX="19.0" layoutY="11.0" text="Imię" />
-                        <TextField fx:id="txtFieldInstructorName" layoutX="79.0" layoutY="11.0" prefWidth="149.0" />
-                        <Label layoutX="17.0" layoutY="40.0" text="Nazwisko" />
-                        <TextField fx:id="txtFieldInstructorSurrname" layoutX="79.0" layoutY="37.0" prefWidth="149.0" />
-                        <Button fx:id="btnAddInstructor" layoutX="167.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#addInstructor" text="Dodaj" />
-                        <Button id="btnRemoveInstructor" fx:id="btnRmvInstructor" layoutX="94.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#removeInstructor" prefWidth="60.0" text="Usuń" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-                <TableView fx:id="tblClassType" layoutX="15.0" layoutY="170.0" prefHeight="140.0" prefWidth="420.0">
-                  <columns>
-                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="404.0" text="Typ zajęć" fx:id="colClassType" />
-                  </columns>
-                </TableView>
-                <TitledPane animated="false" expanded="true" layoutX="445.0" layoutY="170.0" prefHeight="137.0" prefWidth="238.0" text="Nowy typ zajęć">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <Label layoutX="14.0" layoutY="14.0" text="Nazwa" />
-                        <TextField id="txtFieldClassName" fx:id="tfClassTypeName" layoutX="77.0" layoutY="11.0" prefWidth="143.0" />
-                        <Button id="btnAddClass" layoutX="160.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#addClassType" text="Dodaj" />
-                        <Button id="btnRemoveInstructor" fx:id="btnRmvClassType" layoutX="89.0" layoutY="45.0" mnemonicParsing="false" onMouseClicked="#removeClassType" prefWidth="60.0" text="Usuń" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-                <TableView fx:id="tblRoom" layoutX="15.0" layoutY="330.0" prefHeight="140.0" prefWidth="420.0">
-                  <columns>
-                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="404.0" text="Nazwa sali" fx:id="colRoomName" />
-                  </columns>
-                </TableView>
-                <TitledPane animated="false" collapsible="true" disable="false" expanded="true" focusTraversable="true" layoutX="445.0" layoutY="330.0" prefHeight="140.0" prefWidth="240.0" text="Dodaj sale" underline="false" visible="true" wrapText="false">
-                  <content>
-                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <children>
-                        <Label fx:id="lblRoomName" layoutX="19.0" layoutY="9.0" text="Nazwa" />
-                        <TextField id="txtFieldInstructorName" fx:id="tfRoomName" layoutX="90.0" layoutY="8.0" prefWidth="127.0" />
-                        <Button id="btnAddClass" fx:id="btnAddRoom" layoutX="152.0" layoutY="42.0" mnemonicParsing="false" onMouseClicked="#addRoom" text="Dodaj" />
-                        <Button id="btnRemoveInstructor" fx:id="btnRmvRoom" layoutX="88.0" layoutY="42.0" mnemonicParsing="false" onMouseClicked="#removeRoom" prefWidth="60.0" text="Usuń" />
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
+                <Accordion AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                  <expandedPane>
+                    <TitledPane fx:id="paneTrainers" collapsible="true" expanded="true" text="Instruktorzy">
+                      <content>
+                        <VBox>
+                          <TableView fx:id="tblTrainers" prefHeight="0.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Imię" fx:id="colName" />
+                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Nazwisko" fx:id="colSurrname" />
+                            </columns>
+                            <VBox.margin>
+                              <Insets bottom="2.0" left="5.0" right="5.0" top="5.0" fx:id="top_elem" />
+                            </VBox.margin>
+                          </TableView>
+                          <!-- <HBox VBox.margin="$middle_elem">
+                            <Label text="Imię" />
+                            
+                            <Label text="Nazwisko" />
+                            
+                          </HBox> -->
+                          <BorderPane>
+                            <left>
+                              <HBox>
+                                <VBox>
+                                  <TextField fx:id="txtFieldInstructorName" prefWidth="149.0" promptText="Imie" />
+                                  <TextField fx:id="txtFieldInstructorSurrname" prefWidth="149.0" promptText="Nazwisko" />
+                                </VBox>
+                                <Button fx:id="btnAddInstructor" alignment="BOTTOM_CENTER" contentDisplay="TOP" onMouseClicked="#addInstructor" text="Dodaj" wrapText="false" HBox.hgrow="NEVER">
+                                  <HBox.margin>
+                                    <Insets left="3.0" />
+                                  </HBox.margin>
+                                </Button>
+                                <BorderPane.margin>
+                                  <Insets bottom="3.0" top="2.0" />
+                                </BorderPane.margin>
+                              </HBox>
+                            </left>
+                            <right>
+                              <Button fx:id="btnRmvInstructor" mnemonicParsing="false" onMouseClicked="#removeInstructor" text="Usuń wybrany">
+                                <BorderPane.margin>
+                                  <Insets top="2.0" />
+                                </BorderPane.margin>
+                              </Button>
+                            </right>
+                            <VBox.margin>
+                              <Insets bottom="2.0" left="5.0" right="5.0" fx:id="middle_elem" />
+                            </VBox.margin>
+                          </BorderPane>
+                        </VBox>
+                      </content>
+                    </TitledPane>
+                  </expandedPane>
+                  <panes>
+                    <fx:reference source="paneTrainers" />
+                    <TitledPane fx:id="x1" animated="false" collapsible="true" text="Typ zajęć">
+                      <content>
+                        <VBox>
+                          <TableView fx:id="tblClassType" editable="true" prefHeight="170.0" tableMenuButtonVisible="false" VBox.margin="$top_elem" VBox.vgrow="ALWAYS">
+                            <columns>
+                              <TableColumn editable="true" maxWidth="5000.0" minWidth="10.0" onEditCommit="#editType" prefWidth="404.0" text="Typ zajęć" fx:id="colClassType" />
+                            </columns>
+                          </TableView>
+                          <BorderPane VBox.margin="$middle_elem">
+                            <left>
+                              <HBox>
+                                <TextField id="txtFieldClassName" fx:id="tfClassTypeName" prefWidth="143.0" promptText="Nazwa">
+                                  <HBox.margin>
+                                    <Insets bottom="3.0" right="5.0" top="3.0" fx:id="rbt" />
+                                  </HBox.margin>
+                                </TextField>
+                                <Button fx:id="btnAddClass" mnemonicParsing="false" onMouseClicked="#addClassType" text="Dodaj" HBox.margin="$rbt" />
+                              </HBox>
+                            </left>
+                            <right>
+                              <Button fx:id="btnRmvClassType" mnemonicParsing="false" onMouseClicked="#removeClassType" text="Usuń wybrany">
+                                <BorderPane.margin>
+                                  <Insets top="3.0" fx:id="x2" />
+                                </BorderPane.margin>
+                              </Button>
+                            </right>
+                          </BorderPane>
+                        </VBox>
+                      </content>
+                    </TitledPane>
+                    <TitledPane collapsible="true" expanded="false" text="Sala">
+                      <content>
+                        <VBox>
+                          <TableView fx:id="tblRoom" prefHeight="170.0" VBox.margin="$top_elem" VBox.vgrow="ALWAYS">
+                            <columns>
+                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="404.0" text="Nazwa sali" fx:id="colRoomName" />
+                            </columns>
+                          </TableView>
+                          <BorderPane VBox.margin="$middle_elem">
+                            <left>
+                              <HBox>
+                                <TextField fx:id="tfRoomName" prefWidth="127.0" promptText="Nazwa sali" HBox.margin="$rbt" />
+                                <Button fx:id="btnAddRoom" mnemonicParsing="false" onMouseClicked="#addRoom" text="Dodaj" HBox.margin="$rbt" />
+                              </HBox>
+                            </left>
+                            <right>
+                              <Button fx:id="btnRmvRoom" mnemonicParsing="false" onMouseClicked="#removeRoom" text="Usuń wybraną" BorderPane.margin="$x2" />
+                            </right>
+                          </BorderPane>
+                        </VBox>
+                      </content>
+                    </TitledPane>
+                  </panes>
+                </Accordion>
               </children>
             </AnchorPane>
           </content>

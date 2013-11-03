@@ -124,7 +124,7 @@ public class GymTrainerManager {
 	}
 
 	public void initializeCombo(ComboBox<TrainerWrapper> instructorCombo) {
-		instructorCombo.getItems().setAll(wrapTrainers(DataManager.getInstance().getGymTrainerManager().getTrainers()));	
+		instructorCombo.getItems().setAll(wrappedTrainers);	
 	}
 	
 	public List<GymTrainer> getTrainers() {

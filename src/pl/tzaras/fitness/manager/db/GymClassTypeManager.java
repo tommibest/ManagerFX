@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -148,7 +149,5 @@ public class GymClassTypeManager {
 		}
 		return wrapped;
 	}
-
-	
 	
 }
