@@ -58,7 +58,7 @@
     </HBox>
     <HBox GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5">
       <children>
-        <TextField fx:id="tfDuration" prefWidth="75.0" onKeyTyped="#updateDialogOnKey"/>
+        <TextField fx:id="tfDuration" prefWidth="75.0"/>
         <Label text="minut">
           <HBox.margin>
             <Insets left="3.0" top="3.0" />
@@ -66,7 +66,7 @@
         </Label>
       </children>
     </HBox>
-    <TextField fx:id="tfParticipants" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" />
+    <TextField fx:id="tfParticipants" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6"/>
   </children>
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER" maxWidth="0.0" minWidth="-Infinity" prefWidth="0.0" />

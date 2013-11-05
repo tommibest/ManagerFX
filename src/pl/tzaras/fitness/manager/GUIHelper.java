@@ -30,7 +30,7 @@ public class GUIHelper {
 	
 	public static void prepareHoursColumn(AnchorPane callendarPane) {
 		log.logEntry("prepareHoursColumn");
-		double rowHeight = callendarPane.getPrefHeight()/(ManagerUtils.endHour-ManagerUtils.startHour);
+		double rowHeight = (callendarPane.getPrefHeight()-headerHeight)/(ManagerUtils.endHour-ManagerUtils.startHour);
 		for (int i=ManagerUtils.startHour;i<ManagerUtils.endHour; i++) {
 			Label newLbl = new Label();
 			if (i<10) newLbl.setText("0"+i+":00");
@@ -40,8 +40,7 @@ public class GUIHelper {
 			newLbl.setStyle("-fx-background-color: #eee; -fx-border-color:white;");
 			double rowPosition = headerHeight + (i-ManagerUtils.startHour)*rowHeight;
 			if ( i%2 == 1 ) {
-				Rectangle rectangle = RectangleBuilder.create().x(88).y(rowPosition).width(callendarPane.getWidth()-88).height(rowHeight).style("-fx-fill:  #efefef;").build();
-				callendarPane.getChildren().add(rectangle);
+				callendarPane.getChildren().add(RectangleBuilder.create().x(88).y(rowPosition).width(callendarPane.getPrefWidth()-88).height(rowHeight).style("-fx-fill:  #efefef;").build());
 			}
 			AnchorPane.setTopAnchor(newLbl, rowPosition);
 			AnchorPane.setLeftAnchor(newLbl, 0.0);
@@ -68,9 +67,14 @@ public class GUIHelper {
 			AnchorPane.setLeftAnchor(lbl, currentXPos);
 			lbl.setAlignment(Pos.CENTER);
 			lbl.setStyle("-fx-background-color: #eee; -fx-border-color:white;");
-			lbl.getStyleClass().add("myborder");
-			Line line = LineBuilder.create().startX(currentXPos+87).startY(0).endX(currentXPos+87).endY(callendarPane.getHeight()).style("-fx-fill:  #eee;").strokeWidth(CALLENDAR_LINE_WIDTH).build();
-			callendarPane.getChildren().add(line);
+			if ( !lbl.getText().equalsIgnoreCase(ManagerUtils.SUNDAY_pl) ) {
+				callendarPane.getChildren().add(
+					LineBuilder.create().startX(currentXPos + 87).startY(0)
+							.endX(currentXPos + 87)
+							.endY(callendarPane.getPrefHeight())
+							.style("-fx-fill:  #eee;")
+							.strokeWidth(CALLENDAR_LINE_WIDTH).build());
+			}
 			currentXPos += 87.0;
 			callendarPane.getChildren().add(lbl);
 		}

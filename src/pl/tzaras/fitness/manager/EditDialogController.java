@@ -15,11 +15,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 public class EditDialogController  implements Initializable  {
+
+	public static final int CANCEL_BUTTON = 1;
+	public static final int OK_BUTTON = 0;
 
 	Stage dialogStage;
 	
@@ -37,6 +41,9 @@ public class EditDialogController  implements Initializable  {
 	
 	private GymClass gymClass;
 
+	private int status = CANCEL_BUTTON;
+	private boolean editMode;
+
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		ManagerUtils.fillWithWeekDays(cmbDay);
 		ManagerUtils.fillWithHours(cmbHour);
@@ -50,22 +57,34 @@ public class EditDialogController  implements Initializable  {
 	
 	@FXML protected void updateClass(MouseEvent event) {
 		
-		gymClass.setClassRoom(cmbRoom.getSelectionModel().getSelectedItem().getRoom());
-		gymClass.setClassTrainer(cmbTrainer.getSelectionModel().getSelectedItem().getGymTrainer());
-		gymClass.setClassType(cmbClassType.getSelectionModel().getSelectedItem().getClassType());
-		
-		gymClass.setStartTime(gymClass.getStartTime()
-				.withDayOfWeek(ManagerUtils.dayToInt(cmbDay.getValue()))
-				.withHourOfDay(Integer.valueOf(cmbHour.getValue()))
-				.withMinuteOfHour(Integer.valueOf(cmbMinute.getValue())));
-		gymClass.setDuration(Long.valueOf(tfDuration.getText()));
-		int participants = tfParticipants.getText().isEmpty() ? 0 :Integer.valueOf(tfParticipants.getText());
-		gymClass.setParticipants(participants);
-		
-		dialogStage.close();
+		if (!tfDuration.getText().matches("\\d+")) {
+			GUIHelper.cannotDelete("Czas trwania zajęć musi być liczbą");
+		} else if (!tfParticipants.getText().matches("\\d+")) {
+			GUIHelper.cannotDelete("Ilość uczestników musi być liczbą");
+		} else {
+
+			gymClass.setClassRoom(cmbRoom.getSelectionModel().getSelectedItem()
+					.getRoom());
+			gymClass.setClassTrainer(cmbTrainer.getSelectionModel()
+					.getSelectedItem().getGymTrainer());
+			gymClass.setClassType(cmbClassType.getSelectionModel()
+					.getSelectedItem().getClassType());
+
+			gymClass.setStartTime(gymClass.getStartTime()
+					.withDayOfWeek(ManagerUtils.dayToInt(cmbDay.getValue()))
+					.withHourOfDay(Integer.valueOf(cmbHour.getValue()))
+					.withMinuteOfHour(Integer.valueOf(cmbMinute.getValue())));
+			gymClass.setDuration(Long.valueOf(tfDuration.getText()));
+			int participants = tfParticipants.getText().isEmpty() ? 0 : Integer
+					.valueOf(tfParticipants.getText());
+			gymClass.setParticipants(participants);
+
+			dialogStage.close();
+		}
 	}
 	
 	@FXML protected void handleCancel(MouseEvent event) {
+		status = CANCEL_BUTTON;
 		dialogStage.close();
 	}
 	
@@ -76,6 +95,7 @@ public class EditDialogController  implements Initializable  {
 	public void setGymClass(GymClass gymClass, boolean initialize) {
 		this.gymClass = gymClass;
 
+		editMode = initialize;
 		if (initialize) {
 			for (TrainerWrapper tw : cmbTrainer.getItems()) {
 				if (tw.getGymTrainer().getTrainerId() == gymClass
@@ -116,11 +136,33 @@ public class EditDialogController  implements Initializable  {
 	}
 	
 	@FXML protected void updateDialog(ActionEvent event) {
-		updatedOkButton();
+		status = OK_BUTTON;
+		updatedOkButton();;
 	}
 	
 	@FXML protected void updateDialogOnKey(KeyEvent event) {
-		updatedOkButton();
+		System.out.println(event.toString());
+			if ( event.getSource().equals(tfParticipants) && editMode ) {
+				okButton.setDisable(false);
+			} else {
+				if ( cmbTrainer.getSelectionModel().getSelectedItem() != null
+						&& cmbClassType.getSelectionModel().getSelectedItem() != null
+						&& cmbDay.getSelectionModel().getSelectedItem() != null
+						&& cmbRoom.getSelectionModel().getSelectedItem() != null
+						&& cmbHour.getSelectionModel().getSelectedItem() != null
+						&& cmbMinute.getSelectionModel().getSelectedItem() != null
+						&& (!tfDuration.getText().isEmpty() ? tfDuration.getText().matches("\\d+") : true)
+						&& (event.getCharacter() != KeyEvent.CHAR_UNDEFINED ? event.getCharacter().matches("\\d") : true) ) {
+					if (!tfParticipants.getText().isEmpty() && !tfParticipants.getText().matches("\\d+")) {
+						okButton.setDisable(true);
+					} else {
+						okButton.setDisable(false);
+					}
+				} else {
+					
+					okButton.setDisable(true);
+				}
+			}
 	}
 
 	private void updatedOkButton() {
@@ -129,11 +171,14 @@ public class EditDialogController  implements Initializable  {
 				cmbDay.getSelectionModel().getSelectedItem() != null &&
 				cmbRoom.getSelectionModel().getSelectedItem() != null &&
 				cmbHour.getSelectionModel().getSelectedItem() != null &&
-				cmbMinute.getSelectionModel().getSelectedItem() != null && 
-				!tfDuration.getText().isEmpty() && tfDuration.getText().matches("\\d+") ) {
+				cmbMinute.getSelectionModel().getSelectedItem() != null) {
 			okButton.setDisable(false);
 		} else {
 			okButton.setDisable(true);
 		}
+	}
+
+	public int getStatus() {
+		return status ;
 	}
 }

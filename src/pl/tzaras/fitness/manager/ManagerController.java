@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,6 +30,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jfxtras.labs.dialogs.MonologFXButton;
@@ -274,9 +277,11 @@ public class ManagerController implements Initializable {
 			controller.setGymClass(newClass,false);
 			controller.setEditDialogStage(stage);
 			stage.showAndWait();
-			mngr.saveClass(controller.getGymClass());
-			populateCurrentWeekData();
-			displayOverview(controller.getGymClass());
+			if (controller.getStatus() == EditDialogController.OK_BUTTON ){
+				mngr.saveClass(controller.getGymClass());
+				populateCurrentWeekData();
+				displayOverview(controller.getGymClass());
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -284,19 +289,18 @@ public class ManagerController implements Initializable {
     	
     }
 
-	public void initialize(URL location, ResourceBundle resources) {
+	public void initialize(URL location, ResourceBundle resources) {		
 		if (populate) {
 			populateTestData();
 		}
 		
 		initializeManagementTab();
-		callendarPane.setVisible(true);
-		callendarPane.getChildren().clear();
 		initializeMainTab();
 		populateCurrentWeekData();
 	}
 
 	private void initializeMainTab() {
+		
 		DateTime now = new DateTime();
 		monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
 		sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
@@ -415,6 +419,8 @@ public class ManagerController implements Initializable {
 			}
 		}
 		
+		
+		
 		//tblClasses.setItems(data);
 	}
 
@@ -427,9 +433,8 @@ public class ManagerController implements Initializable {
 			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
 		}
 		tblTrainers.setItems(data);
-		
-		tblClassType.setEditable(true);
 
+		colClassType.setCellValueFactory(new PropertyValueFactory<GymClassType, String>("name"));
 		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassTypeManager().getClassTypes());
 		for (GymClassType classType : classTypes) {

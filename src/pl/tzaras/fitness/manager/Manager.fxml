@@ -22,12 +22,13 @@
       <tabs>
         <Tab text="Przeglad">
           <content>
-            <AnchorPane id="Content" fx:id="cmb" minHeight="0.0" minWidth="0.0" prefHeight="746.0" prefWidth="1018.0" style="-fx-border-color: #2e8b57;&#10;-fx-border-width: 2px;&#10;">
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="746.0" prefWidth="1018.0">
               <children>
                 <VBox id="VBox" alignment="CENTER" prefHeight="549.0" prefWidth="699.0" spacing="5.0" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="8.0">
                   <children>
-                    <ScrollPane prefHeight="534.0" prefWidth="701.0">
-                      <AnchorPane fx:id="callendarPane" prefHeight="500.0" prefWidth="696.0" />
+                    <ScrollPane minHeight="526.0" minWidth="697.0">
+                      <AnchorPane fx:id="callendarPane" minWidth="696.0" minHeight="500.0" maxWidth="500.0" maxHeight="696.0" prefHeight="524.0" prefWidth="696.0">
+                      </AnchorPane>
                     </ScrollPane>
                     <HBox>
                       <Label text="Kalendarz dla sali:">
