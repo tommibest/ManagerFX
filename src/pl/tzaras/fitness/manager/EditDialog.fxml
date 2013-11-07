@@ -10,7 +10,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane gridLinesVisible="false" hgap="5.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="265.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.EditDialogController">
+<GridPane gridLinesVisible="false" hgap="5.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.EditDialogController">
   <children>
     <Label text="Trener" GridPane.columnIndex="1" GridPane.rowIndex="1" />
     <Label text="Sala" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -19,17 +19,17 @@
     <Label text="Czas trwania" GridPane.columnIndex="1" GridPane.rowIndex="5" />
     <Label text="Ilosc osob" GridPane.columnIndex="1" GridPane.rowIndex="6" />
     <Label graphicTextGap="0.0" text="Typ zajec" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-    <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+    <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
       <children>
         <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
-        <Button fx:id="cancelButton" onMouseClicked="#handleCancel" cancelButton="true" minWidth="80.0" mnemonicParsing="false" text="Cancel" HBox.hgrow="NEVER">
+        <Button fx:id="cancelButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onMouseClicked="#handleCancel" text="Cancel" HBox.hgrow="NEVER">
           <HBox.margin>
             <Insets />
           </HBox.margin>
         </Button>
         <HBox id="HBox" fx:id="okParent" alignment="CENTER">
           <children>
-            <Button fx:id="okButton" onMouseClicked="#updateClass" minWidth="80.0" mnemonicParsing="false" text="Ok" HBox.hgrow="NEVER">
+            <Button fx:id="okButton" minWidth="80.0" mnemonicParsing="false" onMouseClicked="#updateClass" text="Ok" HBox.hgrow="NEVER">
               <HBox.margin>
                 <Insets left="14.0" />
               </HBox.margin>
@@ -41,24 +41,24 @@
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
       </GridPane.margin>
     </HBox>
-    <ComboBox fx:id="cmbClassType" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="0" onAction="#updateDialog"/>
-    <ComboBox fx:id="cmbTrainer" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" onAction="#updateDialog"/>
-    <ComboBox fx:id="cmbRoom" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" onAction="#updateDialog"/>
-    <ComboBox fx:id="cmbDay" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" onAction="#updateDialog"/>
+    <ComboBox fx:id="cmbClassType" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="0" />
+    <ComboBox fx:id="cmbTrainer" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+    <ComboBox fx:id="cmbRoom" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+    <ComboBox fx:id="cmbDay" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
     <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
       <children>
-        <ComboBox fx:id="cmbHour" onAction="#updateDialog"/>
+        <ComboBox fx:id="cmbHour" onAction="#updateDialog" />
         <Label fx:id="lblCollon" text=":">
           <HBox.margin>
             <Insets top="3.0" />
           </HBox.margin>
         </Label>
-        <ComboBox fx:id="cmbMinute" onAction="#updateDialog"/>
+        <ComboBox fx:id="cmbMinute" onAction="#updateDialog" />
       </children>
     </HBox>
     <HBox GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5">
       <children>
-        <TextField fx:id="tfDuration" prefWidth="75.0"/>
+        <TextField fx:id="tfDuration" prefWidth="75.0" />
         <Label text="minut">
           <HBox.margin>
             <Insets left="3.0" top="3.0" />
@@ -66,7 +66,9 @@
         </Label>
       </children>
     </HBox>
-    <TextField fx:id="tfParticipants" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6"/>
+    <TextField fx:id="tfParticipants" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" />
+    <Label fx:id="lblNumberOfWeeks" prefWidth="84.0" text="Ilosc tygodni" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+    <TextField fx:id="tfNumberOfWeeks" prefWidth="75.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
   </children>
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER" maxWidth="0.0" minWidth="-Infinity" prefWidth="0.0" />
@@ -77,6 +79,7 @@
     <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
   </padding>
   <rowConstraints>
+    <RowConstraints maxHeight="21.0" minHeight="-Infinity" prefHeight="21.0" vgrow="NEVER" />
     <RowConstraints maxHeight="21.0" minHeight="-Infinity" prefHeight="21.0" vgrow="NEVER" />
     <RowConstraints maxHeight="21.0" minHeight="-Infinity" prefHeight="21.0" vgrow="NEVER" />
     <RowConstraints maxHeight="21.0" minHeight="-Infinity" prefHeight="21.0" vgrow="NEVER" />

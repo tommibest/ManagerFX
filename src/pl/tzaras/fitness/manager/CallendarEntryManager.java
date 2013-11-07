@@ -39,4 +39,11 @@ public class CallendarEntryManager {
 		}
 	}
 
+	public void refreshEntries() {
+		for (CallendarEntry ce : entries.values()) {
+			ce.update();
+		}
+		
+	}
+
 }

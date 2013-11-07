@@ -1,6 +1,8 @@
 package pl.tzaras.fitness.manager.db;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +20,12 @@ import pl.tzaras.fitness.manager.utils.HibernateUtil;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 public class GymClassTypeManager {
+	
+	public class CustomComparator implements Comparator<TypeWrapper> {
+	    public int compare(TypeWrapper o1, TypeWrapper o2) {
+	        return o1.getClassType().getName().compareTo(o2.getClassType().getName());
+	    }
+	}
 	
 	private List<GymClassType> classTypes;
 	private List<TypeWrapper> wrappedTypes;
@@ -147,6 +155,8 @@ public class GymClassTypeManager {
 		for (GymClassType classType : classTypes) {
 			wrapped.add(new TypeWrapper(classType));
 		}
+		
+		Collections.sort(wrapped, new CustomComparator());
 		return wrapped;
 	}
 	

@@ -2,7 +2,6 @@ package pl.tzaras.fitness.manager.db.data;
 
 // Generated Oct 13, 2013 8:20:36 PM by Hibernate Tools 3.4.0.CR1
 
-import org.jadira.usertype.dateandtime.joda.PersistentDateTime;
 import org.joda.time.DateTime;
 
 /**

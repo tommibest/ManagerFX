@@ -29,11 +29,14 @@ public class CallendarEntry extends Button {
 	}
 	
 	public void update(){
+		setText(gymClass.getClassType().getName()+"\n"+gymClass.getClassTrainer().getSurrname());
 		double hourHeight = mController.getCallendarPane().getPrefHeight() / (ManagerUtils.endHour-ManagerUtils.startHour);
 		setPrefSize(87.0, gymClass.getDuration()*(hourHeight/60));
 		double posY = GUIHelper.getHeaderHeight() + ((gymClass.getStartTime().getHourOfDay()-ManagerUtils.startHour) + (gymClass.getStartTime().getMinuteOfHour()/60.0))*hourHeight;
 		AnchorPane.setTopAnchor(this, posY);
+		System.out.println("left anchor: "+  gymClass.getStartTime().getDayOfWeek()*87.0);
 		AnchorPane.setLeftAnchor(this, gymClass.getStartTime().getDayOfWeek()*87.0);
+		
 		super.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent e) {
 		        mController.displayOverview(gymClass);

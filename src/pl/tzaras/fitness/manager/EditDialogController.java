@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -29,6 +30,9 @@ public class EditDialogController  implements Initializable  {
 	
 	@FXML private TextField tfDuration;
 	@FXML private TextField tfParticipants;
+	@FXML private TextField tfNumberOfWeeks;
+	
+	@FXML private Label lblNumberOfWeeks;
 	
 	@FXML private ComboBox<TrainerWrapper> cmbTrainer;
 	@FXML private ComboBox<TypeWrapper> cmbClassType;
@@ -52,16 +56,25 @@ public class EditDialogController  implements Initializable  {
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(cmbClassType);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbRoom);
+		tfParticipants.setText("0");
 		okButton.setDisable(true);
 	}
 	
 	@FXML protected void updateClass(MouseEvent event) {
 		
+		tfNumberOfWeeks.setStyle("-fx-border-style: none;");
+		tfParticipants.setStyle("-fx-border-style: none;");
+		tfDuration.setStyle("-fx-border-style: none;");
 		if (!tfDuration.getText().matches("\\d+")) {
+			tfDuration.setStyle("-fx-border-style: solid; -fx-border-color:red;");
 			GUIHelper.cannotDelete("Czas trwania zajęć musi być liczbą");
-		} else if (!tfParticipants.getText().matches("\\d+")) {
-			GUIHelper.cannotDelete("Ilość uczestników musi być liczbą");
-		} else {
+		} else if ( !tfParticipants.getText().matches("\\d+") ) {
+			tfParticipants.setStyle("-fx-border-style: solid; -fx-border-color:red;");
+			GUIHelper.cannotDelete("Ilość uczestników musi być liczbą");		
+		} else if ( tfNumberOfWeeks.isVisible() && !tfNumberOfWeeks.getText().matches("\\d+") ) {
+			tfNumberOfWeeks.setStyle("-fx-border-style: solid; -fx-border-color:red");
+			GUIHelper.cannotDelete("Ilość tygodni musi być liczbą");
+		} else 	{
 
 			gymClass.setClassRoom(cmbRoom.getSelectionModel().getSelectedItem()
 					.getRoom());
@@ -74,6 +87,7 @@ public class EditDialogController  implements Initializable  {
 					.withDayOfWeek(ManagerUtils.dayToInt(cmbDay.getValue()))
 					.withHourOfDay(Integer.valueOf(cmbHour.getValue()))
 					.withMinuteOfHour(Integer.valueOf(cmbMinute.getValue())));
+			System.out.println("!!!!!!!!! Start time: " + gymClass.getStartTime().toString());
 			gymClass.setDuration(Long.valueOf(tfDuration.getText()));
 			int participants = tfParticipants.getText().isEmpty() ? 0 : Integer
 					.valueOf(tfParticipants.getText());
@@ -97,6 +111,8 @@ public class EditDialogController  implements Initializable  {
 
 		editMode = initialize;
 		if (initialize) {
+			tfNumberOfWeeks.setVisible(false);
+			lblNumberOfWeeks.setVisible(false);
 			for (TrainerWrapper tw : cmbTrainer.getItems()) {
 				if (tw.getGymTrainer().getTrainerId() == gymClass
 						.getClassTrainer().getTrainerId()) {
@@ -122,12 +138,17 @@ public class EditDialogController  implements Initializable  {
 			cmbDay.getSelectionModel().select(
 					ManagerUtils.intToWeekDay(gymClass.getStartTime()
 							.getDayOfWeek()));
+			int hour = gymClass.getStartTime().getHourOfDay();
 			cmbHour.getSelectionModel().select(
-					String.valueOf(gymClass.getStartTime().getHourOfDay()));
+					hour < 10 ? "0"+String.valueOf(hour) : String.valueOf(hour));
+			int minute = gymClass.getStartTime().getMinuteOfHour();
 			cmbMinute.getSelectionModel().select(
-					String.valueOf(gymClass.getStartTime().getMinuteOfHour()));
+					minute < 10 ? "0"+String.valueOf(minute) : String.valueOf(minute));
 			tfDuration.setText(String.valueOf(gymClass.getDuration()));
 			tfParticipants.setText(String.valueOf(gymClass.getParticipants()));
+		} else {
+			tfNumberOfWeeks.setVisible(true);
+			lblNumberOfWeeks.setVisible(true);
 		}
 	}
 
@@ -180,5 +201,9 @@ public class EditDialogController  implements Initializable  {
 
 	public int getStatus() {
 		return status ;
+	}
+
+	public int getRepetition() {
+		return Integer.valueOf(tfNumberOfWeeks.getText());
 	}
 }

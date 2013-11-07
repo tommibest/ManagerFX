@@ -12,10 +12,10 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -30,10 +31,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import jfxtras.labs.dialogs.MonologFXButton;
 
 import org.joda.time.DateTime;
@@ -135,6 +135,9 @@ public class ManagerController implements Initializable {
     @FXML private TextField tfSearchResult;
 	
     @FXML private AnchorPane callendarPane;
+    
+    @FXML private CheckBox chbPension;
+    @FXML private TextField tfPension;
     
 	DateTime monday;
 	DateTime sunday;
@@ -278,7 +281,14 @@ public class ManagerController implements Initializable {
 			controller.setEditDialogStage(stage);
 			stage.showAndWait();
 			if (controller.getStatus() == EditDialogController.OK_BUTTON ){
-				mngr.saveClass(controller.getGymClass());
+				GymClass gClass =controller.getGymClass(); 
+				mngr.saveClass(gClass);
+				for (int i=0; i<controller.getRepetition(); i++){
+					GymClass classCopy = mngr.makeCopy(gClass);
+					classCopy.setStartTime(gClass.getStartTime().plusWeeks(i+1));
+					classCopy.setParticipants(0);
+					mngr.saveClass(classCopy);
+				}
 				populateCurrentWeekData();
 				displayOverview(controller.getGymClass());
 			}
@@ -302,8 +312,9 @@ public class ManagerController implements Initializable {
 	private void initializeMainTab() {
 		
 		DateTime now = new DateTime();
-		monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
-		sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
+		monday = now.withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
+		sunday = monday.plusWeeks(1);
+		//sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
 		displaySelectedWeek();
 		initializeCalendarView();
 		populateCurrentWeekData();
@@ -433,7 +444,36 @@ public class ManagerController implements Initializable {
 			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
 		}
 		tblTrainers.setItems(data);
-
+		tblTrainers.setEditable(true);
+		Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>> trainerCellFactory =
+	              new Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>>() {
+	                  public TableCell<GymTrainer,String> call(TableColumn<GymTrainer,String> p) {
+	                      return new EditingCell<GymTrainer,String>();
+	                  }
+	              };
+	    colName.setCellFactory(trainerCellFactory);
+	    colSurrname.setCellFactory(trainerCellFactory);
+	    colName.setOnEditCommit(
+	           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
+	                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
+	                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
+	                              trainer.setName(t.getNewValue());
+	                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname());
+	                              CallendarEntryManager.getInstance().refreshEntries();
+	                              populateCurrentWeekData();
+	                          }
+	                      });
+	    colSurrname.setOnEditCommit(
+		           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
+		                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
+		                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
+		                              trainer.setSurrname(t.getNewValue());
+		                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname());
+		                              CallendarEntryManager.getInstance().refreshEntries();
+		                              populateCurrentWeekData();
+		                          }
+		                      });		
+		
 		colClassType.setCellValueFactory(new PropertyValueFactory<GymClassType, String>("name"));
 		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassTypeManager().getClassTypes());
@@ -441,6 +481,26 @@ public class ManagerController implements Initializable {
 			System.out.println(classType.getName());
 		}
 		tblClassType.setItems(classTypes);
+		tblClassType.setEditable(true);
+		Callback<TableColumn<GymClassType,String>, TableCell<GymClassType,String>> cellFactory =
+	              new Callback<TableColumn<GymClassType,String>, TableCell<GymClassType,String>>() {
+	                  public TableCell<GymClassType,String> call(TableColumn<GymClassType,String> p) {
+	                      return new EditingCell<GymClassType,String>();
+	                  }
+	              };
+	    colClassType.setCellFactory(cellFactory);
+	    colClassType.setOnEditCommit(
+	           new EventHandler<TableColumn.CellEditEvent<GymClassType, String>>() {
+	                          public void handle(TableColumn.CellEditEvent<GymClassType, String> t){
+	                        	  GymClassType type = (GymClassType)t.getTableView().getItems().get(
+	                                      t.getTablePosition().getRow()); 
+	                              type.setName(t.getNewValue());
+	                              DataManager.getInstance().getGymClassTypeManager().updateClassType(type.getClassId(), type.getName());
+	                              CallendarEntryManager.getInstance().refreshEntries();
+	                              populateCurrentWeekData();
+	                          }
+	                      });
+	              //---
 		
 		colRoomName.setCellValueFactory(new PropertyValueFactory<GymRoom, String>("name"));
 		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(DataManager.getInstance().getGymRoomManager().getRooms());
@@ -448,6 +508,25 @@ public class ManagerController implements Initializable {
 			System.out.println(classType.getName());
 		}
 		tblRoom.setItems(rooms);
+		tblRoom.setEditable(true);
+		Callback<TableColumn<GymRoom,String>, TableCell<GymRoom,String>> roomCellFactory =
+	              new Callback<TableColumn<GymRoom,String>, TableCell<GymRoom,String>>() {
+	                  public TableCell<GymRoom,String> call(TableColumn<GymRoom,String> p) {
+	                      return new EditingCell<GymRoom,String>();
+	                  }
+	              };
+	    colRoomName.setCellFactory(roomCellFactory);
+	    colRoomName.setOnEditCommit(
+	    new EventHandler<TableColumn.CellEditEvent<GymRoom, String>>() {
+            public void handle(TableColumn.CellEditEvent<GymRoom, String> t){
+          	    GymRoom room = (GymRoom)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
+                room.setName(t.getNewValue());
+                DataManager.getInstance().getGymRoomManager().updateClass(room.getID(), room.getName());
+                CallendarEntryManager.getInstance().refreshEntries();
+                populateCurrentWeekData();
+            }
+        });
+	    
 	}
 
 	private void populateTestData() {
@@ -556,7 +635,9 @@ public class ManagerController implements Initializable {
 			} else if (source.getId().compareTo("chbToHour") == 0) {
 				cmbToHour.setDisable(false);
 				cmbToMinute.setDisable(false);
-			}  
+			} else if (source.getId().compareTo("chbPension") == 0 ) {
+				tfPension.setDisable(false);
+			}
 		} else {
 			if (source.getId().compareTo("chbTrainer") == 0) {
 				cmbSearchTrainer.setDisable(true);
@@ -574,12 +655,52 @@ public class ManagerController implements Initializable {
 			} else if (source.getId().compareTo("chbToHour") == 0) {
 				cmbToHour.setDisable(true);
 				cmbToMinute.setDisable(true);
+			} else if (source.getId().compareTo("chbPension") == 0 ) {
+				tfPension.setDisable(true);
 			}
 		}
 		
 	}
 	
-	@FXML protected void handleSearch(MouseEvent event) {
+	@FXML protected void handleCalculate(ActionEvent event) {
+		tfSearchResult.setText( "" );
+		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses();
+		ArrayList<GymClass> result = new ArrayList<GymClass>();
+		if ( chbTrainer.isSelected() && chbFromDate.isSelected() && chbToDate.isSelected() && chbPension.isSelected() ) {
+			for (GymClass gClass : allClasses) { 
+				if ( chbTrainer.isSelected() ) {
+					if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer().getTrainerId() ) {
+						continue;
+					}
+					if (chbFromDate.isSelected()) {
+						String [] date = tfFromDate.getText().split("-");
+						DateTime fromDate = new DateTime(Integer.valueOf(date[2]),Integer.valueOf(date[1]),Integer.valueOf(date[0]),0,0,0,0);
+						if ( !gClass.getStartTime().isAfter(fromDate.getMillis()) ) {
+							continue;
+						}	
+					}
+					if (chbToDate.isSelected()) {
+						String [] date = tfToDate.getText().split("-");
+						DateTime toDate = new DateTime(Integer.valueOf(date[2]),Integer.valueOf(date[1]),Integer.valueOf(date[0]),23,59,59,999);
+						if ( !gClass.getStartTime().isBefore(toDate.getMillis()) ) {
+							continue;
+						}
+					}
+					result.add(gClass);
+				}
+			}
+			
+			int totalNumber = 0;
+			for (GymClass gClass : result) {
+				totalNumber += gClass.getDuration();
+			}
+			System.out.println("Duration: " + totalNumber);
+			double pension = (totalNumber/60) * Double.parseDouble(tfPension.getText());
+			tfSearchResult.setText( String.valueOf(pension) );
+		}
+	}
+	
+	@FXML protected void handleSearch(ActionEvent event) {
 		tfSearchResult.setText( "" );
 		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses();
 		ArrayList<GymClass> result = new ArrayList<GymClass>();

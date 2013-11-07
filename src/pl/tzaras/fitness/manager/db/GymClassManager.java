@@ -163,6 +163,17 @@ public class GymClassManager {
 		
 	}
 
+	public GymClass makeCopy(GymClass gClass) {
+		GymClass newClass = new GymClass();
+		newClass.setClassRoom(gClass.getClassRoom());
+		newClass.setClassTrainer(gClass.getClassTrainer());
+		newClass.setClassType(gClass.getClassType());
+		newClass.setDuration(gClass.getDuration());
+		newClass.setParticipants(gClass.getParticipants());
+		newClass.setStartTime(gClass.getStartTime());
+		return newClass;
+	}
+
 	/*
 	public void initializeCombo(ComboBox<RoomWrapper> classTypeCombo) {
 		classTypeCombo.getItems().setAll(wrapRoom(getRooms()));		

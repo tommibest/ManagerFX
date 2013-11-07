@@ -1,6 +1,8 @@
 package pl.tzaras.fitness.manager.db;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,12 @@ import pl.tzaras.fitness.manager.utils.HibernateUtil;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 public class GymRoomManager {
+
+	public class CustomComparator implements Comparator<RoomWrapper> {
+	    public int compare(RoomWrapper o1, RoomWrapper o2) {
+	        return o1.getName().compareTo(o2.getName());
+	    }
+	}
 	
 	public static final String DEFAULT = "Dowolna";
 	
@@ -110,6 +118,8 @@ public class GymRoomManager {
 		for (GymRoom classType : rooms) {
 			wrapped.add(new RoomWrapper(classType));
 		}
+		
+		Collections.sort(wrapped, new CustomComparator());
 		return wrapped;
 	}
 

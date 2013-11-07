@@ -1,23 +1,30 @@
 package pl.tzaras.fitness.manager.db;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import javafx.scene.control.ComboBox;
-import javafx.util.Callback;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
+import pl.tzaras.fitness.manager.CallendarEntryManager;
 import pl.tzaras.fitness.manager.db.data.GymTrainer;
 import pl.tzaras.fitness.manager.utils.HibernateUtil;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
 
 public class GymTrainerManager {
 
+	public class CustomComparator implements Comparator<TrainerWrapper> {
+	    public int compare(TrainerWrapper o1, TrainerWrapper o2) {
+	        return o1.getGymTrainer().getSurrname().compareTo(o2.getGymTrainer().getSurrname());
+	    }
+	}
+	
 	private List<GymTrainer> trainers;
 	private List<TrainerWrapper> wrappedTrainers;
 	
@@ -85,6 +92,7 @@ public class GymTrainerManager {
 					break;
 				}
 			}
+			CallendarEntryManager.getInstance().refreshEntries();
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
@@ -133,10 +141,10 @@ public class GymTrainerManager {
 
 	private List<TrainerWrapper> wrapTrainers(List<GymTrainer> trainers) {
 		ArrayList<TrainerWrapper> newList = new ArrayList<TrainerWrapper>();
-		
 		for (GymTrainer trainer : trainers){
 			newList.add(new TrainerWrapper(trainer));
 		}
+		Collections.sort(newList, new CustomComparator());
 		
 		return newList;
 	}
