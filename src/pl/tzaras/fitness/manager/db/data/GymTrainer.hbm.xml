@@ -1,18 +1,28 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Oct 5, 2013 10:02:05 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="pl.tzaras.fitness.manager.db.data.GymTrainer" table="GYMTRAINER">
-        <id name="trainerId" type="long">
-            <column name="TRAINER_ID" />
-            <generator class="increment"/>
-        </id>
-        <property name="name" type="java.lang.String">
-            <column name="NAME" />
-        </property>
-        <property name="surrname" type="java.lang.String">
-            <column name="SURRNAME" />
-        </property>
-    </class>
+ <class name="pl.tzaras.fitness.manager.db.data.GymTrainer" table="GYMTRAINER">
+  <id name="trainerId" type="long">
+   <column name="TRAINER_ID"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="name" type="java.lang.String">
+   <column name="NAME"/>
+  </property>
+  <property generated="never" lazy="false" name="surrname" type="java.lang.String">
+   <column name="SURRNAME"/>
+  </property>
+  <property column="RATE_OF_PAY" name="rateOfPay" type="double"/>
+  <set name="classes" table="class_trainer"
+  	inverse="false" lazy="true" fetch="select" cascade="all" >
+  	<key>
+      <column name="TRAINER_ID" not-null="true" />
+    </key>
+    <many-to-many entity-name="pl.tzaras.fitness.manager.db.data.GymClass">
+      <column name="CLASSID" not-null="true" />
+    </many-to-many>
+  </set>
+ </class>
 </hibernate-mapping>

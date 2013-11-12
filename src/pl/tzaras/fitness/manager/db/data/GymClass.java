@@ -1,7 +1,9 @@
 package pl.tzaras.fitness.manager.db.data;
 
-// Generated Oct 13, 2013 8:20:36 PM by Hibernate Tools 3.4.0.CR1
+// Generated Nov 11, 2013 11:05:25 PM by Hibernate Tools 4.0.0
 
+import java.util.HashSet;
+import java.util.Set;
 import org.joda.time.DateTime;
 
 /**
@@ -11,31 +13,28 @@ public class GymClass implements java.io.Serializable {
 
 	private long classId;
 	private GymRoom classRoom;
-	private GymTrainer classTrainer;
 	private GymClassType classType;
 	private DateTime startTime;
 	private long duration;
 	private int participants;
+	private Set<GymTrainer> trainers = new HashSet<GymTrainer>(0);
 
 	public GymClass() {
 	}
 
-	public GymClass(GymRoom classRoom, GymTrainer classTrainer,
-			GymClassType classType) {
+	public GymClass(GymRoom classRoom, GymClassType classType) {
 		this.classRoom = classRoom;
-		this.classTrainer = classTrainer;
 		this.classType = classType;
 	}
 
-	public GymClass(GymRoom classRoom, GymTrainer classTrainer,
-			GymClassType classType, DateTime startTime,
-			long duration, int participants) {
+	public GymClass(GymRoom classRoom, GymClassType classType, DateTime startTime, long duration,
+			int participants, Set<GymTrainer> trainers) {
 		this.classRoom = classRoom;
-		this.classTrainer = classTrainer;
 		this.classType = classType;
 		this.startTime = startTime;
 		this.duration = duration;
 		this.participants = participants;
+		this.trainers = trainers;
 	}
 
 	public long getClassId() {
@@ -52,14 +51,6 @@ public class GymClass implements java.io.Serializable {
 
 	public void setClassRoom(GymRoom classRoom) {
 		this.classRoom = classRoom;
-	}
-
-	public GymTrainer getClassTrainer() {
-		return this.classTrainer;
-	}
-
-	public void setClassTrainer(GymTrainer classTrainer) {
-		this.classTrainer = classTrainer;
 	}
 
 	public GymClassType getClassType() {
@@ -92,6 +83,14 @@ public class GymClass implements java.io.Serializable {
 
 	public void setParticipants(int participants) {
 		this.participants = participants;
+	}
+
+	public Set<GymTrainer> getTrainers() {
+		return this.trainers;
+	}
+
+	public void setTrainers(Set<GymTrainer> trainers) {
+		this.trainers = trainers;
 	}
 
 }

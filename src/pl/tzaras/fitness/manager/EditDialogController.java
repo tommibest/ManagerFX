@@ -1,13 +1,18 @@
 package pl.tzaras.fitness.manager;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import pl.tzaras.fitness.manager.db.DataManager;
 import pl.tzaras.fitness.manager.db.RoomWrapper;
 import pl.tzaras.fitness.manager.db.TrainerWrapper;
 import pl.tzaras.fitness.manager.db.TypeWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClass;
+import pl.tzaras.fitness.manager.db.data.GymTrainer;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,6 +40,7 @@ public class EditDialogController  implements Initializable  {
 	@FXML private Label lblNumberOfWeeks;
 	
 	@FXML private ComboBox<TrainerWrapper> cmbTrainer;
+	@FXML private ComboBox<TrainerWrapper> cmbTrainer2;
 	@FXML private ComboBox<TypeWrapper> cmbClassType;
 	@FXML private ComboBox<String> cmbDay;
 	@FXML private ComboBox<RoomWrapper> cmbRoom;
@@ -54,6 +60,7 @@ public class EditDialogController  implements Initializable  {
 		ManagerUtils.fillWithMinutes(cmbMinute);
 		
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
+		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer2);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(cmbClassType);
 		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbRoom);
 		tfParticipants.setText("0");
@@ -78,11 +85,12 @@ public class EditDialogController  implements Initializable  {
 
 			gymClass.setClassRoom(cmbRoom.getSelectionModel().getSelectedItem()
 					.getRoom());
-			gymClass.setClassTrainer(cmbTrainer.getSelectionModel()
-					.getSelectedItem().getGymTrainer());
+			Set<GymTrainer> trainers = new HashSet<GymTrainer>();
+			trainers.add(cmbTrainer.getSelectionModel().getSelectedItem().getGymTrainer());
+			trainers.add(cmbTrainer2.getSelectionModel().getSelectedItem().getGymTrainer());
+			gymClass.setTrainers(trainers);
 			gymClass.setClassType(cmbClassType.getSelectionModel()
 					.getSelectedItem().getClassType());
-
 			gymClass.setStartTime(gymClass.getStartTime()
 					.withDayOfWeek(ManagerUtils.dayToInt(cmbDay.getValue()))
 					.withHourOfDay(Integer.valueOf(cmbHour.getValue()))
@@ -113,14 +121,21 @@ public class EditDialogController  implements Initializable  {
 		if (initialize) {
 			tfNumberOfWeeks.setVisible(false);
 			lblNumberOfWeeks.setVisible(false);
+			Object[] trainers = gymClass.getTrainers().toArray();
 			for (TrainerWrapper tw : cmbTrainer.getItems()) {
-				if (tw.getGymTrainer().getTrainerId() == gymClass
-						.getClassTrainer().getTrainerId()) {
+				if (tw.getGymTrainer().equals(trainers[0])) {
 					cmbTrainer.getSelectionModel().select(tw);
 					break;
 				}
 			}
 
+			for (TrainerWrapper tw : cmbTrainer2.getItems()) {
+				if (tw.getGymTrainer().equals(trainers[0])) {
+					cmbTrainer2.getSelectionModel().select(tw);
+					break;
+				}
+			}
+			
 			for (RoomWrapper rw : cmbRoom.getItems()) {
 				if (rw.getRoom().getID() == gymClass.getClassRoom().getID()) {
 					cmbRoom.getSelectionModel().select(rw);
