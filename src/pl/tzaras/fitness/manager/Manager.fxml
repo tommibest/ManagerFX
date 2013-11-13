@@ -27,8 +27,7 @@
                 <VBox id="VBox" alignment="CENTER" prefHeight="549.0" prefWidth="699.0" spacing="5.0" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="8.0">
                   <children>
                     <ScrollPane minHeight="526.0" minWidth="697.0">
-                      <AnchorPane fx:id="callendarPane" minWidth="696.0" minHeight="500.0" maxWidth="500.0" maxHeight="696.0" prefHeight="524.0" prefWidth="696.0">
-                      </AnchorPane>
+                      <AnchorPane fx:id="callendarPane" maxHeight="696.0" maxWidth="500.0" minHeight="500.0" minWidth="696.0" prefHeight="524.0" prefWidth="696.0" />
                     </ScrollPane>
                     <HBox>
                       <Label text="Kalendarz dla sali:">
@@ -147,13 +146,10 @@
                           <ComboBox fx:id="cmbToHour" disable="true" layoutX="88.0" layoutY="184.0" prefWidth="61.0" />
                           <Label layoutX="153.0" layoutY="182.0" text=":" />
                           <ComboBox fx:id="cmbToMinute" disable="true" layoutX="162.0" layoutY="184.0" prefWidth="61.0" />
-                          
                           <CheckBox fx:id="chbPension" layoutX="6.0" layoutY="210.0" mnemonicParsing="false" onAction="#enableWidget" text="Za godzine" />
                           <TextField fx:id="tfPension" disable="true" layoutX="86.0" layoutY="207.0" pickOnBounds="false" prefWidth="120.0" promptText="" text="10" />
-                          
                           <Button fx:id="btnSearch" layoutX="9.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleSearch" prefWidth="254.0" text="Oblicz ilość uczestników" />
                           <Button fx:id="btnCalculate" layoutX="9.0" layoutY="255.0" mnemonicParsing="false" onAction="#handleCalculate" prefWidth="254.0" text="Oblicz pensję" />
-                          
                           <Label layoutX="14.0" layoutY="284.0" text="Wynik zapytania: " />
                           <TextField fx:id="tfSearchResult" editable="false" layoutX="132.0" layoutY="281.0" prefWidth="127.0" promptText="ilosc osob" />
                         </children>
@@ -183,25 +179,21 @@
                         <VBox>
                           <TableView fx:id="tblTrainers" prefHeight="0.0" VBox.vgrow="ALWAYS">
                             <columns>
-                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Imię" fx:id="colName" />
-                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="202.0" text="Nazwisko" fx:id="colSurrname" />
+                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="160.0" text="Imię" fx:id="colName" />
+                              <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="160.0" text="Nazwisko" fx:id="colSurrname" />
+                              <TableColumn prefWidth="84.0" text="Stawka" fx:id="colRate" />
                             </columns>
                             <VBox.margin>
                               <Insets bottom="2.0" left="5.0" right="5.0" top="5.0" fx:id="top_elem" />
                             </VBox.margin>
                           </TableView>
-                          <!-- <HBox VBox.margin="$middle_elem">
-                            <Label text="Imię" />
-                            
-                            <Label text="Nazwisko" />
-                            
-                          </HBox> -->
                           <BorderPane>
                             <left>
                               <HBox>
                                 <VBox>
                                   <TextField fx:id="txtFieldInstructorName" prefWidth="149.0" promptText="Imie" />
                                   <TextField fx:id="txtFieldInstructorSurrname" prefWidth="149.0" promptText="Nazwisko" />
+                                  <TextField fx:id="txtFieldInstructorRate" prefWidth="149.0" promptText="Stawka" />
                                 </VBox>
                                 <Button fx:id="btnAddInstructor" alignment="BOTTOM_CENTER" contentDisplay="TOP" onMouseClicked="#addInstructor" text="Dodaj" wrapText="false" HBox.hgrow="NEVER">
                                   <HBox.margin>

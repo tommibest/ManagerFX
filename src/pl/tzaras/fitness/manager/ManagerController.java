@@ -63,6 +63,7 @@ public class ManagerController implements Initializable {
     
 	@FXML private TextField txtFieldInstructorName;
 	@FXML private TextField txtFieldInstructorSurrname;
+	@FXML private TextField txtFieldInstructorRate;
 	@FXML private TextField tfClassTypeName;
 	@FXML private TextField tfRoomName;
 	@FXML private TextField tfDuration;
@@ -87,6 +88,7 @@ public class ManagerController implements Initializable {
 	@FXML private TableView<GymTrainer> tblTrainers;
 	@FXML private TableColumn<GymTrainer, String> colName;
 	@FXML private TableColumn<GymTrainer, String> colSurrname;
+	@FXML private TableColumn<GymTrainer, Double> colRate;
 	
 	@FXML private TableView<GymClass> tblClasses;
 	@FXML private TableColumn<GymClass, Long> colClassId;
@@ -147,7 +149,9 @@ public class ManagerController implements Initializable {
 	@FXML protected void addInstructor(MouseEvent arg0) {
     	if ( !txtFieldInstructorName.getText().isEmpty() && !txtFieldInstructorSurrname.getText().isEmpty() ) {
     		GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager();
-    		mngr.saveTrainer(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText());
+    		double rateOfPay = 0.0;
+    		if (!txtFieldInstructorRate.getText().isEmpty()) rateOfPay = Double.parseDouble(txtFieldInstructorRate.getText());
+    		mngr.saveTrainer(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText(),rateOfPay);
             System.out.println("Adding instructor: "+ txtFieldInstructorName.getText()  + ", " + txtFieldInstructorSurrname.getText() );
             txtFieldInstructorName.setText("");
             txtFieldInstructorSurrname.setText("");
@@ -436,45 +440,66 @@ public class ManagerController implements Initializable {
 	}
 
 	private void initializeManagementTab() {
-		colName.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("name"));
-		colSurrname.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("surrname"));
-		ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
-				.getInstance().getGymTrainerManager().getTrainers());
+		ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager.getInstance().getGymTrainerManager().getTrainers());
 		for (GymTrainer trainer : data) {
 			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
 		}
+		
 		tblTrainers.setItems(data);
 		tblTrainers.setEditable(true);
-		Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>> trainerCellFactory =
+		Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>> trainerStrintCellFactory =
 	              new Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>>() {
 	                  public TableCell<GymTrainer,String> call(TableColumn<GymTrainer,String> p) {
 	                      return new EditingCell<GymTrainer,String>();
 	                  }
 	              };
-	    colName.setCellFactory(trainerCellFactory);
-	    colSurrname.setCellFactory(trainerCellFactory);
+	    colName.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("name"));
+	    colName.setCellFactory(trainerStrintCellFactory);
 	    colName.setOnEditCommit(
 	           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
 	                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
 	                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
 	                              trainer.setName(t.getNewValue());
-	                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname());
+	                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname(), trainer.getRateOfPay());
 	                              CallendarEntryManager.getInstance().refreshEntries();
 	                              populateCurrentWeekData();
 	                          }
 	                      });
+	    
+	    colSurrname.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("surrname"));
+	    colSurrname.setCellFactory(trainerStrintCellFactory);
 	    colSurrname.setOnEditCommit(
 		           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
 		                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
 		                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
 		                              trainer.setSurrname(t.getNewValue());
-		                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname());
+		                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname(), trainer.getRateOfPay());
 		                              CallendarEntryManager.getInstance().refreshEntries();
 		                              populateCurrentWeekData();
 		                          }
 		                      });		
 		
-		colClassType.setCellValueFactory(new PropertyValueFactory<GymClassType, String>("name"));
+	    Callback<TableColumn<GymTrainer, Double>, TableCell<GymTrainer, Double>> trainerDoubleCellFactory =
+	    		new Callback<TableColumn<GymTrainer,Double>, TableCell<GymTrainer,Double>>() {
+
+					public TableCell<GymTrainer, Double> call(TableColumn<GymTrainer, Double> arg0) {
+						return new EditingCell<GymTrainer, Double>();
+					}
+	    			
+	    		};
+	    colRate.setCellValueFactory(new PropertyValueFactory<GymTrainer, Double>("rateOfPay"));
+	    colRate.setCellFactory(trainerDoubleCellFactory);
+	    colRate.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<GymTrainer, Double>>() {
+		                          public void handle(TableColumn.CellEditEvent<GymTrainer, Double> t){
+		                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
+		                              trainer.setRateOfPay(t.getNewValue());
+		                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname(), trainer.getRateOfPay());
+		                              CallendarEntryManager.getInstance().refreshEntries();
+		                              populateCurrentWeekData();
+		                          }
+		                      });
+		
+	    colClassType.setCellValueFactory(new PropertyValueFactory<GymClassType, String>("name"));
 		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(DataManager
 				.getInstance().getGymClassTypeManager().getClassTypes());
 		for (GymClassType classType : classTypes) {
@@ -530,9 +555,9 @@ public class ManagerController implements Initializable {
 	}
 
 	private void populateTestData() {
-		DataManager.getInstance().getGymTrainerManager().saveTrainer("Szymon", "Wesołowski");
-		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Fitness");
-		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Mental");
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Szymon", "Wesołowski", 0.0);
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Fitness", 0.0);
+		DataManager.getInstance().getGymTrainerManager().saveTrainer("Trener", "Mental", 0.0);
 		
 		DataManager.getInstance().getGymClassTypeManager().addClassType("FITNESS");
 		DataManager.getInstance().getGymClassTypeManager().addClassType("ZUMBA");

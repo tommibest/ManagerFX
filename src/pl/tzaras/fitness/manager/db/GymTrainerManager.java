@@ -33,7 +33,7 @@ public class GymTrainerManager {
 		wrappedTrainers = wrapTrainers(trainers);
 	}
 	
-	public Long saveTrainer(String name, String surrname)
+	public Long saveTrainer(String name, String surrname, double rateOfPay)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -43,6 +43,7 @@ public class GymTrainerManager {
 			GymTrainer trainer = new GymTrainer();
 			trainer.setName(name);
 			trainer.setSurrname(surrname);
+			trainer.setRateOfPay(rateOfPay);
 			instructorId = (Long) session.save(trainer);
 			transaction.commit();
 			trainers.add(trainer);
@@ -73,7 +74,7 @@ public class GymTrainerManager {
 		return trainers;
 	}
 
-	public void updateTrainer(Long trainerId, String name, String surrname)
+	public void updateTrainer(Long trainerId, String name, String surrname, double d)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -82,6 +83,7 @@ public class GymTrainerManager {
 			GymTrainer trainer = (GymTrainer) session.get(GymTrainer.class, trainerId);
 			if (name != null && !name.isEmpty() ) trainer.setName(name);
 			if (surrname != null && !surrname.isEmpty() ) trainer.setSurrname(surrname);
+			trainer.setRateOfPay(d);
 			transaction.commit();
 			
 			for(Iterator<GymTrainer> i = trainers.iterator(); i.hasNext(); ){
