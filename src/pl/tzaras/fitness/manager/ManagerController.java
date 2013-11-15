@@ -789,8 +789,10 @@ public class ManagerController implements Initializable {
 		lblOverviewRoom.setText(gymClass.getClassRoom().getName());
 		StringBuilder trainers = new StringBuilder();
 		for (GymTrainer trainer : gymClass.getTrainers()) {
+			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
 			trainers.append(trainer.getName()).append(", ").append(trainer.getSurrname()).append("\n");
 		}
+		System.out.println("After append: " +  trainers.toString());
 		lblOverviewTrainer.setText(trainers.toString());
 		lblOverviewDay.setText(ManagerUtils.intToWeekDay(gymClass.getStartTime().getDayOfWeek()));
 		lblOverviewHour.setText(ManagerUtils.parseHour(gymClass.getStartTime()));

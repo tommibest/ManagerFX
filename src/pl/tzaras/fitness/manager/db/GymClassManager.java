@@ -1,6 +1,7 @@
 package pl.tzaras.fitness.manager.db;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -171,7 +172,7 @@ public class GymClassManager {
 	public GymClass makeCopy(GymClass gClass) {
 		GymClass newClass = new GymClass();
 		newClass.setClassRoom(gClass.getClassRoom());
-		newClass.setTrainers(gClass.getTrainers());
+		newClass.setTrainers(new HashSet<GymTrainer>(gClass.getTrainers()));
 		newClass.setClassType(gClass.getClassType());
 		newClass.setDuration(gClass.getDuration());
 		newClass.setParticipants(gClass.getParticipants());

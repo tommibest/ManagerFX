@@ -18,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -46,6 +47,8 @@ public class EditDialogController  implements Initializable  {
 	@FXML private ComboBox<RoomWrapper> cmbRoom;
 	@FXML private ComboBox<String> cmbHour;
 	@FXML private ComboBox<String> cmbMinute;
+	
+	@FXML private CheckBox chbTrainer2;
 	
 	@FXML private Button okButton;
 	
@@ -220,5 +223,9 @@ public class EditDialogController  implements Initializable  {
 
 	public int getRepetition() {
 		return Integer.valueOf(tfNumberOfWeeks.getText());
+	}
+	
+	@FXML protected void enableWidget(ActionEvent event) {
+		cmbTrainer2.setDisable(!chbTrainer2.isSelected());
 	}
 }
