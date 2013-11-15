@@ -126,14 +126,22 @@ public class EditDialogController  implements Initializable  {
 			lblNumberOfWeeks.setVisible(false);
 			Object[] trainers = gymClass.getTrainers().toArray();
 			for (TrainerWrapper tw : cmbTrainer.getItems()) {
-				if (tw.getGymTrainer().equals(trainers[0])) {
+				if (tw.getGymTrainer().getTrainerId() == ((GymTrainer) trainers[0]).getTrainerId()) {
 					cmbTrainer.getSelectionModel().select(tw);
 					break;
 				}
 			}
 
+			if (trainers.length == 2) {
+				chbTrainer2.setSelected( true );
+				cmbTrainer2.setDisable( false );
+			} else {
+				chbTrainer2.setSelected( false );
+				cmbTrainer2.setDisable( true );
+			}
+			
 			for (TrainerWrapper tw : cmbTrainer2.getItems()) {
-				if (tw.getGymTrainer().equals(trainers[0])) {
+				if (tw.getGymTrainer().getTrainerId() == ((GymTrainer) trainers[1]).getTrainerId()) {
 					cmbTrainer2.getSelectionModel().select(tw);
 					break;
 				}
