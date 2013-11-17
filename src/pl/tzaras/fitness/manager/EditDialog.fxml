@@ -13,7 +13,7 @@
 <GridPane gridLinesVisible="false" hgap="5.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="325.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.EditDialogController">
   <children>
     <Label text="Trener" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-    <CheckBox fx:id="chbTrainer2" text="Trener II" GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#enableWidget"  />
+    <CheckBox fx:id="chbTrainer2" onAction="#enableWidget" text="Trener II" GridPane.columnIndex="1" GridPane.rowIndex="2" />
     <Label text="Sala" GridPane.columnIndex="1" GridPane.rowIndex="3" />
     <Label prefWidth="43.0" text="Dzien" GridPane.columnIndex="1" GridPane.rowIndex="4" />
     <Label text="Godzina" GridPane.columnIndex="1" GridPane.rowIndex="5" />
@@ -44,7 +44,7 @@
     </HBox>
     <ComboBox fx:id="cmbClassType" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="0" />
     <ComboBox fx:id="cmbTrainer" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-    <ComboBox fx:id="cmbTrainer2" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" disable="true"/>
+    <ComboBox fx:id="cmbTrainer2" onAction="#updateDialog" disable="true" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
     <ComboBox fx:id="cmbRoom" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
     <ComboBox fx:id="cmbDay" onAction="#updateDialog" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
     <HBox maxHeight="-Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
@@ -71,7 +71,6 @@
     <TextField fx:id="tfParticipants" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
     <Label fx:id="lblNumberOfWeeks" prefWidth="84.0" text="Ilosc tygodni" GridPane.columnIndex="1" GridPane.rowIndex="8" />
     <TextField fx:id="tfNumberOfWeeks" prefWidth="75.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-    
   </children>
   <columnConstraints>
     <ColumnConstraints hgrow="NEVER" maxWidth="0.0" minWidth="-Infinity" prefWidth="0.0" />

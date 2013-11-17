@@ -100,9 +100,11 @@ public class ManagerController implements Initializable {
 	@FXML private TableColumn<GymClass, Integer> colParticipants;
 	@FXML private TableColumn<GymClass, Long> colClassDuration; 
 	
+	@FXML private Label lblTrainer2;
 	@FXML private Label lblOverviewType;
 	@FXML private Label lblOverviewRoom;
 	@FXML private Label lblOverviewTrainer;
+	@FXML private Label lblOverviewTrainer1;
 	@FXML private Label lblOverviewDay;
 	@FXML private Label lblOverviewHour;
 	@FXML private Label lblOverviewEnrolled;
@@ -633,6 +635,8 @@ public class ManagerController implements Initializable {
 		lblOverviewType.setText("");
 		lblOverviewRoom.setText("");
 		lblOverviewTrainer.setText("");
+		lblTrainer2.setDisable(true);
+		lblOverviewTrainer1.setText("");
 		lblOverviewDay.setText("");
 		lblOverviewHour.setText("");
 		lblOverviewEnrolled.setText("");
@@ -694,10 +698,11 @@ public class ManagerController implements Initializable {
 		if ( chbTrainer.isSelected() && chbFromDate.isSelected() && chbToDate.isSelected() && chbPension.isSelected() ) {
 			for (GymClass gClass : allClasses) { 
 				if ( chbTrainer.isSelected() ) {
-					if ( !gClass.getTrainers().contains(cmbSearchTrainer.getValue().getGymTrainer()) ) {
-					//if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer().getTrainerId() ) {
+					if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer1().getTrainerId() &&
+						 (gClass.getClassTrainer2() != null && cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer2().getTrainerId() ) )  {
 						continue;
 					}
+					
 					if (chbFromDate.isSelected()) {
 						String [] date = tfFromDate.getText().split("-");
 						DateTime fromDate = new DateTime(Integer.valueOf(date[2]),Integer.valueOf(date[1]),Integer.valueOf(date[0]),0,0,0,0);
@@ -732,10 +737,15 @@ public class ManagerController implements Initializable {
 		ArrayList<GymClass> result = new ArrayList<GymClass>();
 		for (GymClass gClass : allClasses) { 
 			if ( chbTrainer.isSelected() ) {
-				if ( !gClass.getTrainers().contains(cmbSearchTrainer.getValue().getGymTrainer()) ) {
-				//if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer().getTrainerId() ) {
-					continue;
-				}
+				if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer1().getTrainerId() ) { 
+				   if ( gClass.getClassTrainer2() != null ) {
+					   if (cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer2().getTrainerId())  {
+						   continue;
+					   }
+				   } else {
+					   continue;
+				   }
+				} 
 			} 
 			if (chbType.isSelected()) {
 				if (cmbSearchType.getValue().getClassType().getClassId() != gClass.getClassType().getClassId()) {
@@ -787,13 +797,14 @@ public class ManagerController implements Initializable {
 		selected = gymClass;
 		lblOverviewType.setText(gymClass.getClassType().getName());
 		lblOverviewRoom.setText(gymClass.getClassRoom().getName());
-		StringBuilder trainers = new StringBuilder();
-		for (GymTrainer trainer : gymClass.getTrainers()) {
-			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
-			trainers.append(trainer.getName()).append(", ").append(trainer.getSurrname()).append("\n");
+		System.out.println(selected.getClassTrainer1().getName() + ", " + selected.getClassTrainer1().getSurrname());
+		lblOverviewTrainer.setText(selected.getClassTrainer1().getName() + ", " + selected.getClassTrainer1().getSurrname());
+		if (selected.getClassTrainer2() != null) {
+			lblTrainer2.setDisable(false);
+			System.out.println(selected.getClassTrainer2().getName() + ", " + selected.getClassTrainer2().getSurrname());
+			lblOverviewTrainer1.setText(selected.getClassTrainer2().getName() + ", " + selected.getClassTrainer2().getSurrname());
 		}
-		System.out.println("After append: " +  trainers.toString());
-		lblOverviewTrainer.setText(trainers.toString());
+				
 		lblOverviewDay.setText(ManagerUtils.intToWeekDay(gymClass.getStartTime().getDayOfWeek()));
 		lblOverviewHour.setText(ManagerUtils.parseHour(gymClass.getStartTime()));
 		lblOverviewEnrolled.setText(String.valueOf(gymClass.getParticipants()));

@@ -8,12 +8,18 @@
             <generator class="increment"/>
         </id>
         <many-to-one name="classRoom" class="pl.tzaras.fitness.manager.db.data.GymRoom" column="CLASS_ROOM" not-null="true" />
-<!--         <many-to-one name="classTrainer" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER" not-null="true" /> -->
-        <many-to-one name="classType" class="pl.tzaras.fitness.manager.db.data.GymClassType" column="CLASS_TYPE" not-null="true" />
+		<many-to-one name="classType" class="pl.tzaras.fitness.manager.db.data.GymClassType" column="CLASS_TYPE" not-null="true" />
+        
+        <many-to-one name="classTrainer1" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER_1" not-null="true" />
+		<many-to-one name="classTrainer2" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER_2" not-null="false" />
+		<many-to-one name="classTrainer3" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER_3" not-null="false" />
+		<many-to-one name="classTrainer4" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER_4" not-null="false" />
+		<many-to-one name="classTrainer5" class="pl.tzaras.fitness.manager.db.data.GymTrainer" column="CLASS_TRAINER_5" not-null="false" />
+        
         <property name="startTime" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime" column="START_TIME" />
         <property name="duration" type="long" column="DURATION" />
         <property name="participants" type="int" column="PARTICIPANTS" />
-        <set name="trainers" table="class_trainer" 
+        <!-- <set name="trainers" table="class_trainer" 
         	inverse="false" lazy="true" fetch="select" cascade="all" >
             <key>
                 <column name="CLASSID" not-null="true" />
@@ -21,6 +27,6 @@
             <many-to-many entity-name="pl.tzaras.fitness.manager.db.data.GymTrainer">
                 <column name="TRAINER_ID" not-null="true" />
             </many-to-many>
-        </set>
+        </set> -->
     </class>
 </hibernate-mapping>

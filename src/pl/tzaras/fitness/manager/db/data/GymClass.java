@@ -1,9 +1,7 @@
 package pl.tzaras.fitness.manager.db.data;
 
-// Generated Nov 11, 2013 11:05:25 PM by Hibernate Tools 4.0.0
+// Generated Nov 17, 2013 7:59:56 PM by Hibernate Tools 4.0.0
 
-import java.util.HashSet;
-import java.util.Set;
 import org.joda.time.DateTime;
 
 /**
@@ -14,27 +12,37 @@ public class GymClass implements java.io.Serializable {
 	private long classId;
 	private GymRoom classRoom;
 	private GymClassType classType;
+	private GymTrainer classTrainer1;
+	private GymTrainer classTrainer2;
+	private GymTrainer classTrainer3;
+	private GymTrainer classTrainer4;
+	private GymTrainer classTrainer5;
 	private DateTime startTime;
 	private long duration;
 	private int participants;
-	private Set<GymTrainer> trainers = new HashSet<GymTrainer>(0);
 
 	public GymClass() {
 	}
 
-	public GymClass(GymRoom classRoom, GymClassType classType) {
+	public GymClass(GymRoom classRoom, GymClassType classType, GymTrainer classTrainer1) {
 		this.classRoom = classRoom;
 		this.classType = classType;
+		this.classTrainer1 = classTrainer1;
 	}
 
-	public GymClass(GymRoom classRoom, GymClassType classType, DateTime startTime, long duration,
-			int participants, Set<GymTrainer> trainers) {
+	public GymClass(GymRoom classRoom, GymClassType classType, GymTrainer classTrainer1,
+			GymTrainer classTrainer2, GymTrainer classTrainer3, GymTrainer classTrainer4,
+			GymTrainer classTrainer5, DateTime startTime, long duration, int participants) {
 		this.classRoom = classRoom;
 		this.classType = classType;
+		this.classTrainer1 = classTrainer1;
+		this.classTrainer2 = classTrainer2;
+		this.classTrainer3 = classTrainer3;
+		this.classTrainer4 = classTrainer4;
+		this.classTrainer5 = classTrainer5;
 		this.startTime = startTime;
 		this.duration = duration;
 		this.participants = participants;
-		this.trainers = trainers;
 	}
 
 	public long getClassId() {
@@ -61,6 +69,46 @@ public class GymClass implements java.io.Serializable {
 		this.classType = classType;
 	}
 
+	public GymTrainer getClassTrainer1() {
+		return this.classTrainer1;
+	}
+
+	public void setClassTrainer1(GymTrainer classTrainer1) {
+		this.classTrainer1 = classTrainer1;
+	}
+
+	public GymTrainer getClassTrainer2() {
+		return this.classTrainer2;
+	}
+
+	public void setClassTrainer2(GymTrainer classTrainer2) {
+		this.classTrainer2 = classTrainer2;
+	}
+
+	public GymTrainer getClassTrainer3() {
+		return this.classTrainer3;
+	}
+
+	public void setClassTrainer3(GymTrainer classTrainer3) {
+		this.classTrainer3 = classTrainer3;
+	}
+
+	public GymTrainer getClassTrainer4() {
+		return this.classTrainer4;
+	}
+
+	public void setClassTrainer4(GymTrainer classTrainer4) {
+		this.classTrainer4 = classTrainer4;
+	}
+
+	public GymTrainer getClassTrainer5() {
+		return this.classTrainer5;
+	}
+
+	public void setClassTrainer5(GymTrainer classTrainer5) {
+		this.classTrainer5 = classTrainer5;
+	}
+
 	public DateTime getStartTime() {
 		return this.startTime;
 	}
@@ -83,14 +131,6 @@ public class GymClass implements java.io.Serializable {
 
 	public void setParticipants(int participants) {
 		this.participants = participants;
-	}
-
-	public Set<GymTrainer> getTrainers() {
-		return this.trainers;
-	}
-
-	public void setTrainers(Set<GymTrainer> trainers) {
-		this.trainers = trainers;
 	}
 
 }

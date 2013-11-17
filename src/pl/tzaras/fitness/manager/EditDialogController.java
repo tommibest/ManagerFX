@@ -14,6 +14,8 @@ import pl.tzaras.fitness.manager.db.TypeWrapper;
 import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.db.data.GymTrainer;
 import pl.tzaras.fitness.manager.utils.ManagerUtils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,6 +64,30 @@ public class EditDialogController  implements Initializable  {
 		ManagerUtils.fillWithHours(cmbHour);
 		ManagerUtils.fillWithMinutes(cmbMinute);
 		
+		cmbTrainer.valueProperty().addListener(new ChangeListener<TrainerWrapper>() {
+
+			public void changed(ObservableValue<? extends TrainerWrapper> arg0,
+					TrainerWrapper arg1, TrainerWrapper arg2) {
+				TrainerWrapper selected = cmbTrainer2.getSelectionModel().getSelectedItem();
+				cmbTrainer2.getItems().clear();
+				DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer2);
+				cmbTrainer2.getItems().remove(arg2);
+				cmbTrainer2.getSelectionModel().select(selected);
+			}    
+        });
+		
+		cmbTrainer2.valueProperty().addListener(new ChangeListener<TrainerWrapper>() {
+
+			public void changed(ObservableValue<? extends TrainerWrapper> arg0,
+					TrainerWrapper arg1, TrainerWrapper arg2) {
+				TrainerWrapper selected = cmbTrainer.getSelectionModel().getSelectedItem();
+				cmbTrainer.getItems().clear();
+				DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
+				cmbTrainer.getItems().remove(arg2);
+				cmbTrainer.getSelectionModel().select(selected);
+			}    
+        });
+		
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
 		DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer2);
 		DataManager.getInstance().getGymClassTypeManager().initializeCombo(cmbClassType);
@@ -88,17 +114,16 @@ public class EditDialogController  implements Initializable  {
 
 			gymClass.setClassRoom(cmbRoom.getSelectionModel().getSelectedItem()
 					.getRoom());
-			Set<GymTrainer> trainers = new HashSet<GymTrainer>();
-			trainers.add(cmbTrainer.getSelectionModel().getSelectedItem().getGymTrainer());
-			trainers.add(cmbTrainer2.getSelectionModel().getSelectedItem().getGymTrainer());
-			gymClass.setTrainers(trainers);
+			gymClass.setClassTrainer1(cmbTrainer.getSelectionModel().getSelectedItem().getGymTrainer());
+			if (chbTrainer2.isSelected()) {
+				gymClass.setClassTrainer2(cmbTrainer2.getSelectionModel().getSelectedItem().getGymTrainer());
+			}
 			gymClass.setClassType(cmbClassType.getSelectionModel()
 					.getSelectedItem().getClassType());
 			gymClass.setStartTime(gymClass.getStartTime()
 					.withDayOfWeek(ManagerUtils.dayToInt(cmbDay.getValue()))
 					.withHourOfDay(Integer.valueOf(cmbHour.getValue()))
 					.withMinuteOfHour(Integer.valueOf(cmbMinute.getValue())));
-			System.out.println("!!!!!!!!! Start time: " + gymClass.getStartTime().toString());
 			gymClass.setDuration(Long.valueOf(tfDuration.getText()));
 			int participants = tfParticipants.getText().isEmpty() ? 0 : Integer
 					.valueOf(tfParticipants.getText());
@@ -124,27 +149,25 @@ public class EditDialogController  implements Initializable  {
 		if (initialize) {
 			tfNumberOfWeeks.setVisible(false);
 			lblNumberOfWeeks.setVisible(false);
-			Object[] trainers = gymClass.getTrainers().toArray();
 			for (TrainerWrapper tw : cmbTrainer.getItems()) {
-				if (tw.getGymTrainer().getTrainerId() == ((GymTrainer) trainers[0]).getTrainerId()) {
+				if (tw.getGymTrainer().getTrainerId() == gymClass.getClassTrainer1().getTrainerId()) {
 					cmbTrainer.getSelectionModel().select(tw);
 					break;
 				}
 			}
 
-			if (trainers.length == 2) {
+			if (gymClass.getClassTrainer2() != null) {
 				chbTrainer2.setSelected( true );
 				cmbTrainer2.setDisable( false );
+				for (TrainerWrapper tw : cmbTrainer2.getItems()) {
+					if ( tw.getGymTrainer().getTrainerId() == gymClass.getClassTrainer2().getTrainerId() ) {
+						cmbTrainer2.getSelectionModel().select(tw);
+						break;
+					}
+				}
 			} else {
 				chbTrainer2.setSelected( false );
 				cmbTrainer2.setDisable( true );
-			}
-			
-			for (TrainerWrapper tw : cmbTrainer2.getItems()) {
-				if (tw.getGymTrainer().getTrainerId() == ((GymTrainer) trainers[1]).getTrainerId()) {
-					cmbTrainer2.getSelectionModel().select(tw);
-					break;
-				}
 			}
 			
 			for (RoomWrapper rw : cmbRoom.getItems()) {
@@ -184,7 +207,42 @@ public class EditDialogController  implements Initializable  {
 	
 	@FXML protected void updateDialog(ActionEvent event) {
 		status = OK_BUTTON;
-		updatedOkButton();;
+/*		if (event.getSource().equals(cmbTrainer)) {
+			if ( cmbTrainer.getSelectionModel().getSelectedItem() != null ) {
+				TrainerWrapper selected = cmbTrainer2.getSelectionModel().getSelectedItem();
+				cmbTrainer2.getItems().clear();
+				DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer2);
+				System.out.println(((ComboBox<TrainerWrapper>)event.getSource()).getValue().getGymTrainer().getSurrname());
+				if ( selected != null ) {
+					for (TrainerWrapper t : cmbTrainer2.getItems()) {
+						if ( t.getGymTrainer().getTrainerId() == selected.getGymTrainer().getTrainerId() )
+						{
+							cmbTrainer2.getSelectionModel().select(t);
+							break;
+						}
+					}
+				}
+				cmbTrainer2.getItems().remove(cmbTrainer.getSelectionModel().getSelectedItem());
+			}
+		}
+		if (event.getSource().equals(cmbTrainer2)) {
+			if ( cmbTrainer2.getSelectionModel().getSelectedItem() != null ) {
+				TrainerWrapper selected = cmbTrainer.getSelectionModel().getSelectedItem();
+				cmbTrainer.getItems().clear();
+				DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
+				if ( selected != null ) {
+					for (TrainerWrapper t : cmbTrainer.getItems()) {
+						if ( t.getGymTrainer().getTrainerId() == selected.getGymTrainer().getTrainerId() )
+						{
+							cmbTrainer.getSelectionModel().select(t);
+							break;
+						}
+					}
+				}
+				cmbTrainer.getItems().remove(cmbTrainer2.getSelectionModel().getSelectedItem());
+			}
+		}*/
+		updatedOkButton();
 	}
 	
 	@FXML protected void updateDialogOnKey(KeyEvent event) {
@@ -235,5 +293,19 @@ public class EditDialogController  implements Initializable  {
 	
 	@FXML protected void enableWidget(ActionEvent event) {
 		cmbTrainer2.setDisable(!chbTrainer2.isSelected());
+		if (!chbTrainer2.isSelected()) {
+			TrainerWrapper selected = cmbTrainer.getSelectionModel().getSelectedItem();
+			cmbTrainer.getItems().clear();
+			DataManager.getInstance().getGymTrainerManager().initializeCombo(cmbTrainer);
+			if ( selected != null ) {
+				for (TrainerWrapper t : cmbTrainer.getItems()) {
+					if ( t.getGymTrainer().getTrainerId() == selected.getGymTrainer().getTrainerId() )
+					{
+						cmbTrainer.getSelectionModel().select(t);
+						break;
+					}
+				}
+			}
+		}
 	}
 }

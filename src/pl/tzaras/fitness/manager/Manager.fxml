@@ -85,17 +85,19 @@
                                 </GridPane.margin>
                               </Label>
                               <Label text="Sala:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="1" />
-                              <Label text="Trener:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="2" />
-                              <Label alignment="CENTER_RIGHT" text="Dzien:" textAlignment="LEFT" underline="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="3" />
-                              <Label text="Godzina:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="4" />
-                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Zapisanych:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                              <Label text="Trener 1:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="2" />
+                              <Label fx:id="lblTrainer2" text="Trener 2:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="3" disable="true"/>
+                              <Label alignment="CENTER_RIGHT" text="Dzien:" textAlignment="LEFT" underline="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="4" />
+                              <Label text="Godzina:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Zapisanych:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="6" />
                               <Label fx:id="lblOverviewType" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="0" />
                               <Label fx:id="lblOverviewRoom" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="1" />
                               <Label fx:id="lblOverviewTrainer" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="2" />
-                              <Label fx:id="lblOverviewDay" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="3" />
-                              <Label fx:id="lblOverviewHour" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="4" />
-                              <Label fx:id="lblOverviewEnrolled" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="5" />
-                              <HBox GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="6">
+                              <Label fx:id="lblOverviewTrainer1" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="3" />
+                              <Label fx:id="lblOverviewDay" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="4" />
+                              <Label fx:id="lblOverviewHour" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                              <Label fx:id="lblOverviewEnrolled" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="6" />
+                              <HBox GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="7">
                                 <Button fx:id="btnRemoveClass" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun">
                                   <HBox.margin>
                                     <Insets right="5.0" fx:id="x7" />

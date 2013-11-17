@@ -15,14 +15,5 @@
    <column name="SURRNAME"/>
   </property>
   <property column="RATE_OF_PAY" name="rateOfPay" type="double"/>
-  <set name="classes" table="class_trainer"
-  	inverse="false" lazy="true" fetch="select" cascade="all" >
-  	<key>
-      <column name="TRAINER_ID" not-null="true" />
-    </key>
-    <many-to-many entity-name="pl.tzaras.fitness.manager.db.data.GymClass">
-      <column name="CLASSID" not-null="true" />
-    </many-to-many>
-  </set>
  </class>
 </hibernate-mapping>

@@ -19,8 +19,9 @@ public class CallendarEntry extends Button {
 		double hourHeight = (mController.getCallendarPane().getPrefHeight() - GUIHelper.getHeaderHeight()) / (ManagerUtils.endHour-ManagerUtils.startHour);
 		this.gymClass = gClass;
 		StringBuilder trainers = new StringBuilder();
-		for (GymTrainer t : gymClass.getTrainers()) {
-			trainers.append(t.getSurrname()).append("\n");
+		trainers.append(gymClass.getClassTrainer1().getSurrname()).append("; ");
+		if ( gymClass.getClassTrainer2() != null ) {
+			trainers.append(gymClass.getClassTrainer2().getSurrname()).append("; ");
 		}
 		super.setText(gClass.getClassType().getName()+"\n"+trainers.toString());
 		setPrefSize(87.0, gymClass.getDuration()*(hourHeight/60));
@@ -36,8 +37,9 @@ public class CallendarEntry extends Button {
 	
 	public void update(){
 		StringBuilder trainers = new StringBuilder();
-		for (GymTrainer t : gymClass.getTrainers()) {
-			trainers.append(t.getSurrname()).append("\n");
+		trainers.append(gymClass.getClassTrainer1().getSurrname()).append("; ");
+		if ( gymClass.getClassTrainer2() != null ) {
+			trainers.append(gymClass.getClassTrainer2().getSurrname()).append("; ");
 		}
 		setText(gymClass.getClassType().getName()+"\n"+trainers.toString());
 		double hourHeight = mController.getCallendarPane().getPrefHeight() / (ManagerUtils.endHour-ManagerUtils.startHour);

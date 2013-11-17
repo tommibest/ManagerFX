@@ -38,8 +38,9 @@ public class GymClassManager {
 			classes.addAll( session.createQuery("from GymClass").list() );
 			for (Iterator iter = classes.iterator(); iter.hasNext();) {
 				GymClass gClass = (GymClass) iter.next();
-				for (GymTrainer trainer : gClass.getTrainers()) {
-					System.out.println("Trainer: " + trainer.getName() + ", " + trainer.getSurrname());
+				System.out.println("Trainer1: " + gClass.getClassTrainer1().getName() + ", " + gClass.getClassTrainer1().getSurrname());
+				if (gClass.getClassTrainer2() != null ) {
+					System.out.println("Trainer2: " + gClass.getClassTrainer2().getName() + ", " + gClass.getClassTrainer2().getSurrname());
 				}
 				System.out.println("Room: "+gClass.getClassRoom().getName());
 				System.out.println("ClassType: "+gClass.getClassType().getName());
@@ -56,7 +57,7 @@ public class GymClassManager {
 	}
 
 	public Long saveClass(GymRoom room, DateTime startTime, int participants,
-			Set<GymTrainer> trainers, GymClassType classType, long duration) {
+			GymTrainer classTrainer1, GymTrainer classTrainer2, GymClassType classType, long duration) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		Long courseId = null;
@@ -66,7 +67,10 @@ public class GymClassManager {
 			gymClass.setClassRoom(room);
 			gymClass.setStartTime(startTime);
 			gymClass.setClassType(classType);
-			gymClass.setTrainers(trainers);
+			gymClass.setClassTrainer1(classTrainer1);
+			if ( classTrainer2 != null) {
+				gymClass.setClassTrainer2(classTrainer2);
+			}
 			gymClass.setDuration(duration);
 			gymClass.setParticipants(participants);
 			courseId = (Long) session.save(gymClass);
@@ -92,8 +96,9 @@ public class GymClassManager {
 			classes.addAll( session.createQuery("from GymClass where startTime >= :from and startTime <= :to").setParameter("from", monday).setParameter("to", sunday).list() );
 			for (Iterator iter = classes.iterator(); iter.hasNext();) {
 				GymClass gClass = (GymClass) iter.next();
-				for (GymTrainer trainer : gClass.getTrainers()) {
-					System.out.println("Trainer: " + trainer.getName() + ", " + trainer.getSurrname());
+				System.out.println("Trainer1: " + gClass.getClassTrainer1().getName() + ", " + gClass.getClassTrainer1().getSurrname());
+				if (gClass.getClassTrainer2() != null ) {
+					System.out.println("Trainer2: " + gClass.getClassTrainer2().getName() + ", " + gClass.getClassTrainer2().getSurrname());
 				}
 				System.out.println("Room: "+gClass.getClassRoom().getName());
 				System.out.println("ClassType: "+gClass.getClassType().getName());
@@ -117,7 +122,10 @@ public class GymClassManager {
 			GymClass gClass = (GymClass) session.get(GymClass.class, gymClass.getClassId());
 			gClass.setClassRoom(gymClass.getClassRoom());
 			gClass.setClassType(gymClass.getClassType());
-			gClass.setTrainers(gymClass.getTrainers());
+			gClass.setClassTrainer1(gymClass.getClassTrainer1());
+			if (gymClass.getClassTrainer2() != null) {
+				gClass.setClassTrainer2(gymClass.getClassTrainer2());
+			}
 			gClass.setStartTime(gymClass.getStartTime());
 			gClass.setDuration(gymClass.getDuration());
 			gClass.setParticipants(gymClass.getParticipants());
@@ -172,7 +180,10 @@ public class GymClassManager {
 	public GymClass makeCopy(GymClass gClass) {
 		GymClass newClass = new GymClass();
 		newClass.setClassRoom(gClass.getClassRoom());
-		newClass.setTrainers(new HashSet<GymTrainer>(gClass.getTrainers()));
+		newClass.setClassTrainer1(gClass.getClassTrainer1());
+		if (gClass.getClassTrainer2() != null) {
+			newClass.setClassTrainer2(gClass.getClassTrainer2());
+		}
 		newClass.setClassType(gClass.getClassType());
 		newClass.setDuration(gClass.getDuration());
 		newClass.setParticipants(gClass.getParticipants());
