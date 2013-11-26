@@ -71,8 +71,8 @@ class EditingCell<T,S> extends TableCell<T, S> {
 
         });
     }
-   
-    private String getString() {
+
+	private String getString() {
         return getItem() == null ? "" : getItem().toString();
     }
 }

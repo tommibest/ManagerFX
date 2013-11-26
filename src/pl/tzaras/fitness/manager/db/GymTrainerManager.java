@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javafx.scene.control.ComboBox;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -24,9 +25,12 @@ public class GymTrainerManager {
 	        return o1.getGymTrainer().getSurrname().compareTo(o2.getGymTrainer().getSurrname());
 	    }
 	}
+
+	private static final String DEFAULT = "Dowlony";
 	
 	private List<GymTrainer> trainers;
 	private List<TrainerWrapper> wrappedTrainers;
+	public TrainerWrapper defaultSelection = new TrainerWrapper(DEFAULT);
 	
 	public GymTrainerManager() {
 		trainers = retrieveTrainers();
@@ -95,6 +99,7 @@ public class GymTrainerManager {
 				}
 			}
 			CallendarEntryManager.getInstance().refreshEntries();
+			wrappedTrainers = wrapTrainers(trainers);
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
@@ -184,6 +189,21 @@ public class GymTrainerManager {
 			session.close();
 		}
 		return retVal;
+	}
+
+	public boolean trainerExists(String name, String surrname) {
+		for (GymTrainer trainer : trainers){
+			if (trainer.getName().compareTo(name) == 0 && trainer.getSurrname().compareTo(surrname) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void initializeComboWithDefault(ComboBox<TrainerWrapper> comboBox) {
+		initializeCombo(comboBox);
+		comboBox.getItems().add(defaultSelection);
+		comboBox.setValue(defaultSelection);
 	}
 
 }

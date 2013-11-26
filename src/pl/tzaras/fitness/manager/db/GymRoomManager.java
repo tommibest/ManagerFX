@@ -89,6 +89,14 @@ public class GymRoomManager {
 			GymRoom gClass = (GymRoom) session.get(GymRoom.class, gClassId);
 			gClass.setName(roomName);
 			transaction.commit();
+			
+			for (Iterator<GymRoom> iter = rooms.iterator(); iter.hasNext(); ) {
+				GymRoom room = iter.next();
+				if (room.getID() == gClassId) {
+					room.setName(roomName);
+				}
+			}
+			wrappedRooms = wrapRoom(rooms);
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
@@ -161,6 +169,21 @@ public class GymRoomManager {
 		}
 		
 		return retVal;
+	}
+
+	public boolean roomExists(String roomName) {
+		for (GymRoom room : rooms) {
+			if (room.getName().compareTo(roomName) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void initializeComboWithDefault(ComboBox<RoomWrapper> comboBox) {
+		initializeCombo(comboBox);
+		comboBox.getItems().add(defaultSelection);
+		comboBox.setValue(defaultSelection);
 	}
 
 }

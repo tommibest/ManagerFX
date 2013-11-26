@@ -72,10 +72,10 @@ public class ManagerController implements Initializable {
 	@FXML private Button btnAddInstructor;
 	@FXML private Button btnAddRoom;
 	
-	@FXML private ComboBox<TrainerWrapper> instructorCombo;
-	@FXML private ComboBox<TypeWrapper> classTypeCombo;
+	//@FXML private ComboBox<TrainerWrapper> instructorCombo;
+	//@FXML private ComboBox<TypeWrapper> classTypeCombo;
 	@FXML private ComboBox<String> daysCombo;
-	@FXML private ComboBox<RoomWrapper> roomCombo;
+	//@FXML private ComboBox<RoomWrapper> roomCombo;
 	@FXML private ComboBox<String> cmbHours;
 	@FXML private ComboBox<String> cmbMinutes;
 	
@@ -112,6 +112,7 @@ public class ManagerController implements Initializable {
 	@FXML private Button btnEditClass;
 	
 	@FXML private ComboBox<RoomWrapper> cmbSelectRoom;
+	@FXML private ComboBox<TrainerWrapper> cmbSelectTrainer;
 	@FXML private Button btnNextWeek;
 	@FXML private Button btnPrevWeek;
 	@FXML private Label lblCurrentWeek;
@@ -147,23 +148,37 @@ public class ManagerController implements Initializable {
 	DateTime sunday;
 	GymClass selected;
 	private boolean populate = false;
+	private boolean initializing;
 	
-	@FXML protected void addInstructor(MouseEvent arg0) {
+	@FXML protected void addTrainer(MouseEvent arg0) {
     	if ( !txtFieldInstructorName.getText().isEmpty() && !txtFieldInstructorSurrname.getText().isEmpty() ) {
     		GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager();
     		double rateOfPay = 0.0;
     		if (!txtFieldInstructorRate.getText().isEmpty()) rateOfPay = Double.parseDouble(txtFieldInstructorRate.getText());
-    		mngr.saveTrainer(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText(),rateOfPay);
-            System.out.println("Adding instructor: "+ txtFieldInstructorName.getText()  + ", " + txtFieldInstructorSurrname.getText() );
-            txtFieldInstructorName.setText("");
-            txtFieldInstructorSurrname.setText("");
-            mngr.initializeCombo(cmbSearchTrainer);
-            
-            ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager.getInstance().getGymTrainerManager().getTrainers());
-    		for (GymTrainer trainer : data) {
-    			System.out.println(trainer.getName() + ", " + trainer.getSurrname());
+    		
+			if ( !mngr.trainerExists(txtFieldInstructorName.getText(), txtFieldInstructorSurrname.getText())) {
+
+				mngr.saveTrainer(txtFieldInstructorName.getText(),
+						txtFieldInstructorSurrname.getText(), rateOfPay);
+				System.out.println("Adding instructor: " + txtFieldInstructorName.getText() + ", "
+						+ txtFieldInstructorSurrname.getText());
+				
+				mngr.initializeCombo(cmbSearchTrainer);
+				mngr.initializeComboWithDefault(cmbSelectTrainer);
+
+				ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager
+						.getInstance().getGymTrainerManager().getTrainers());
+				for (GymTrainer trainer : data) {
+					System.out.println(trainer.getName() + ", " + trainer.getSurrname());
+				}
+				tblTrainers.setItems(data);
+			} else {
+				GUIHelper.nothingSelectedWarning("Trener " + txtFieldInstructorName.getText() + " "
+						+ txtFieldInstructorSurrname.getText() + " już istnieje.");
     		}
-    		tblTrainers.setItems(data);
+			txtFieldInstructorName.setText("");
+			txtFieldInstructorSurrname.setText("");
+			txtFieldInstructorRate.setText("");
     	} else {
         	System.err.println("Name or surrname of instructor is empty");
     	}
@@ -229,18 +244,22 @@ public class ManagerController implements Initializable {
 	
     @FXML protected void addClassType(MouseEvent arg0) {
     	if ( !tfClassTypeName.getText().isEmpty() ) {
-    		System.out.println("Adding class: " + tfClassTypeName.getText());
     		GymClassTypeManager mngr = DataManager.getInstance().getGymClassTypeManager();
-    		mngr.addClassType(tfClassTypeName.getText());
+			if (!mngr.classTypeExists(tfClassTypeName.getText())) {
+				System.out.println("Adding class: " + tfClassTypeName.getText());
+				mngr.addClassType(tfClassTypeName.getText());
+				mngr.initializeCombo(cmbSearchType);
+				ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(mngr
+						.getClassTypes());
+				for (GymClassType classType : classTypes) {
+					System.out.println(classType.getName());
+				}
+				tblClassType.setItems(classTypes);
+			} else {
+				GUIHelper.nothingSelectedWarning("Zajęcia " + tfClassTypeName.getText() + " juz istnieją"); 
+			}
+    		
     		tfClassTypeName.setText("");
-    		mngr.initializeCombo(classTypeCombo);
-    		
-    		ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(mngr.getClassTypes());
-    		for (GymClassType classType : classTypes) {
-    			System.out.println(classType.getName());
-    		}
-    		tblClassType.setItems(classTypes);
-    		
     	} else {
     		System.err.println("Cannot add empty class type.");
     	}
@@ -252,15 +271,18 @@ public class ManagerController implements Initializable {
     
     @FXML protected void addRoom(MouseEvent arg0) {
     	if ( !tfRoomName.getText().isEmpty() ) {
-    		System.out.println("Adding class: " + tfRoomName.getText());
     		GymRoomManager mngr = DataManager.getInstance().getGymRoomManager();
-    		mngr.saveRoom(tfRoomName.getText());
-    		tfRoomName.setText("");
-    		mngr.initializeCombo(cmbSelectRoom);
-    		cmbSelectRoom.getItems().add(mngr.defaultSelection);		
-    		cmbSelectRoom.setValue(mngr.defaultSelection);
-    		ObservableList<GymRoom> rooms = FXCollections.observableArrayList(mngr.getRooms());
-    		tblRoom.setItems(rooms);
+			if (mngr.roomExists(tfRoomName.getText())) {
+				System.out.println("Adding class: " + tfRoomName.getText());
+				mngr.saveRoom(tfRoomName.getText());
+
+				mngr.initializeComboWithDefault(cmbSelectRoom);
+
+				ObservableList<GymRoom> rooms = FXCollections.observableArrayList(mngr.getRooms());
+				tblRoom.setItems(rooms);
+			} else {
+				tfRoomName.setText("");
+			}
     		
     	} else {
     		System.err.println("Cannot add empty class type.");
@@ -306,13 +328,15 @@ public class ManagerController implements Initializable {
     }
 
 	public void initialize(URL location, ResourceBundle resources) {		
+		initializing = true;
 		if (populate) {
 			populateTestData();
 		}
 		
-		initializeManagementTab();
 		initializeMainTab();
+		initializeManagementTab();
 		populateCurrentWeekData();
+		initializing = false;
 	}
 
 	private void initializeMainTab() {
@@ -320,7 +344,6 @@ public class ManagerController implements Initializable {
 		DateTime now = new DateTime();
 		monday = now.withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
 		sunday = monday.plusWeeks(1);
-		//sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
 		displaySelectedWeek();
 		initializeCalendarView();
 		populateCurrentWeekData();
@@ -399,9 +422,8 @@ public class ManagerController implements Initializable {
 
 	private void initializeCalendarView() {
 		callendarPane.setStyle("-fx-background-color: white");
-		DataManager.getInstance().getGymRoomManager().initializeCombo(cmbSelectRoom);
-		cmbSelectRoom.getItems().add(DataManager.getInstance().getGymRoomManager().defaultSelection);		
-		cmbSelectRoom.setValue(DataManager.getInstance().getGymRoomManager().defaultSelection);
+		DataManager.getInstance().getGymRoomManager().initializeComboWithDefault(cmbSelectRoom);
+		DataManager.getInstance().getGymTrainerManager().initializeComboWithDefault(cmbSelectTrainer);
 	}
 
 	private void initializeSearchPanel() {
@@ -416,7 +438,9 @@ public class ManagerController implements Initializable {
 	}
 
 	@FXML protected void refreshCallendar(ActionEvent event){
-		populateCurrentWeekData();
+		if ( !initializing ) {
+			populateCurrentWeekData();
+		}
 	}
 	
 	private void populateCurrentWeekData() {
@@ -428,19 +452,35 @@ public class ManagerController implements Initializable {
 				.getInstance().getGymClassManager().getClasses(monday,sunday));
 	
 		for (GymClass gymClass : data) {
-			if ( cmbSelectRoom.getValue().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
-				 gymClass.getClassRoom().getID() == cmbSelectRoom.getSelectionModel().getSelectedItem().getRoom().getID()) {
-				callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
+			if ( ( cmbSelectRoom.getValue().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) ||
+				   gymClass.getClassRoom().getID() == cmbSelectRoom.getSelectionModel().getSelectedItem().getRoom().getID() ) &&
+				 ( (cmbSelectTrainer.getItems().size() != 0 && cmbSelectTrainer.getValue().equals(DataManager.getInstance().getGymTrainerManager().defaultSelection) ) ||
+				   (gymClass.getClassTrainer1() != null && gymClass.getClassTrainer1().getTrainerId() == cmbSelectTrainer.getSelectionModel().getSelectedItem().getGymTrainer().getTrainerId()) || 
+				   (gymClass.getClassTrainer2() != null && gymClass.getClassTrainer2().getTrainerId() == cmbSelectTrainer.getSelectionModel().getSelectedItem().getGymTrainer().getTrainerId()) ) ) {
 				
+				callendarPane.getChildren().add(CallendarEntryManager.getInstance().getEntry(gymClass,this));
 				System.out.println("Getting: " + gymClass.getClassId() );
 			}
 		}
-		
-		
-		
-		//tblClasses.setItems(data);
 	}
 
+	private void updateTrainer(GymTrainer newTrainer) {
+		GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager();
+		if ( !mngr.trainerExists(newTrainer.getName(), newTrainer.getSurrname())) {
+			mngr.updateTrainer(newTrainer.getTrainerId(), newTrainer.getName(), newTrainer.getSurrname(),
+					newTrainer.getRateOfPay());
+			mngr.initializeCombo(cmbSearchTrainer);
+			TrainerWrapper tw = cmbSelectTrainer.getSelectionModel().getSelectedItem();
+			mngr.initializeComboWithDefault(cmbSelectTrainer);
+			cmbSelectTrainer.setValue(tw);
+			CallendarEntryManager.getInstance().refreshEntries();
+			populateCurrentWeekData();
+		} else {
+			GUIHelper.nothingSelectedWarning("Trener " +newTrainer.getName() + " "
+					+ newTrainer.getSurrname() + " już istnieje.");
+		}
+	}
+	
 	private void initializeManagementTab() {
 		ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager.getInstance().getGymTrainerManager().getTrainers());
 		for (GymTrainer trainer : data) {
@@ -460,11 +500,13 @@ public class ManagerController implements Initializable {
 	    colName.setOnEditCommit(
 	           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
 	                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
-	                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
-	                              trainer.setName(t.getNewValue());
-	                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname(), trainer.getRateOfPay());
-	                              CallendarEntryManager.getInstance().refreshEntries();
-	                              populateCurrentWeekData();
+	                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow());
+	                        	  if (t.getNewValue().compareTo(t.getOldValue()) != 0) {
+	                        		  GymTrainer newTrainer = new GymTrainer(t.getNewValue(), trainer.getSurrname(), trainer.getRateOfPay());
+	                        		  newTrainer.setTrainerId(trainer.getTrainerId());
+	                        		  updateTrainer(newTrainer);
+	                        	  }
+
 	                          }
 	                      });
 	    
@@ -473,11 +515,12 @@ public class ManagerController implements Initializable {
 	    colSurrname.setOnEditCommit(
 		           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
 		                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
-		                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
-		                              trainer.setSurrname(t.getNewValue());
-		                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname(), trainer.getRateOfPay());
-		                              CallendarEntryManager.getInstance().refreshEntries();
-		                              populateCurrentWeekData();
+		                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow());
+		                        	  if (t.getNewValue().compareTo(t.getOldValue()) != 0) {
+		                        		  GymTrainer newTrainer = new GymTrainer(trainer.getName(), t.getNewValue(), trainer.getRateOfPay());
+		                        		  newTrainer.setTrainerId(trainer.getTrainerId());
+		                        		  updateTrainer(newTrainer);
+		                        	  }
 		                          }
 		                      });		
 		
@@ -485,7 +528,7 @@ public class ManagerController implements Initializable {
 	    		new Callback<TableColumn<GymTrainer,Double>, TableCell<GymTrainer,Double>>() {
 
 					public TableCell<GymTrainer, Double> call(TableColumn<GymTrainer, Double> arg0) {
-						return new EditingCell<GymTrainer, Double>();
+						return new EditingDoubleCell<GymTrainer, Double>();
 					}
 	    			
 	    		};
@@ -494,10 +537,12 @@ public class ManagerController implements Initializable {
 	    colRate.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<GymTrainer, Double>>() {
 		                          public void handle(TableColumn.CellEditEvent<GymTrainer, Double> t){
 		                        	  GymTrainer trainer = (GymTrainer)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
-		                              trainer.setRateOfPay(t.getNewValue());
-		                              DataManager.getInstance().getGymTrainerManager().updateTrainer(trainer.getTrainerId(), trainer.getName(), trainer.getSurrname(), trainer.getRateOfPay());
-		                              CallendarEntryManager.getInstance().refreshEntries();
-		                              populateCurrentWeekData();
+		                        	  if (t.getNewValue().compareTo(t.getOldValue()) != 0) {
+		                        		  GymTrainer newTrainer = new GymTrainer(trainer.getName(), trainer.getSurrname(), t.getNewValue());
+		                        		  newTrainer.setTrainerId(trainer.getTrainerId());
+		                        		  updateTrainer(newTrainer);
+		                        	  }
+		                        	  
 		                          }
 		                      });
 		
@@ -525,6 +570,7 @@ public class ManagerController implements Initializable {
 	                              DataManager.getInstance().getGymClassTypeManager().updateClassType(type.getClassId(), type.getName());
 	                              CallendarEntryManager.getInstance().refreshEntries();
 	                              populateCurrentWeekData();
+	                              DataManager.getInstance().getGymClassTypeManager().initializeCombo(cmbSearchType);                       
 	                          }
 	                      });
 	              //---
@@ -548,7 +594,9 @@ public class ManagerController implements Initializable {
             public void handle(TableColumn.CellEditEvent<GymRoom, String> t){
           	    GymRoom room = (GymRoom)t.getTableView().getItems().get(t.getTablePosition().getRow()); 
                 room.setName(t.getNewValue());
-                DataManager.getInstance().getGymRoomManager().updateClass(room.getID(), room.getName());
+                GymRoomManager mngr = DataManager.getInstance().getGymRoomManager();
+                mngr.updateClass(room.getID(), room.getName());
+                mngr.initializeComboWithDefault(cmbSelectRoom);
                 CallendarEntryManager.getInstance().refreshEntries();
                 populateCurrentWeekData();
             }
@@ -695,7 +743,7 @@ public class ManagerController implements Initializable {
 		tfSearchResult.setText( "" );
 		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses();
 		ArrayList<GymClass> result = new ArrayList<GymClass>();
-		if ( chbTrainer.isSelected() && chbFromDate.isSelected() && chbToDate.isSelected() && chbPension.isSelected() ) {
+		if ( chbTrainer.isSelected() && chbFromDate.isSelected() && chbToDate.isSelected() ) {
 			for (GymClass gClass : allClasses) { 
 				if ( chbTrainer.isSelected() ) {
 					if ( cmbSearchTrainer.getValue().getGymTrainer().getTrainerId() != gClass.getClassTrainer1().getTrainerId() &&
@@ -726,7 +774,11 @@ public class ManagerController implements Initializable {
 				totalNumber += gClass.getDuration();
 			}
 			System.out.println("Duration: " + totalNumber);
-			double pension = (totalNumber/60) * Double.parseDouble(tfPension.getText());
+			double rateOfPay = cmbSearchTrainer.getValue().getGymTrainer().getRateOfPay();
+			if ( chbPension.isSelected() ) {
+				rateOfPay = Double.parseDouble(tfPension.getText());
+			}
+			double pension = (totalNumber/60) * rateOfPay;
 			tfSearchResult.setText( String.valueOf(pension) );
 		}
 	}

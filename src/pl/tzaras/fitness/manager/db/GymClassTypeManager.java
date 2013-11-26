@@ -94,6 +94,7 @@ public class GymClassTypeManager {
 					currType.setName(gClass.getName());
 				}
 			}
+			wrappedTypes = wrapClassTypes(classTypes);
 		} catch (HibernateException e) {
 			transaction.rollback();
 			e.printStackTrace();
@@ -158,6 +159,15 @@ public class GymClassTypeManager {
 		
 		Collections.sort(wrapped, new CustomComparator());
 		return wrapped;
+	}
+
+	public boolean classTypeExists(String text) {
+		for (GymClassType classType : classTypes) {
+			if (classType.getName().compareTo(text) == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
