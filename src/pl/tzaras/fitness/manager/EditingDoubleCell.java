@@ -7,11 +7,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-class EditingCell<T,S> extends TableCell<T, S> {
+class EditingDoubleCell<T,S> extends TableCell<T, S> {
 	 
     private TextField textField;
    
-    public EditingCell() {}
+    public EditingDoubleCell() {}
    
     @Override
     public void startEdit() {
@@ -19,8 +19,6 @@ class EditingCell<T,S> extends TableCell<T, S> {
        
         if (textField == null) {
             createTextField();
-        } else {
-        	textField.setText(getString());
         }
        
         setGraphic(textField);
@@ -56,17 +54,17 @@ class EditingCell<T,S> extends TableCell<T, S> {
             }
         }
     }
-    
+
     private void createTextField() {
-    	
         textField = new TextField(getString());
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()*2);
         textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
             public void handle(KeyEvent t) {
                 if (t.getCode() == KeyCode.ENTER) {
-                    commitEdit((S) textField.getText());
-                    
+                	S val = (S) new Double(textField.getText());
+                	commitEdit(val);
+                    //commitEdit((S) textField.getText());
                 } else if (t.getCode() == KeyCode.ESCAPE) {
                     cancelEdit();
                 }

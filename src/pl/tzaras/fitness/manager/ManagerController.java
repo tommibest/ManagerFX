@@ -4,6 +4,7 @@
  */
 package pl.tzaras.fitness.manager;
 
+import java.awt.Event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import jfxtras.labs.dialogs.MonologFXButton;
 
+import org.hibernate.dialect.FirebirdDialect;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
@@ -464,9 +466,9 @@ public class ManagerController implements Initializable {
 		}
 	}
 
-	private void updateTrainer(GymTrainer newTrainer) {
+	private boolean updateTrainer(GymTrainer newTrainer, boolean validateExistance) {
 		GymTrainerManager mngr = DataManager.getInstance().getGymTrainerManager();
-		if ( !mngr.trainerExists(newTrainer.getName(), newTrainer.getSurrname())) {
+		if ( !mngr.trainerExists(newTrainer.getName(), newTrainer.getSurrname()) || !validateExistance ) {
 			mngr.updateTrainer(newTrainer.getTrainerId(), newTrainer.getName(), newTrainer.getSurrname(),
 					newTrainer.getRateOfPay());
 			mngr.initializeCombo(cmbSearchTrainer);
@@ -475,9 +477,11 @@ public class ManagerController implements Initializable {
 			cmbSelectTrainer.setValue(tw);
 			CallendarEntryManager.getInstance().refreshEntries();
 			populateCurrentWeekData();
+			return true;
 		} else {
 			GUIHelper.nothingSelectedWarning("Trener " +newTrainer.getName() + " "
 					+ newTrainer.getSurrname() + " już istnieje.");
+			return false;
 		}
 	}
 	
@@ -489,14 +493,14 @@ public class ManagerController implements Initializable {
 		
 		tblTrainers.setItems(data);
 		tblTrainers.setEditable(true);
-		Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>> trainerStrintCellFactory =
+		Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>> trainerStringCellFactory =
 	              new Callback<TableColumn<GymTrainer,String>, TableCell<GymTrainer,String>>() {
 	                  public TableCell<GymTrainer,String> call(TableColumn<GymTrainer,String> p) {
 	                      return new EditingCell<GymTrainer,String>();
 	                  }
 	              };
 	    colName.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("name"));
-	    colName.setCellFactory(trainerStrintCellFactory);
+	    colName.setCellFactory(trainerStringCellFactory);
 	    colName.setOnEditCommit(
 	           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
 	                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
@@ -504,14 +508,17 @@ public class ManagerController implements Initializable {
 	                        	  if (t.getNewValue().compareTo(t.getOldValue()) != 0) {
 	                        		  GymTrainer newTrainer = new GymTrainer(t.getNewValue(), trainer.getSurrname(), trainer.getRateOfPay());
 	                        		  newTrainer.setTrainerId(trainer.getTrainerId());
-	                        		  updateTrainer(newTrainer);
+	                        		  if ( !updateTrainer(newTrainer,true) ) {
+	                        			  tblTrainers.getColumns().get(0).setVisible(false);
+	                        			  tblTrainers.getColumns().get(0).setVisible(true);
+	                        		  }
 	                        	  }
 
 	                          }
 	                      });
 	    
 	    colSurrname.setCellValueFactory(new PropertyValueFactory<GymTrainer, String>("surrname"));
-	    colSurrname.setCellFactory(trainerStrintCellFactory);
+	    colSurrname.setCellFactory(trainerStringCellFactory);
 	    colSurrname.setOnEditCommit(
 		           new EventHandler<TableColumn.CellEditEvent<GymTrainer, String>>() {
 		                          public void handle(TableColumn.CellEditEvent<GymTrainer, String> t){
@@ -519,7 +526,10 @@ public class ManagerController implements Initializable {
 		                        	  if (t.getNewValue().compareTo(t.getOldValue()) != 0) {
 		                        		  GymTrainer newTrainer = new GymTrainer(trainer.getName(), t.getNewValue(), trainer.getRateOfPay());
 		                        		  newTrainer.setTrainerId(trainer.getTrainerId());
-		                        		  updateTrainer(newTrainer);
+		                        		  if ( !updateTrainer(newTrainer,true) ) {
+		                        			  tblTrainers.getColumns().get(1).setVisible(false);
+		                        			  tblTrainers.getColumns().get(1).setVisible(true);
+		                        		  }
 		                        	  }
 		                          }
 		                      });		
@@ -540,7 +550,7 @@ public class ManagerController implements Initializable {
 		                        	  if (t.getNewValue().compareTo(t.getOldValue()) != 0) {
 		                        		  GymTrainer newTrainer = new GymTrainer(trainer.getName(), trainer.getSurrname(), t.getNewValue());
 		                        		  newTrainer.setTrainerId(trainer.getTrainerId());
-		                        		  updateTrainer(newTrainer);
+		                        		  updateTrainer(newTrainer,false);
 		                        	  }
 		                        	  
 		                          }
