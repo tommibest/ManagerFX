@@ -103,5 +103,11 @@ public class GUIHelper {
 		MonologFX cannotDeleteDialog = MonologFXBuilder.create().modal(true).message(message).titleText("Brak zaznaczenia").button(btnYes).buttonAlignment(MonologFX.ButtonAlignment.CENTER).build();
 		return cannotDeleteDialog.showDialog();		
 	}
+
+	public static Type displayWarning(String message) {
+		MonologFXButton btnYes = MonologFXButtonBuilder.create().defaultButton(true).type(MonologFXButton.Type.OK).build();
+		MonologFX nothingSelectedDialog = MonologFXBuilder.create().modal(true).message(message).titleText("Uwaga").button(btnYes).buttonAlignment(MonologFX.ButtonAlignment.CENTER).build();
+		return nothingSelectedDialog.showDialog();
+	}
 	
 }

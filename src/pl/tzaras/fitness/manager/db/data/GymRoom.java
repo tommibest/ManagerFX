@@ -17,6 +17,11 @@ public class GymRoom implements java.io.Serializable {
 		this.name = name;
 	}
 
+	public GymRoom(long roomId, String name) {
+		this.ID = roomId;
+		this.name = name;
+	}
+
 	public long getID() {
 		return this.ID;
 	}

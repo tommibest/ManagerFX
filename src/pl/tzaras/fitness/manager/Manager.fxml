@@ -12,173 +12,218 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import pl.tzaras.fitness.manager.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="632.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
+<AnchorPane id="AnchorPane" prefHeight="598.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="pl.tzaras.fitness.manager.ManagerController">
   <children>
-    <TabPane layoutX="0.0" layoutY="0.0" prefHeight="632.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE">
+    <TabPane layoutX="0.0" layoutY="0.0" prefHeight="598.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE">
       <tabs>
-        <Tab text="Przeglad">
+        <Tab text="Kalendarz">
           <content>
-            <AnchorPane id="Content" minHeight="600.0" minWidth="0.0" prefHeight="600.0" prefWidth="1000.0">
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="980.0">
               <children>
                 <VBox id="VBox" alignment="CENTER" prefHeight="549.0" prefWidth="699.0" spacing="5.0" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="8.0">
                   <children>
                     <ScrollPane minHeight="526.0" minWidth="697.0">
                       <AnchorPane fx:id="callendarPane" maxHeight="696.0" maxWidth="500.0" minHeight="500.0" minWidth="696.0" prefHeight="524.0" prefWidth="696.0" />
                     </ScrollPane>
-                    <HBox>
-                      <GridPane hgap="2.0" minHeight="50.0" minWidth="0.0" prefHeight="80.0" prefWidth="278.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                    <BorderPane prefWidth="429.0">
+                      <center>
+                        <Label fx:id="lblCurrentWeek" alignment="CENTER" prefWidth="-1.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER" />
+                      </center>
+                      <left>
+                        <Button fx:id="btnPrevWeek" defaultButton="true" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;" textAlignment="CENTER" BorderPane.alignment="CENTER_LEFT" />
+                      </left>
+                      <right>
+                        <Button fx:id="btnNextWeek" alignment="CENTER_RIGHT" defaultButton="true" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" textAlignment="CENTER" BorderPane.alignment="CENTER_RIGHT" />
+                      </right>
+                    </BorderPane>
+                  </children>
+                </VBox>
+                <BorderPane center="$null" layoutX="713.0" layoutY="8.0" prefHeight="552.0" prefWidth="277.0">
+                  <bottom>
+                    <Button fx:id="btnCreateNewClass" alignment="BOTTOM_CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" disable="false" onAction="#addClass" prefWidth="260.0" text="Dodaj nowe zajęcia" BorderPane.alignment="CENTER" />
+                  </bottom>
+                  <top>
+                    <VBox>
+                      <TitledPane fx:id="paneOverview" collapsible="false" text="Podsumowanie">
+                        <content>
+                          <AnchorPane id="Content" prefHeight="160.0" prefWidth="250.0">
+                            <children>
+                              <GridPane alignment="CENTER_RIGHT" disable="false" focusTraversable="false" gridLinesVisible="false" layoutX="0.0" layoutY="-1.0" prefHeight="160.0" prefWidth="274.0" style="" visible="true">
+                                <children>
+                                  <Label alignment="CENTER_RIGHT" cache="false" contentDisplay="RIGHT" depthTest="INHERIT" prefWidth="-1.0" text="Zajecia:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+                                    <GridPane.margin>
+                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x5" />
+                                    </GridPane.margin>
+                                  </Label>
+                                  <Label text="Sala:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="1" />
+                                  <Label text="Trener 1:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="2" />
+                                  <Label fx:id="lblTrainer2" disable="true" text="Trener 2:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="3" />
+                                  <Label alignment="CENTER_RIGHT" text="Dzien:" textAlignment="LEFT" underline="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="4" />
+                                  <Label text="Godzina:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                                  <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Zapisanych:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="6" />
+                                  <Label fx:id="lblOverviewType" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="0" />
+                                  <Label fx:id="lblOverviewRoom" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="1" />
+                                  <Label fx:id="lblOverviewTrainer" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="2" />
+                                  <Label fx:id="lblOverviewTrainer1" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="3" />
+                                  <Label fx:id="lblOverviewDay" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="4" />
+                                  <Label fx:id="lblOverviewHour" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="5" />
+                                  <Label fx:id="lblOverviewEnrolled" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="6" />
+                                  <HBox GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="7">
+                                    <Button fx:id="btnRemoveClass" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun">
+                                      <HBox.margin>
+                                        <Insets right="5.0" fx:id="x7" />
+                                      </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnEditClass" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
+                                  </HBox>
+                                </children>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="92.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="180.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                              </GridPane>
+                            </children>
+                          </AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <GridPane hgap="2.0" prefWidth="260.0" vgap="2.0">
                         <children>
-                          <Label text="Sala:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                          <Label prefWidth="80.0" text="Sala:" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
                             <GridPane.margin>
                               <Insets bottom="1.0" left="5.0" right="5.0" fx:id="x10" />
                             </GridPane.margin>
                           </Label>
-                          <ComboBox fx:id="cmbSelectRoom" onAction="#refreshCallendar" prefWidth="150.0" GridPane.columnIndex="1" GridPane.margin="$x10" GridPane.rowIndex="0" />
-                          <Label minHeight="21.0" minWidth="-1.0" text="Trener:" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.margin="$x10" GridPane.rowIndex="1" />
-                          <ComboBox fx:id="cmbSelectTrainer" onAction="#refreshCallendar" prefHeight="22.0" prefWidth="147.0" GridPane.columnIndex="1" GridPane.margin="$x10" GridPane.rowIndex="1" />
+                          <ComboBox fx:id="cmbSelectRoom" onAction="#refreshCallendar" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.margin="$x10" GridPane.rowIndex="0" />
+                          <Label prefWidth="80.0" text="Trener:" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.margin="$x10" GridPane.rowIndex="1" />
+                          <ComboBox fx:id="cmbSelectTrainer" onAction="#refreshCallendar" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.margin="$x10" GridPane.rowIndex="1" />
                         </children>
                         <rowConstraints>
                           <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           <RowConstraints fillHeight="true" percentHeight="0.0" />
                         </rowConstraints>
+                        <VBox.margin>
+                          <Insets top="5.0" />
+                        </VBox.margin>
                       </GridPane>
-                      <BorderPane prefWidth="429.0" HBox.hgrow="ALWAYS">
-                        <center>
-                          <Label fx:id="lblCurrentWeek" alignment="CENTER" prefWidth="-1.0" text="&lt;Biezacy tydzien&gt;" textAlignment="CENTER" />
-                        </center>
-                        <left>
-                          <Button fx:id="btnPrevWeek" defaultButton="true" mnemonicParsing="false" onMouseClicked="#prevWeekAction" text="&lt;" textAlignment="CENTER" BorderPane.alignment="CENTER_LEFT" />
-                        </left>
-                        <right>
-                          <Button fx:id="btnNextWeek" alignment="CENTER_RIGHT" defaultButton="true" mnemonicParsing="false" onMouseClicked="#nextWeekAction" text="&gt;" textAlignment="CENTER" BorderPane.alignment="CENTER_RIGHT" />
-                        </right>
-                      </BorderPane>
-                    </HBox>
-                  </children>
-                </VBox>
-                <!-- 
-                    <TitledPane fx:id="x2" animated="true" text="Przegląd zajęć">
-                      <content>
-                        <TableView fx:id="tblClasses" prefHeight="500.0" prefWidth="650.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="ID zajęć" fx:id="colClassId" />
-                            <TableColumn prefWidth="75.0" text="Typ zajęć" fx:id="colCType" />
-                            <TableColumn prefWidth="75.0" text="Dzień" fx:id="colClassDay" />
-                            <TableColumn prefWidth="75.0" text="Godzina" fx:id="colClassHour" />
-                            <TableColumn prefWidth="75.0" text="Instruktor" fx:id="colClassTrainer" />
-                            <TableColumn prefWidth="75.0" text="Sala" fx:id="colClassRoom" />
-                            <TableColumn prefWidth="139.0" text="Ilość uczestników" fx:id="colParticipants" />
-                            <TableColumn prefWidth="104.0" text="Czas trwania" fx:id="colClassDuration" />
-                          </columns>
-                        </TableView>
-                      </content>
-                    </TitledPane>
-               -->
-                <VBox alignment="TOP_CENTER" layoutX="716.0" prefWidth="275.0" AnchorPane.topAnchor="8.0">
-                  <TitledPane fx:id="paneOverview" collapsible="false" text="Podsumowanie">
-                    <content>
-                      <AnchorPane id="Content" prefHeight="160.0" prefWidth="250.0">
-                        <children>
-                          <GridPane alignment="CENTER_RIGHT" disable="false" focusTraversable="false" gridLinesVisible="false" layoutX="0.0" layoutY="-1.0" prefHeight="160.0" prefWidth="274.0" style="" visible="true">
-                            <children>
-                              <Label alignment="CENTER_RIGHT" cache="false" contentDisplay="RIGHT" depthTest="INHERIT" prefWidth="-1.0" text="Zajecia:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
-                                <GridPane.margin>
-                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x5" />
-                                </GridPane.margin>
-                              </Label>
-                              <Label text="Sala:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="1" />
-                              <Label text="Trener 1:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="2" />
-                              <Label fx:id="lblTrainer2" disable="true" text="Trener 2:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="3" />
-                              <Label alignment="CENTER_RIGHT" text="Dzien:" textAlignment="LEFT" underline="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="4" />
-                              <Label text="Godzina:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="5" />
-                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Zapisanych:" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.margin="$x5" GridPane.rowIndex="6" />
-                              <Label fx:id="lblOverviewType" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="0" />
-                              <Label fx:id="lblOverviewRoom" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="1" />
-                              <Label fx:id="lblOverviewTrainer" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="2" />
-                              <Label fx:id="lblOverviewTrainer1" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="3" />
-                              <Label fx:id="lblOverviewDay" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="4" />
-                              <Label fx:id="lblOverviewHour" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="5" />
-                              <Label fx:id="lblOverviewEnrolled" text="" GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="6" />
-                              <HBox GridPane.columnIndex="1" GridPane.margin="$x5" GridPane.rowIndex="7">
-                                <Button fx:id="btnRemoveClass" mnemonicParsing="false" onMouseClicked="#removeClass" text="Usun">
-                                  <HBox.margin>
-                                    <Insets right="5.0" fx:id="x7" />
-                                  </HBox.margin>
-                                </Button>
-                                <Button fx:id="btnEditClass" mnemonicParsing="false" onMouseClicked="#editClass" text="Edytuj" />
-                              </HBox>
-                            </children>
-                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="92.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="180.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                          </GridPane>
-                        </children>
-                      </AnchorPane>
-                    </content>
-                    <VBox.margin>
-                      <Insets bottom="5.0" fx:id="bottom5" />
-                    </VBox.margin>
-                  </TitledPane>
-                  <TitledPane fx:id="paneSearch" collapsible="false" text="Wyszukaj" VBox.margin="$bottom5">
-                    <content>
-                      <AnchorPane id="Content" prefHeight="307.0" prefWidth="250.0">
-                        <children>
-                          <CheckBox fx:id="chbTrainer" layoutX="6.0" layoutY="8.0" mnemonicParsing="false" onAction="#enableWidget" text="Trener" />
-                          <ComboBox fx:id="cmbSearchTrainer" disable="true" editable="false" layoutX="86.0" layoutY="4.0" prefWidth="175.0" />
-                          <CheckBox fx:id="chbType" layoutX="6.0" layoutY="38.0" mnemonicParsing="false" onAction="#enableWidget" text="Typ zaj." />
-                          <ComboBox fx:id="cmbSearchType" disable="true" editable="false" layoutX="86.0" layoutY="34.0" prefWidth="175.0" />
-                          <CheckBox fx:id="chbDay" layoutX="6.0" layoutY="68.0" mnemonicParsing="false" onAction="#enableWidget" text="W/g dnia" />
-                          <ComboBox fx:id="cmbSearchDay" disable="true" editable="false" layoutX="86.0" layoutY="64.0" prefWidth="175.0" />
-                          <CheckBox fx:id="chbFromDate" layoutX="6.0" layoutY="98.0" mnemonicParsing="false" onAction="#enableWidget" text="Od dnia:" />
-                          <TextField fx:id="tfFromDate" disable="true" layoutX="86.0" layoutY="94.0" prefWidth="120.0" promptText="dd-mm-yyyy" />
-                          <CheckBox fx:id="chbToDate" layoutX="6.0" layoutY="128.0" mnemonicParsing="false" onAction="#enableWidget" text="Do dnia:" />
-                          <TextField fx:id="tfToDate" disable="true" layoutX="86.0" layoutY="124.0" pickOnBounds="false" prefWidth="120.0" promptText="dd-mm-yyyy" text="" />
-                          <CheckBox fx:id="chbFromHour" layoutX="6.0" layoutY="158.0" mnemonicParsing="false" onAction="#enableWidget" text="Od godz." />
-                          <ComboBox fx:id="cmbFromHour" disable="true" layoutX="88.0" layoutY="154.0" prefWidth="61.0" />
-                          <Label layoutX="153.0" layoutY="157.0" text=":" />
-                          <ComboBox fx:id="cmbFromMinute" disable="true" layoutX="162.0" layoutY="154.0" prefWidth="61.0" />
-                          <CheckBox fx:id="chbToHour" layoutX="6.0" layoutY="188.0" mnemonicParsing="false" onAction="#enableWidget" text="Do godz." />
-                          <ComboBox fx:id="cmbToHour" disable="true" layoutX="88.0" layoutY="184.0" prefWidth="61.0" />
-                          <Label layoutX="153.0" layoutY="182.0" text=":" />
-                          <ComboBox fx:id="cmbToMinute" disable="true" layoutX="162.0" layoutY="184.0" prefWidth="61.0" />
-                          <CheckBox fx:id="chbPension" layoutX="6.0" layoutY="210.0" mnemonicParsing="false" onAction="#enableWidget" text="Za godzine" />
-                          <TextField fx:id="tfPension" disable="true" layoutX="86.0" layoutY="207.0" pickOnBounds="false" prefWidth="120.0" promptText="" text="10" />
-                          <Button fx:id="btnSearch" layoutX="9.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleSearch" prefWidth="254.0" text="Oblicz ilość uczestników" />
-                          <Button fx:id="btnCalculate" layoutX="9.0" layoutY="255.0" mnemonicParsing="false" onAction="#handleCalculate" prefWidth="254.0" text="Oblicz pensję" />
-                          <Label layoutX="14.0" layoutY="284.0" text="Wynik zapytania: " />
-                          <TextField fx:id="tfSearchResult" editable="false" layoutX="132.0" layoutY="281.0" prefWidth="127.0" promptText="ilosc osob" />
-                        </children>
-                      </AnchorPane>
-                    </content>
-                  </TitledPane>
-                  <!-- </panes> 
-                  </Accordion> -->
-                  <Button fx:id="btnCreateNewClass" alignment="TOP_CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" disable="false" onAction="#addClass" prefWidth="260.0" text="Dodaj nowe zajęcia" VBox.vgrow="SOMETIMES">
-                    <VBox.margin>
-                      <Insets left="5.0" right="5.0" />
-                    </VBox.margin>
-                  </Button>
-                </VBox>
+                    </VBox>
+                  </top>
+                </BorderPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="Raporty">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="980.0">
+              <children>
+                <HBox layoutX="0.0" layoutY="0.0" prefHeight="570.0" prefWidth="1000.0">
+                  <VBox>
+                    <GridPane alignment="CENTER_RIGHT" disable="false" focusTraversable="false" gridLinesVisible="false" hgap="5.0" prefWidth="270.0" style="" vgap="5.0" visible="true">
+                      <children>
+                        <CheckBox fx:id="chbTrainer" mnemonicParsing="false" onAction="#enableWidget" text="Trener" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cmbSearchTrainer" disable="true" editable="false" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <CheckBox fx:id="chbType" mnemonicParsing="false" onAction="#enableWidget" text="Typ zaj." GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cmbSearchType" disable="true" editable="false" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="chbDay" mnemonicParsing="false" onAction="#enableWidget" text="W/g dnia" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="cmbSearchDay" disable="true" editable="false" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="chbFromDate" mnemonicParsing="false" onAction="#enableWidget" text="Od dnia:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <TextField fx:id="tfFromDate" disable="true" prefWidth="120.0" promptText="dd-mm-yyyy" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="chbToDate" mnemonicParsing="false" onAction="#enableWidget" text="Do dnia:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <TextField fx:id="tfToDate" disable="true" pickOnBounds="false" prefWidth="120.0" promptText="dd-mm-yyyy" text="" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="chbFromHour" mnemonicParsing="false" onAction="#enableWidget" text="Od godz." GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="5">
+                          <ComboBox fx:id="cmbFromHour" disable="true" prefWidth="61.0" />
+                          <Label text=":" />
+                          <ComboBox fx:id="cmbFromMinute" disable="true" prefWidth="61.0" />
+                        </HBox>
+                        <CheckBox fx:id="chbToHour" mnemonicParsing="false" onAction="#enableWidget" text="Do godz." GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="6">
+                          <ComboBox fx:id="cmbToHour" disable="true" prefWidth="61.0" />
+                          <Label text=":" />
+                          <ComboBox fx:id="cmbToMinute" disable="true" prefWidth="61.0" />
+                        </HBox>
+                        <CheckBox fx:id="chbPension" mnemonicParsing="false" onAction="#enableWidget" text="Za godzine" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                        <TextField fx:id="tfPension" disable="true" pickOnBounds="false" prefWidth="120.0" promptText="" text="10" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="92.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="180.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="22.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <VBox.margin>
+                        <Insets bottom="5.0" right="5.0" />
+                      </VBox.margin>
+                    </GridPane>
+                    <Button fx:id="btnSearch" alignment="TOP_CENTER" cache="false" cancelButton="false" contentDisplay="CENTER" defaultButton="false" mnemonicParsing="false" onAction="#handleSearch" prefWidth="270.0" text="Oblicz ilość uczestników" underline="false" wrapText="false">
+                      <VBox.margin>
+                        <Insets bottom="1.0" top="10.0" />
+                      </VBox.margin>
+                    </Button>
+                    <Label text="Ilość uczestników: ">
+                      <VBox.margin>
+                        <Insets top="2.0" />
+                      </VBox.margin>
+                    </Label>
+                    <TextField fx:id="tfSearchResult" editable="false" prefWidth="127.0" promptText="ilosc osob" >
+                      <VBox.margin>
+                        <Insets bottom="10.0" />
+                      </VBox.margin>
+                    </TextField>
+                    <Button fx:id="btnCalculate" mnemonicParsing="false" onAction="#handleCalculate" prefWidth="270.0" text="Oblicz pensję" VBox.vgrow="NEVER"/>
+                    <Label text="Wypłata:">
+                      <VBox.margin>
+                        <Insets top="2.0" />
+                      </VBox.margin>
+                    </Label>
+                    <TextField fx:id="tfPayResult" editable="false" prefWidth="127.0" promptText="wypłata" />
+                    <padding>
+                      <Insets left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                  </VBox>
+                  <TableView fx:id="reportTable" prefHeight="550.0" prefWidth="705.0">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="Typ zajęć" fx:id="reportClassType" />
+                      <TableColumn prefWidth="75.0" text="Dzień" fx:id="reportClassDay" />
+                      <TableColumn prefWidth="75.0" text="Godzina" fx:id="reportClassHour" />
+                      <TableColumn prefWidth="75.0" text="Instruktor" fx:id="reportClassTrainer" />
+                      <TableColumn prefWidth="75.0" text="Sala" fx:id="reportClassRoom" />
+                      <TableColumn prefWidth="139.0" text="Ilość uczestników" fx:id="reportParticipants" />
+                      <TableColumn prefWidth="104.0" text="Czas trwania" fx:id="reportClassDuration" />
+                    </columns>
+                    <HBox.margin>
+                      <Insets bottom="10.0" right="10.0" top="10.0" />
+                    </HBox.margin>
+                  </TableView>
+                </HBox>
               </children>
             </AnchorPane>
           </content>
         </Tab>
         <Tab closable="false" text="Zarządzaj">
           <content>
-            <AnchorPane id="Content">
+            <AnchorPane id="Content" prefHeight="570.0" prefWidth="980.0">
               <children>
                 <Accordion AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                   <expandedPane>
@@ -252,7 +297,7 @@
                             <right>
                               <Button fx:id="btnRmvClassType" mnemonicParsing="false" onMouseClicked="#removeClassType" text="Usuń wybrany">
                                 <BorderPane.margin>
-                                  <Insets top="3.0" fx:id="x2" />
+                                  <Insets top="3.0" fx:id="x2_x0" />
                                 </BorderPane.margin>
                               </Button>
                             </right>
@@ -276,7 +321,7 @@
                               </HBox>
                             </left>
                             <right>
-                              <Button fx:id="btnRmvRoom" mnemonicParsing="false" onMouseClicked="#removeRoom" text="Usuń wybraną" BorderPane.margin="$x2" />
+                              <Button fx:id="btnRmvRoom" mnemonicParsing="false" onMouseClicked="#removeRoom" text="Usuń wybraną" BorderPane.margin="$x2_x0" />
                             </right>
                           </BorderPane>
                         </VBox>

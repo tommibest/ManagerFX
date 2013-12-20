@@ -20,7 +20,7 @@ public class Manager extends Application {
 		
         Parent root = FXMLLoader.load(getClass().getResource("Manager.fxml"));
         Scene scene = new Scene(root);
-        stage.setResizable(false);
+        //stage.setResizable(false);
         stage.setScene(scene);
         stage.setTitle("Fitness Manager");
         //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

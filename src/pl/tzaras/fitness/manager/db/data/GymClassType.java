@@ -17,6 +17,11 @@ public class GymClassType implements java.io.Serializable {
 		this.name = name;
 	}
 
+	public GymClassType(long classId, String name) {
+		this.classId = classId;
+		this.name = name;
+	}
+
 	public long getClassId() {
 		return this.classId;
 	}

@@ -80,7 +80,7 @@ public class GymRoomManager {
 		return rooms;
 	}
 
-	public void updateClass(Long gClassId, String roomName)
+	public void updateRoom(Long gClassId, String roomName)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
