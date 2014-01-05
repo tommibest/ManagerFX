@@ -26,7 +26,7 @@ public class GymTrainerManager {
 	    }
 	}
 
-	private static final String DEFAULT = "Dowlony";
+	private static final String DEFAULT = "Dowolny";
 	
 	private List<GymTrainer> trainers;
 	private List<TrainerWrapper> wrappedTrainers;
@@ -139,6 +139,7 @@ public class GymTrainerManager {
 	}
 
 	public void initializeCombo(ComboBox<TrainerWrapper> instructorCombo) {
+		instructorCombo.getItems().clear();	
 		instructorCombo.getItems().setAll(wrappedTrainers);	
 	}
 	
@@ -204,6 +205,7 @@ public class GymTrainerManager {
 		initializeCombo(comboBox);
 		comboBox.getItems().add(defaultSelection);
 		comboBox.setValue(defaultSelection);
+//		comboBox.getSelectionModel().select(defaultSelection);
 	}
 
 }

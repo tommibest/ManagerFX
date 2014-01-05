@@ -113,6 +113,7 @@ public class GymRoomManager {
 	}
 
 	public void initializeCombo(ComboBox<RoomWrapper> classTypeCombo) {
+		classTypeCombo.getItems().clear();
 		classTypeCombo.getItems().setAll(wrappedRooms);		
 	}
 	

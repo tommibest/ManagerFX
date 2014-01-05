@@ -71,6 +71,11 @@ import pl.tzaras.fitness.manager.utils.ManagerUtils;
  */
 public class ManagerController implements Initializable {
 
+	private static AppState state;
+	static {
+		state = AppState.getInstance();
+	}
+	
 	@FXML
 	private TextField txtFieldInstructorName;
 	@FXML
@@ -206,7 +211,7 @@ public class ManagerController implements Initializable {
 
 	@FXML
 	private TextField tfSearchResult;
-	
+
 	@FXML
 	private TextField tfPayResult;
 	@FXML
@@ -216,12 +221,6 @@ public class ManagerController implements Initializable {
 	private CheckBox chbPension;
 	@FXML
 	private TextField tfPension;
-
-	DateTime monday;
-	DateTime sunday;
-	GymClass selected;
-	private boolean populate = false;
-	private boolean initializing;
 
 	@FXML
 	protected void addTrainer(MouseEvent arg0) {
@@ -237,8 +236,10 @@ public class ManagerController implements Initializable {
 				System.out.println("Adding instructor: " + txtFieldInstructorName.getText() + ", "
 						+ txtFieldInstructorSurrname.getText());
 
-				mngr.initializeCombo(cmbSearchTrainer);
+				TrainerWrapper tw = cmbSelectTrainer.getSelectionModel().getSelectedItem();
 				mngr.initializeComboWithDefault(cmbSelectTrainer);
+				cmbSelectTrainer.setValue(tw);
+				mngr.initializeComboWithDefault(cmbSearchTrainer);
 
 				ObservableList<GymTrainer> data = FXCollections.observableArrayList(DataManager.getInstance()
 						.getGymTrainerManager().getTrainers());
@@ -247,8 +248,8 @@ public class ManagerController implements Initializable {
 				}
 				tblTrainers.setItems(data);
 			} else {
-				GUIHelper.nothingSelectedWarning("Trener " + txtFieldInstructorName.getText() + " "
-						+ txtFieldInstructorSurrname.getText() + " już istnieje.");
+				GUIHelper.warningWithOk("Trener " + txtFieldInstructorName.getText() + " " + txtFieldInstructorSurrname.getText()
+						+ " już istnieje.");
 			}
 			txtFieldInstructorName.setText("");
 			txtFieldInstructorSurrname.setText("");
@@ -270,6 +271,7 @@ public class ManagerController implements Initializable {
 			int result = mngr.delete(trainer);
 			if (result == ManagerUtils.SUCCESS) {
 				mngr.initializeCombo(cmbSearchTrainer);
+				mngr.initializeComboWithDefault(cmbSelectTrainer);
 
 				ObservableList<GymTrainer> data = FXCollections.observableArrayList(mngr.getTrainers());
 				tblTrainers.setItems(data);
@@ -328,14 +330,13 @@ public class ManagerController implements Initializable {
 			if (!mngr.classTypeExists(tfClassTypeName.getText())) {
 				System.out.println("Adding class: " + tfClassTypeName.getText());
 				mngr.addClassType(tfClassTypeName.getText());
+
 				mngr.initializeCombo(cmbSearchType);
+
 				ObservableList<GymClassType> classTypes = FXCollections.observableArrayList(mngr.getClassTypes());
-				for (GymClassType classType : classTypes) {
-					System.out.println(classType.getName());
-				}
 				tblClassType.setItems(classTypes);
 			} else {
-				GUIHelper.nothingSelectedWarning("Zajęcia " + tfClassTypeName.getText() + " juz istnieją");
+				GUIHelper.warningWithOk("Zajęcia " + tfClassTypeName.getText() + " juz istnieją");
 			}
 
 			tfClassTypeName.setText("");
@@ -353,20 +354,23 @@ public class ManagerController implements Initializable {
 	protected void addRoom(MouseEvent arg0) {
 		if (!tfRoomName.getText().isEmpty()) {
 			GymRoomManager mngr = DataManager.getInstance().getGymRoomManager();
-			if (mngr.roomExists(tfRoomName.getText())) {
-				System.out.println("Adding class: " + tfRoomName.getText());
+			if (!mngr.roomExists(tfRoomName.getText())) {
+				System.out.println("Adding room: " + tfRoomName.getText());
 				mngr.saveRoom(tfRoomName.getText());
 
+				RoomWrapper rw = cmbSelectRoom.getSelectionModel().getSelectedItem();
 				mngr.initializeComboWithDefault(cmbSelectRoom);
+				cmbSelectRoom.setValue(rw);
 
 				ObservableList<GymRoom> rooms = FXCollections.observableArrayList(mngr.getRooms());
 				tblRoom.setItems(rooms);
 			} else {
+				GUIHelper.warningWithOk("Sala " + tfRoomName.getText() + " już istnieje.");
 				tfRoomName.setText("");
 			}
 
 		} else {
-			System.err.println("Cannot add empty class type.");
+			System.err.println("Cannot add empty room.");
 		}
 	}
 
@@ -374,43 +378,36 @@ public class ManagerController implements Initializable {
 	protected void addClass(ActionEvent event) {
 		GymClassManager mngr = DataManager.getInstance().getGymClassManager();
 
-		Stage stage = new Stage();
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("EditDialog.fxml"));
-			root = (Parent) loader.load();
-			stage.setScene(new Scene(root));
-			stage.setTitle("Dodaj zajęcia");
-			stage.initModality(Modality.WINDOW_MODAL);
-			stage.initOwner(((Node) event.getSource()).getScene().getWindow());
-			EditDialogController controller = (EditDialogController) loader.getController();
-			GymClass newClass = new GymClass();
-			newClass.setStartTime(monday);
-			controller.setGymClass(newClass, false);
-			controller.setEditDialogStage(stage);
-			stage.showAndWait();
-			if (controller.getStatus() == EditDialogController.OK_BUTTON) {
-				GymClass gClass = controller.getGymClass();
+		EditClassDialog dialog = new EditClassDialog(((Node) event.getSource()).getScene().getWindow());
+		dialog.showAndWait();
+		GymClass gClass = null;
+		if ( (gClass = dialog.getGymClass()) != null ){
+			if ( mngr.isRoomAvailableForClass(gClass) ) { 
 				mngr.saveClass(gClass);
-				for (int i = 0; i < controller.getRepetition(); i++) {
-					GymClass classCopy = mngr.makeCopy(gClass);
-					classCopy.setStartTime(gClass.getStartTime().plusWeeks(i + 1));
-					classCopy.setParticipants(0);
-					mngr.saveClass(classCopy);
-				}
 				populateCurrentWeekData();
-				displayOverview(controller.getGymClass());
+				displayOverview(gClass);
+			} else {
+				DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-YYYY HH:mm");
+				GUIHelper.displayWarning("Nie można utworzyć zajęć:" +fmt.print(gClass.getStartTime())+"\nSala o wybranej godzinie jest już zajęta.");
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			for (int i = 0; i < dialog.getRepetition(); i++) {
+				GymClass classCopy = mngr.makeCopy(gClass);
+				classCopy.setStartTime(gClass.getStartTime().plusWeeks(i + 1));
+				classCopy.setParticipants(0);
+				if ( mngr.isRoomAvailableForClass(classCopy) ) { 
+					mngr.saveClass(classCopy);
+				} else {
+					DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-YYYY HH:mm");
+					GUIHelper.displayWarning("Nie można utworzyć zajęć:" +fmt.print(classCopy.getStartTime())+"\nSala o wybranej godzinie jest już zajęta.");
+				}
+			}
+			
 		}
-
 	}
 
 	public void initialize(URL location, ResourceBundle resources) {
-		initializing = true;
-		if (populate) {
+		state.setInitializing(true);
+		if (state.isPopulate()) {
 			populateTestData();
 		}
 
@@ -418,7 +415,7 @@ public class ManagerController implements Initializable {
 		initializeReportTab();
 		initializeManagementTab();
 		populateCurrentWeekData();
-		initializing = false;
+		state.setInitializing(false);
 	}
 
 	private void initializeReportTab() {
@@ -488,8 +485,8 @@ public class ManagerController implements Initializable {
 	private void initializeMainTab() {
 
 		DateTime now = new DateTime();
-		monday = now.withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0);
-		sunday = monday.plusWeeks(1);
+		state.setCurrentMonday(now.withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0));
+		state.setCurrentSunday(state.getCurrentMonday().plusWeeks(1));
 		displaySelectedWeek();
 		initializeCalendarView();
 		populateCurrentWeekData();
@@ -517,7 +514,7 @@ public class ManagerController implements Initializable {
 
 	@FXML
 	protected void refreshCallendar(ActionEvent event) {
-		if (!initializing) {
+		if (!state.isInitializing()) {
 			populateCurrentWeekData();
 		}
 	}
@@ -528,7 +525,7 @@ public class ManagerController implements Initializable {
 		GUIHelper.prepareDayOfWeekHeaders(callendarPane);
 
 		ObservableList<GymClass> data = FXCollections.observableArrayList(DataManager.getInstance().getGymClassManager()
-				.getClasses(monday, sunday));
+				.getClasses(state.getCurrentMonday(), state.getCurrentSunday()));
 
 		for (GymClass gymClass : data) {
 			if ((cmbSelectRoom.getValue().equals(DataManager.getInstance().getGymRoomManager().defaultSelection) || gymClass
@@ -739,8 +736,8 @@ public class ManagerController implements Initializable {
 
 	@FXML
 	protected void prevWeekAction(MouseEvent arg0) {
-		monday = monday.minusWeeks(1);
-		sunday = sunday.minusWeeks(1);
+		state.setCurrentMonday( state.getCurrentMonday().minusWeeks(1) );
+		state.setCurrentSunday( state.getCurrentSunday().minusWeeks(1) );
 		displaySelectedWeek();
 		populateCurrentWeekData();
 		clearOverview();
@@ -748,8 +745,8 @@ public class ManagerController implements Initializable {
 
 	@FXML
 	protected void nextWeekAction(MouseEvent arg0) {
-		monday = monday.plusWeeks(1);
-		sunday = sunday.plusWeeks(1);
+		state.setCurrentMonday( state.getCurrentMonday().plusWeeks(1) );
+		state.setCurrentSunday( state.getCurrentSunday().plusWeeks(1) );
 		displaySelectedWeek();
 		populateCurrentWeekData();
 		clearOverview();
@@ -757,7 +754,7 @@ public class ManagerController implements Initializable {
 
 	private void displaySelectedWeek() {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
-		lblCurrentWeek.setText(fmt.print(monday) + " - " + fmt.print(sunday));
+		lblCurrentWeek.setText(fmt.print(state.getCurrentMonday()) + " - " + fmt.print(state.getCurrentSunday()));
 	}
 
 	@FXML
@@ -772,7 +769,7 @@ public class ManagerController implements Initializable {
 			stage.initModality(Modality.WINDOW_MODAL);
 			stage.initOwner(((Node) event.getSource()).getScene().getWindow());
 			EditDialogController controller = (EditDialogController) loader.getController();
-			controller.setGymClass(selected, true);
+			controller.setGymClass(state.getSelectedClass(), true);
 			controller.setEditDialogStage(stage);
 			stage.showAndWait();
 			CallendarEntryManager.getInstance().updateEntry(controller.getGymClass());
@@ -788,13 +785,13 @@ public class ManagerController implements Initializable {
 	@FXML
 	protected void removeClass(MouseEvent event) {
 		if (GUIHelper.confirmDeletion("Czy na pewno chcesz usunąć te zajęcia?") == MonologFXButton.Type.YES) {
-			DataManager.getInstance().getGymClassManager().deleteClass(selected);
-			CallendarEntryManager.getInstance().remove(selected);
+			DataManager.getInstance().getGymClassManager().deleteClass(state.getSelectedClass());
+			CallendarEntryManager.getInstance().remove(state.getSelectedClass());
 			clearOverview();
 			populateCurrentWeekData();
 			btnRemoveClass.setDisable(true);
 			btnEditClass.setDisable(true);
-			selected = null;
+			state.setSelectedClass(null);
 		}
 	}
 
@@ -862,7 +859,7 @@ public class ManagerController implements Initializable {
 	@FXML
 	protected void handleCalculate(ActionEvent event) {
 		tfPayResult.setText("");
-		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses();
+		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses(null);
 		ArrayList<GymClass> result = new ArrayList<GymClass>();
 		if (chbTrainer.isSelected() && chbFromDate.isSelected() && chbToDate.isSelected()) {
 			for (GymClass gClass : allClasses) {
@@ -902,10 +899,10 @@ public class ManagerController implements Initializable {
 			if (chbPension.isSelected()) {
 				rateOfPay = Double.parseDouble(tfPension.getText());
 			}
-			System.out.println("Rate of pay: "+rateOfPay);
+			System.out.println("Rate of pay: " + rateOfPay);
 			double pension = (totalNumber / 60) * rateOfPay;
 			tfPayResult.setText(String.valueOf(pension));
-			
+
 			reportTable.setItems(FXCollections.observableList(result));
 		} else {
 			GUIHelper.displayWarning("Do wyliczenia wypłaty, należy podać trenera i zakres dni.");
@@ -915,7 +912,7 @@ public class ManagerController implements Initializable {
 	@FXML
 	protected void handleSearch(ActionEvent event) {
 		tfSearchResult.setText("");
-		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses();
+		ArrayList<GymClass> allClasses = (ArrayList<GymClass>) DataManager.getInstance().getGymClassManager().getClasses(null);
 		ArrayList<GymClass> result = new ArrayList<GymClass>();
 		for (GymClass gClass : allClasses) {
 			if (chbTrainer.isSelected()) {
@@ -984,15 +981,15 @@ public class ManagerController implements Initializable {
 	}
 
 	public void displayOverview(GymClass gymClass) {
-		selected = gymClass;
+		state.setSelectedClass(gymClass);
 		lblOverviewType.setText(gymClass.getClassType().getName());
 		lblOverviewRoom.setText(gymClass.getClassRoom().getName());
-		System.out.println(selected.getClassTrainer1().getName() + ", " + selected.getClassTrainer1().getSurrname());
-		lblOverviewTrainer.setText(selected.getClassTrainer1().getName() + ", " + selected.getClassTrainer1().getSurrname());
-		if (selected.getClassTrainer2() != null) {
+		System.out.println(state.getSelectedClass().getClassTrainer1().getName() + ", " + state.getSelectedClass().getClassTrainer1().getSurrname());
+		lblOverviewTrainer.setText(state.getSelectedClass().getClassTrainer1().getName() + ", " + state.getSelectedClass().getClassTrainer1().getSurrname());
+		if (state.getSelectedClass().getClassTrainer2() != null) {
 			lblTrainer2.setDisable(false);
-			System.out.println(selected.getClassTrainer2().getName() + ", " + selected.getClassTrainer2().getSurrname());
-			lblOverviewTrainer1.setText(selected.getClassTrainer2().getName() + ", " + selected.getClassTrainer2().getSurrname());
+			System.out.println(state.getSelectedClass().getClassTrainer2().getName() + ", " + state.getSelectedClass().getClassTrainer2().getSurrname());
+			lblOverviewTrainer1.setText(state.getSelectedClass().getClassTrainer2().getName() + ", " + state.getSelectedClass().getClassTrainer2().getSurrname());
 		}
 
 		lblOverviewDay.setText(ManagerUtils.intToWeekDay(gymClass.getStartTime().getDayOfWeek()));
@@ -1004,5 +1001,9 @@ public class ManagerController implements Initializable {
 
 	public AnchorPane getCallendarPane() {
 		return callendarPane;
+	}
+
+	public static Object getState() {
+		return state;
 	}
 }

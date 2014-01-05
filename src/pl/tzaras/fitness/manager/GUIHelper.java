@@ -92,6 +92,13 @@ public class GUIHelper {
 		return confirmDialog.showDialog();
 	}
 
+	public static Type warningWithOk(String message) {
+		MonologFXButton btnOK = MonologFXButtonBuilder.create().defaultButton(true).type(MonologFXButton.Type.OK).build();
+		MonologFX warningDialog = MonologFXBuilder.create().modal(true).message(message).titleText("Brak zaznaczenia").button(btnOK).buttonAlignment(MonologFX.ButtonAlignment.CENTER).build();
+		return warningDialog.showDialog();
+	}
+
+	
 	public static Type nothingSelectedWarning(String message) {
 		MonologFXButton btnYes = MonologFXButtonBuilder.create().defaultButton(true).type(MonologFXButton.Type.OK).build();
 		MonologFX nothingSelectedDialog = MonologFXBuilder.create().modal(true).message(message).titleText("Brak zaznaczenia").button(btnYes).buttonAlignment(MonologFX.ButtonAlignment.CENTER).build();

@@ -1,18 +1,13 @@
 package pl.tzaras.fitness.manager.db;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
-import javafx.util.Callback;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import pl.tzaras.fitness.manager.db.data.GymClass;
 import pl.tzaras.fitness.manager.db.data.GymClassType;
@@ -27,15 +22,18 @@ public class GymClassManager {
 		
 	}
 	
-	public List<GymClass> getClasses()
+	public List<GymClass> getClasses(String condition)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		ArrayList<GymClass> classes = new ArrayList<GymClass>();
 		try {
 			transaction = session.beginTransaction();
-			
-			classes.addAll( session.createQuery("from GymClass").list() );
+			String query = "from GymClass";
+			if (condition != null) {
+				query  += " " + condition; 
+			}
+			classes.addAll( session.createQuery(query).list() );
 			for (Iterator iter = classes.iterator(); iter.hasNext();) {
 				GymClass gClass = (GymClass) iter.next();
 				System.out.println("Trainer1: " + gClass.getClassTrainer1().getName() + ", " + gClass.getClassTrainer1().getSurrname());
@@ -47,7 +45,7 @@ public class GymClassManager {
 			}
 				
 			transaction.commit();
-		} catch (HibernateException e) {
+		} catch (HibernateException e) { 
 			transaction.rollback();
 			e.printStackTrace();
 		} finally {
@@ -84,6 +82,34 @@ public class GymClassManager {
 		}
 		return courseId;
 		
+	}
+	
+	private List<GymClass> getClasses(GymRoom classRoom) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		ArrayList<GymClass> classes = new ArrayList<GymClass>();
+		try {
+
+			transaction = session.beginTransaction();
+			classes.addAll( session.createQuery("from GymClass where classRoom = :room").setParameter("room", classRoom).list() );
+			for (Iterator iter = classes.iterator(); iter.hasNext();) {
+				GymClass gClass = (GymClass) iter.next();
+				System.out.println("Trainer1: " + gClass.getClassTrainer1().getName() + ", " + gClass.getClassTrainer1().getSurrname());
+				if (gClass.getClassTrainer2() != null ) {
+					System.out.println("Trainer2: " + gClass.getClassTrainer2().getName() + ", " + gClass.getClassTrainer2().getSurrname());
+				}
+				System.out.println("Room: "+gClass.getClassRoom().getName());
+				System.out.println("ClassType: "+gClass.getClassType().getName());
+			}
+				
+			transaction.commit();
+		} catch (HibernateException e) {
+			transaction.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return classes;
 	}
 
 	public List<GymClass> getClasses(DateTime monday, DateTime sunday) {
@@ -191,18 +217,21 @@ public class GymClassManager {
 		return newClass;
 	}
 
-	/*
-	public void initializeCombo(ComboBox<RoomWrapper> classTypeCombo) {
-		classTypeCombo.getItems().setAll(wrapRoom(getRooms()));		
-	}
-	
-	private List<RoomWrapper> wrapRoom(List<GymRoom> rooms) {
-		ArrayList<RoomWrapper> wrapped = new ArrayList<RoomWrapper>();
+	public boolean isRoomAvailableForClass(GymClass gClass) {
+		List<GymClass> classes = getClasses(gClass.getClassRoom());
 		
-		for (GymRoom classType : rooms) {
-			wrapped.add(new RoomWrapper(classType));
+		boolean retVal = true;
+		if (classes.size() != 0) {
+			for (GymClass c : classes) {
+				if ( gClass.getStartTime().isAfter(c.getStartTime().getMillis()) && gClass.getStartTime().isBefore(c.getStartTime().plusMinutes((int)c.getDuration()).getMillis()) ) {
+					retVal = false;
+					break;
+				}
+			}
 		}
-		return wrapped;
-	}*/
+		return retVal;
+	}
+
+	
 	
 }

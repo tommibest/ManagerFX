@@ -143,6 +143,7 @@ public class GymClassTypeManager {
 	}
 	
 	public void initializeCombo(ComboBox<TypeWrapper> classTypeCombo) {
+		classTypeCombo.getItems().clear();
 		classTypeCombo.getItems().setAll(wrapClassTypes(DataManager.getInstance().getGymClassTypeManager().getClassTypes()));		
 	}
 	
